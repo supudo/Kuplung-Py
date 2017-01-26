@@ -234,11 +234,6 @@ class KuplungMainWindow(QMainWindow):
     # Help
         helpMenu = menu_bar.addMenu('&Help')
 
-        action_metrics = QAction(QIcon('resources/gui/info.png'), 'Metrics', cls)
-        action_metrics.setStatusTip('Toggle Metrics')
-        action_metrics.triggered.connect(cls.toggleMetrics)
-        helpMenu.addAction(action_metrics)
-
         action_about_kuplung = QAction(QIcon('resources/gui/info-circle.png'), 'About Kuplung', cls)
         action_about_kuplung.setStatusTip('Toggle About Kuplung')
         action_about_kuplung.triggered.connect(cls.toggleAboutKuplung)
@@ -354,9 +349,6 @@ class KuplungMainWindow(QMainWindow):
 
     # Help
 
-    def toggleMetrics(self):
-        return NotImplementedError
-
     def toggleAboutKuplung(self):
         boxAbout = QMessageBox()
         boxAbout.setModal(True)
@@ -364,10 +356,12 @@ class KuplungMainWindow(QMainWindow):
         boxAbout.setWindowTitle("About Kuplung")
         boxAbout.setIconPixmap(QPixmap('resources/Kuplung_about.png'))
         boxAbout.setWindowIcon(QIcon('resources/Kuplung_about.png'))
-        boxAbout.setText("Kuplung " + Settings.AppVersion + "<br/>"
-                         "By <a href='http://supudo.net'>supudo.net</a>" +
-                         " (<a href='http://github.com/supudo'>github.com/supudo</a>)<br />" +
-                         "Whatever license...")
+        about_str = "Kuplung " + Settings.AppVersion + "<br/>"
+        about_str += "By <a href='http://supudo.net'>supudo.net</a><br />"
+        about_str += "<a href='http://github.com/supudo'>supudo@github</a>"
+        about_str += "<br /><br />"
+        about_str += "Whatever license..."
+        boxAbout.setText(about_str)
         boxAbout.setStandardButtons(QMessageBox.Ok)
         boxAbout.exec_()
 
