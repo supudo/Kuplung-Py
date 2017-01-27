@@ -9,14 +9,16 @@ __author__ = 'supudo'
 __version__ = "1.0.0"
 
 from PyQt5.QtWidgets import (
-    QMainWindow, QAction, QApplication, QScrollArea, QSizePolicy,
-    QGridLayout, QWidget, QMessageBox
+    QApplication, QWidget, QMainWindow, QAction,
+    QScrollArea, QSizePolicy,
+    QGridLayout, QMessageBox
 )
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt, QRect
 from settings import Settings
 from consumption import Consumption
-from ui.OpenGLWindow import OpenGLWindow
+from ui.WidgetViewer import WidgetViewer
+from ui.WidgetModelsUI import WidgetModelsUI
 
 
 class KuplungMainWindow(QMainWindow):
@@ -28,7 +30,7 @@ class KuplungMainWindow(QMainWindow):
         super().__init__()
         self.setMouseTracking(True)
         self.init_window()
-        self.init_dock_windows()
+        self.init_layout()
 
     def init_window(cls):
         # title
@@ -369,34 +371,44 @@ class KuplungMainWindow(QMainWindow):
 
     # GUI
 
-    def init_dock_windows(self):
+    def init_layout(self):
         centralWidget = QWidget()
         self.setCentralWidget(centralWidget)
 
-        self.init_system_ui()
+        gridLayout = QGridLayout()
+        gridLayout.setGeometry(QRect(0, 0, 200, 200))
+
         self.init_models_ui()
         self.init_opengl_ui()
+        self.init_system_ui()
 
-        centralLayout = QGridLayout()
-        centralLayout.setGeometry(QRect(0, 0, 200, 200))
-        centralLayout.addWidget(self.glWidgetArea, 0, 0)
-        centralWidget.setLayout(centralLayout)
+        gridLayout.addWidget(self.glWidgetArea, 0, 0)
+        centralWidget.setLayout(gridLayout)
+
+    def init_models_ui(self):
+        self.widget_modelsui = WidgetModelsUI(self)
+        self.widget_modelsui.initializeUI()
+
+        # self.glWidgetArea = QScrollArea()
+        # self.glWidgetArea.setWidget(self.widget_modelsui)
+        # self.glWidgetArea.setWidgetResizable(True)
+        # self.glWidgetArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        # self.glWidgetArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        # self.glWidgetArea.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+        # self.glWidgetArea.setMinimumSize(50, 50)
 
     def init_system_ui(self):
         return NotImplementedError
 
-    def init_models_ui(self):
-        return NotImplementedError
-
     def init_opengl_ui(self):
-        self.opengl_widget = OpenGLWindow(self)
-        self.opengl_widget.initializeGL()
+        self.widget_opengl = WidgetViewer(self)
+        self.widget_opengl.initializeGL()
 
         self.glWidgetArea = QScrollArea()
-        self.glWidgetArea.setWidget(self.opengl_widget)
+        self.glWidgetArea.setWidget(self.widget_opengl)
         self.glWidgetArea.setWidgetResizable(True)
         self.glWidgetArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.glWidgetArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.glWidgetArea.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
-        self.glWidgetArea.setMinimumSize(50, 50)
+        self.glWidgetArea.setMinimumSize(200, 0)
 

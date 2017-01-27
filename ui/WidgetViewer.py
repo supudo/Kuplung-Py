@@ -11,7 +11,7 @@ from OpenGL.GL import *
 from settings import Settings
 
 
-class OpenGLWindow(QtOpenGL.QGLWidget):
+class WidgetViewer(QtOpenGL.QGLWidget):
 
     def __init__(self, parent=None):
         QtOpenGL.QGLWidget.__init__(self, parent)
