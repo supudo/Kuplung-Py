@@ -20,7 +20,7 @@ class WidgetViewer(QOpenGLWidget):
         super(WidgetViewer, self).__init__(parent, flags)
 
     def initializeGL(self):
-        self.gl_context = QOpenGLContext().currentContext()
+        self.gl_context = QOpenGLContext(self.parent()).currentContext()
         if self.gl_context is None:
             Settings.log_error("[Widget Viewer] Cannot get OpenGL Context!")
         self.printGLStrings()
