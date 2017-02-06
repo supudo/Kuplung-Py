@@ -19,6 +19,7 @@ from settings import Settings
 from consumption import Consumption
 from ui.WidgetViewer import WidgetViewer
 from ui.WidgetModelsUI import WidgetModelsUI
+from PyQt5.Qt import QSurfaceFormat
 
 
 class KuplungMainWindow(QMainWindow):
@@ -32,18 +33,18 @@ class KuplungMainWindow(QMainWindow):
         self.init_window()
         self.init_layout()
 
-    def init_window(cls):
+    def init_window(self):
         # title
-        cls.setWindowTitle('Kuplung')
+        self.setWindowTitle('Kuplung')
 
         # icon
-        cls.setWindowIcon(QIcon("resources/Kuplung.png"))
+        self.setWindowIcon(QIcon("resources/Kuplung.png"))
 
         # main menu
-        cls.init_main_menu()
+        self.init_main_menu()
 
         # status bar
-        cls.statusBar().showMessage('Ready')
+        self.statusBar().showMessage('Ready')
 
         # screen
         dw = QApplication.desktop()
@@ -51,19 +52,19 @@ class KuplungMainWindow(QMainWindow):
         size = screen.geometry()
         posX = (size.width() - Settings.AppMainWindowWidth) / 2
         posY = (size.height() - Settings.AppMainWindowHeight) / 2
-        cls.setGeometry(posX, posY,
+        self.setGeometry(posX, posY,
                         Settings.AppMainWindowWidth,
                         Settings.AppMainWindowHeight)
 
         # set theme
-        # cls.setStyleSheet(Stylesheet.KuplungTheme)
+        # self.setStyleSheet(Stylesheet.KuplungTheme)
 
         # show window
-        cls.show()
+        self.show()
 
-    def init_main_menu(cls):
+    def init_main_menu(self):
         # menu bar
-        menu_bar = cls.menuBar()
+        menu_bar = self.menuBar()
         menu_bar.clear()
 
         if Settings.is_osx():
@@ -72,53 +73,53 @@ class KuplungMainWindow(QMainWindow):
     # File menu
         fileMenu = menu_bar.addMenu('&File')
 
-        action_new = QAction(QIcon('resources/gui/file-o.png'), 'New', cls)
+        action_new = QAction(QIcon('resources/gui/file-o.png'), 'New', self)
         action_new.setStatusTip('New Scene')
-        action_new.triggered.connect(cls.newScene)
+        action_new.triggered.connect(self.newScene)
         fileMenu.addAction(action_new)
 
-        action_open = QAction(QIcon('resources/gui/folder-open-o.png'), 'Open ...', cls)
+        action_open = QAction(QIcon('resources/gui/folder-open-o.png'), 'Open ...', self)
         action_open.setStatusTip('Open Existing Scene')
-        action_open.triggered.connect(cls.openScene)
+        action_open.triggered.connect(self.openScene)
         fileMenu.addAction(action_open)
 
-        action_open_recent = QAction(QIcon('resources/gui/files-o.png'), 'Open Recent', cls)
+        action_open_recent = QAction(QIcon('resources/gui/files-o.png'), 'Open Recent', self)
         action_open_recent.setStatusTip('Open Recent Scene')
-        action_open_recent.triggered.connect(cls.openRecent)
+        action_open_recent.triggered.connect(self.openRecent)
         fileMenu.addAction(action_open_recent)
 
-        action_save = QAction(QIcon('resources/gui/floppy-o.png'), 'Save ...', cls)
+        action_save = QAction(QIcon('resources/gui/floppy-o.png'), 'Save ...', self)
         action_save.setStatusTip('Save Scene')
-        action_save.triggered.connect(cls.saveScene)
+        action_save.triggered.connect(self.saveScene)
         fileMenu.addAction(action_save)
 
         fileMenu.addSeparator()
 
         menu_import = fileMenu.addMenu("Import")
-        menu_import_obj = QAction('Wavefront (.obj)', cls)
+        menu_import_obj = QAction('Wavefront (.obj)', self)
         menu_import_obj.setStatusTip('Import OBJ scene and MTL material files')
-        menu_import_obj.triggered.connect(cls.importFormat_OBJ)
+        menu_import_obj.triggered.connect(self.importFormat_OBJ)
         menu_import.addAction(menu_import_obj)
 
-        action_import_recent = QAction('Import Recent', cls)
+        action_import_recent = QAction('Import Recent', self)
         action_import_recent.setStatusTip('Import Recent Scene')
         fileMenu.addAction(action_import_recent)
 
         menu_export = fileMenu.addMenu("Export")
-        menu_export_obj = QAction('Wavefront (.obj)', cls)
+        menu_export_obj = QAction('Wavefront (.obj)', self)
         menu_export_obj.setStatusTip('Export OBJ scene and MTL material files')
-        menu_export_obj.triggered.connect(cls.exportFormat_OBJ)
+        menu_export_obj.triggered.connect(self.exportFormat_OBJ)
         menu_export.addAction(menu_export_obj)
 
         fileMenu.addSeparator()
 
-        action_exit = QAction(QIcon('resources/gui/power-off.png'), 'Quit', cls)
+        action_exit = QAction(QIcon('resources/gui/power-off.png'), 'Quit', self)
         if Settings.is_osx():
             action_exit.setShortcut('Cmd+Q')
         else:
             action_exit.setShortcut('Alt+F4')
         action_exit.setStatusTip('Exit Kuplung')
-        action_exit.triggered.connect(cls.close)
+        action_exit.triggered.connect(self.close)
         fileMenu.addAction(action_exit)
 
     # Scene menu
@@ -126,124 +127,124 @@ class KuplungMainWindow(QMainWindow):
 
         menu_add_light = sceneMenu.addMenu(QIcon('resources/gui/lightbulb-o.png'), "Add Light")
 
-        menu_add_light_directional = QAction('Directional (Sun)', cls)
-        menu_add_light_directional.triggered.connect(cls.addLight_Directional)
+        menu_add_light_directional = QAction('Directional (Sun)', self)
+        menu_add_light_directional.triggered.connect(self.addLight_Directional)
         menu_add_light.addAction(menu_add_light_directional)
 
-        menu_add_light_point = QAction('Point (Light bulb)', cls)
-        menu_add_light_point.triggered.connect(cls.addLight_Point)
+        menu_add_light_point = QAction('Point (Light bulb)', self)
+        menu_add_light_point.triggered.connect(self.addLight_Point)
         menu_add_light.addAction(menu_add_light_point)
 
-        menu_add_light_spot = QAction('Spot (Flashlight)', cls)
-        menu_add_light_spot.triggered.connect(cls.addLight_Spot)
+        menu_add_light_spot = QAction('Spot (Flashlight)', self)
+        menu_add_light_spot.triggered.connect(self.addLight_Spot)
         menu_add_light.addAction(menu_add_light_spot)
 
         sceneMenu.addSeparator()
 
         menu_scene_rendering = sceneMenu.addMenu(QIcon('resources/gui/certificate.png'), "Scene Rendering")
 
-        menu_skin_solid = QAction('Solid', cls)
-        menu_skin_solid.triggered.connect(cls.renderSkin_Solid)
+        menu_skin_solid = QAction('Solid', self)
+        menu_skin_solid.triggered.connect(self.renderSkin_Solid)
         menu_scene_rendering.addAction(menu_skin_solid)
 
-        menu_skin_material = QAction('Material', cls)
-        menu_skin_material.triggered.connect(cls.renderSkin_Material)
+        menu_skin_material = QAction('Material', self)
+        menu_skin_material.triggered.connect(self.renderSkin_Material)
         menu_scene_rendering.addAction(menu_skin_material)
 
-        menu_skin_texture = QAction('Texture', cls)
-        menu_skin_texture.triggered.connect(cls.renderSkin_Texture)
+        menu_skin_texture = QAction('Texture', self)
+        menu_skin_texture.triggered.connect(self.renderSkin_Texture)
         menu_scene_rendering.addAction(menu_skin_texture)
 
-        menu_skin_wireframe = QAction('Wireframe', cls)
-        menu_skin_wireframe.triggered.connect(cls.renderSkin_Wireframe)
+        menu_skin_wireframe = QAction('Wireframe', self)
+        menu_skin_wireframe.triggered.connect(self.renderSkin_Wireframe)
         menu_scene_rendering.addAction(menu_skin_wireframe)
 
-        menu_skin_rendered = QAction('Rendered', cls)
-        menu_skin_rendered.triggered.connect(cls.renderSkin_Rendered)
+        menu_skin_rendered = QAction('Rendered', self)
+        menu_skin_rendered.triggered.connect(self.renderSkin_Rendered)
         menu_scene_rendering.addAction(menu_skin_rendered)
 
         sceneMenu.addSeparator()
 
-        menu_render_image = QAction(QIcon('resources/gui/file-image-o.png'), 'Render Image', cls)
-        menu_render_image.triggered.connect(cls.renderImage)
+        menu_render_image = QAction(QIcon('resources/gui/file-image-o.png'), 'Render Image', self)
+        menu_render_image.triggered.connect(self.renderImage)
         sceneMenu.addAction(menu_render_image)
 
-        menu_render_ui = QAction(QIcon('resources/gui/cubes.png'), 'Render UI', cls)
-        menu_render_ui.triggered.connect(cls.showRenderUI)
+        menu_render_ui = QAction(QIcon('resources/gui/cubes.png'), 'Render UI', self)
+        menu_render_ui.triggered.connect(self.showRenderUI)
         sceneMenu.addAction(menu_render_ui)
 
     # View
         viewMenu = menu_bar.addMenu('&View')
 
-        menu_item_gui_controls = QAction('GUI Controls', cls)
-        if cls.gui_controls_visible:
+        menu_item_gui_controls = QAction('GUI Controls', self)
+        if self.gui_controls_visible:
             menu_item_gui_controls.setIcon(QIcon('resources/gui/toggle-on.png'))
         else:
             menu_item_gui_controls.setIcon(QIcon('resources/gui/toggle-off.png'))
-        menu_item_gui_controls.triggered.connect(cls.toggleGuiControls)
+        menu_item_gui_controls.triggered.connect(self.toggleGuiControls)
         viewMenu.addAction(menu_item_gui_controls)
 
-        menu_item_scene_controls = QAction('Scene Controls', cls)
-        if cls.scene_controls_visible:
+        menu_item_scene_controls = QAction('Scene Controls', self)
+        if self.scene_controls_visible:
             menu_item_scene_controls.setIcon(QIcon('resources/gui/toggle-on.png'))
         else:
             menu_item_scene_controls.setIcon(QIcon('resources/gui/toggle-off.png'))
-        menu_item_scene_controls.triggered.connect(cls.toggleSceneControls)
+        menu_item_scene_controls.triggered.connect(self.toggleSceneControls)
         viewMenu.addAction(menu_item_scene_controls)
 
-        menu_item_visual_artefacts = QAction('Visual Artefacts', cls)
-        if cls.visual_artefacts_visible:
+        menu_item_visual_artefacts = QAction('Visual Artefacts', self)
+        if self.visual_artefacts_visible:
             menu_item_visual_artefacts.setIcon(QIcon('resources/gui/toggle-on.png'))
         else:
             menu_item_visual_artefacts.setIcon(QIcon('resources/gui/toggle-off.png'))
-        menu_item_visual_artefacts.triggered.connect(cls.toggleVisualArtefacts)
+        menu_item_visual_artefacts.triggered.connect(self.toggleVisualArtefacts)
         viewMenu.addAction(menu_item_visual_artefacts)
 
         viewMenu.addSeparator()
 
-        action_show_log_window = QAction(QIcon('resources/gui/bug.png'), 'Log Window', cls)
+        action_show_log_window = QAction(QIcon('resources/gui/bug.png'), 'Log Window', self)
         action_show_log_window.setStatusTip('Toggle Log Window')
-        action_show_log_window.triggered.connect(cls.toggleLogWindow)
+        action_show_log_window.triggered.connect(self.toggleLogWindow)
         viewMenu.addAction(action_show_log_window)
 
-        action_screenshot_window = QAction(QIcon('resources/gui/desktop.png'), 'Screenshot Window', cls)
+        action_screenshot_window = QAction(QIcon('resources/gui/desktop.png'), 'Screenshot Window', self)
         action_screenshot_window.setStatusTip('Toggle Screenshot Window')
-        action_screenshot_window.triggered.connect(cls.toggleScreenshotWindow)
+        action_screenshot_window.triggered.connect(self.toggleScreenshotWindow)
         viewMenu.addAction(action_screenshot_window)
 
-        action_scene_statistics = QAction(QIcon('resources/gui/tachometer.png'), 'Scene Statistics', cls)
+        action_scene_statistics = QAction(QIcon('resources/gui/tachometer.png'), 'Scene Statistics', self)
         action_scene_statistics.setStatusTip('Toggle Screen Statistics')
-        action_scene_statistics.triggered.connect(cls.toggleScreenStatistics)
+        action_scene_statistics.triggered.connect(self.toggleScreenStatistics)
         viewMenu.addAction(action_scene_statistics)
 
-        action_svs = QAction(QIcon('resources/gui/paper-plane-o.png'), 'Structured Volumetric Sampling', cls)
+        action_svs = QAction(QIcon('resources/gui/paper-plane-o.png'), 'Structured Volumetric Sampling', self)
         action_svs.setStatusTip('Toggle Structured Volumetric Sampling')
-        action_svs.triggered.connect(cls.toggleSVS)
+        action_svs.triggered.connect(self.toggleSVS)
         viewMenu.addAction(action_svs)
 
-        action_shadertoy = QAction(QIcon('resources/gui/bicycle.png'), 'Shadertoy', cls)
+        action_shadertoy = QAction(QIcon('resources/gui/bicycle.png'), 'Shadertoy', self)
         action_shadertoy.setStatusTip('Toggle Shadertoy')
-        action_shadertoy.triggered.connect(cls.toggleShadertoy)
+        action_shadertoy.triggered.connect(self.toggleShadertoy)
         viewMenu.addAction(action_shadertoy)
 
         viewMenu.addSeparator()
 
-        action_options = QAction(QIcon('resources/gui/cog.png'), 'Options', cls)
+        action_options = QAction(QIcon('resources/gui/cog.png'), 'Options', self)
         action_options.setStatusTip('Toggle Options')
-        action_options.triggered.connect(cls.toggleOptions)
+        action_options.triggered.connect(self.toggleOptions)
         viewMenu.addAction(action_options)
 
     # Help
         helpMenu = menu_bar.addMenu('&Help')
 
-        action_about_kuplung = QAction(QIcon('resources/gui/info-circle.png'), 'About Kuplung', cls)
+        action_about_kuplung = QAction(QIcon('resources/gui/info-circle.png'), 'About Kuplung', self)
         action_about_kuplung.setStatusTip('Toggle About Kuplung')
-        action_about_kuplung.triggered.connect(cls.toggleAboutKuplung)
+        action_about_kuplung.triggered.connect(self.toggleAboutKuplung)
         helpMenu.addAction(action_about_kuplung)
 
     # Stats
         menu_bar.addSeparator()
-        menu_bar.addMenu(cls.getAppConsumption())
+        menu_bar.addMenu(self.getAppConsumption())
 
     def getAppConsumption(self):
         consumption_str = Consumption.memory()
@@ -401,8 +402,14 @@ class KuplungMainWindow(QMainWindow):
         return NotImplementedError
 
     def init_opengl_ui(self):
+        gl_format = QSurfaceFormat()
+        gl_format.setDepthBufferSize(24)
+        gl_format.setStencilBufferSize(8)
+        gl_format.setVersion(4, 1)
+        gl_format.setProfile(QSurfaceFormat.CoreProfile)
+        QSurfaceFormat.setDefaultFormat(gl_format)
+
         self.widget_opengl = WidgetViewer(self)
-        self.widget_opengl.initializeGL()
 
         self.glWidgetArea = QScrollArea()
         self.glWidgetArea.setWidget(self.widget_opengl)

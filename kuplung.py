@@ -12,12 +12,12 @@ from PyQt5.QtWidgets import QApplication
 from ui.MainWindow import KuplungMainWindow
 
 if __name__ == '__main__':
-    Settings.log_info("Application starting...")
+    Settings.log_info("[MAIN] Application starting...")
     Settings.ApplicationRootPath = os.path.dirname(os.path.abspath(__file__))
 
     app = QApplication(sys.argv)
     mainWindow = KuplungMainWindow()
 
-    Settings.log_info("Running...")
+    Settings.log_info("[MAIN] Running...")
 
     sys.exit(app.exec_())

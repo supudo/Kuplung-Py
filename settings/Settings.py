@@ -8,9 +8,10 @@ __version__ = "1.0.0"
 
 import platform
 import logging
+import time
 
 
-guiClearColor = [70 / 255.0, 70 / 255.0, 70 / 255.0, 255 / 255.0]
+guiClearColor = [70.0 / 255.0, 70.0 / 255.0, 70.0 / 255.0, 255.0 / 255.0]
 
 AppVersion = "1.0 d"
 
@@ -18,6 +19,7 @@ AppMainWindowWidth = 1200
 AppMainWindowHeight = 900
 
 ApplicationRootPath = ''
+ApplicationAssetsPath = 'resources/shapes/'
 
 LogDebugWindow = True
 
@@ -35,10 +37,10 @@ logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
 
 def log_info(*args):
-    logger.log(logging.INFO, "[Kuplung] {0}".format(' '.join(args)))
+    logger.log(logging.INFO, "{0} {1} [Kuplung] {2}".format(time.strftime("%Y/%m/%d"), time.strftime("%H:%M:%S"), ' '.join(args)))
 
 def log_error(*args):
-    logger.log(logging.ERROR, "[Kuplung] Error! {0}".format(' '.join(args)))
+    logger.log(logging.ERROR, "{0} {1} [Kuplung] Error! {2}".format(time.strftime("%Y/%m/%d"), time.strftime("%H:%M:%S"), ' '.join(args)))
 
 
 # -------------------------------------------------------------------
