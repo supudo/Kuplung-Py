@@ -15,6 +15,7 @@ guiClearColor = [70.0 / 255.0, 70.0 / 255.0, 70.0 / 255.0, 255.0 / 255.0]
 
 AppVersion = "1.0 d"
 
+AppMainWindowTitle = "Kuplung"
 AppMainWindowWidth = 1200
 AppMainWindowHeight = 900
 

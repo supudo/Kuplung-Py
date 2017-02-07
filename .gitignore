@@ -93,3 +93,6 @@ ENV/
 # ide
 .idea/
 bin/
+
+# project specific
+imgui.ini
