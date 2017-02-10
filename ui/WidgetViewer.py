@@ -5,14 +5,15 @@ supudo.net
 __author__ = 'supudo'
 __version__ = "1.0.0"
 
-from PyQt5.QtWidgets import QOpenGLWidget
+from OpenGL.GL import *
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QOpenGLContext
-from OpenGL.GL import *
-from settings import Settings
+from PyQt5.QtWidgets import QOpenGLWidget
+
+from meshes.scene.ModelFace import ModelFace
 from parsers.OBJ.ParserObj import ParserObj
 from rendering.RenderingManager import RenderingManager
-from rendering.ModelFace import ModelFace
+from settings import Settings
 
 
 class WidgetViewer(QOpenGLWidget):

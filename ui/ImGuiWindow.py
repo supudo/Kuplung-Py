@@ -5,17 +5,17 @@ supudo.net
 __author__ = 'supudo'
 __version__ = "1.0.0"
 
-import glfw
 import OpenGL.GL as gl
-
+import glfw
 import imgui
 from imgui.impl import GlfwImpl
 
-from settings import Settings
 from consumption import Consumption
+from meshes.scene.ModelFace import ModelFace
 from parsers.OBJ.ParserObj import ParserObj
+from objects.ObjectsManager import ObjectsManager
 from rendering.RenderingManager import RenderingManager
-from rendering.ModelFace import ModelFace
+from settings import Settings
 
 
 class ImGuiWindow():
@@ -40,17 +40,25 @@ class ImGuiWindow():
         self.init_imgui_impl()
         self.init_rendering_manager()
         self.imgui_style = imgui.GuiStyle()
+        self.init_objects_manager()
 
         self.printGLStrings()
 
         while not glfw.window_should_close(self.window):
             glfw.poll_events()
+
+            width, height = glfw.get_framebuffer_size(self.window)
+            gl.glViewport(0, 0, int(width / 2), int(height))
+            gl.glClearColor(Settings.guiClearColor[0],
+                            Settings.guiClearColor[1],
+                            Settings.guiClearColor[2],
+                            Settings.guiClearColor[3])
+            gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT | gl.GL_STENCIL_BUFFER_BIT)
+
             self.imgui_context.new_frame()
-            self.render_main_menu()
-            self.render_dialogs()
-            self.render_ui_content()
-            self.render_scene()
+            self.render_screen()
             imgui.render()
+
             glfw.swap_buffers(self.window)
 
         glfw.terminate()
@@ -64,6 +72,7 @@ class ImGuiWindow():
         glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 1)
         glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
         glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, gl.GL_TRUE)
+
 
     def init_window(self):
         self.window = glfw.create_window(
@@ -82,6 +91,12 @@ class ImGuiWindow():
         self.imgui_context = GlfwImpl(self.window)
         self.imgui_context.enable()
         self.app_is_running = True
+
+
+    def render_screen(self):
+        self.render_main_menu()
+        self.render_ui_content()
+        self.render_scene()
 
 
     def render_main_menu(self):
@@ -191,8 +206,10 @@ class ImGuiWindow():
 
                 imgui.end_menu()
 
-            imgui.text(self.getAppConsumption())
+            imgui.text(self.get_app_consumption())
             imgui.end_main_menu_bar()
+
+        self.render_dialogs()
 
 
     def render_dialogs(self):
@@ -213,21 +230,14 @@ class ImGuiWindow():
 
 
     def render_ui_content(self):
-        gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT | gl.GL_STENCIL_BUFFER_BIT)
-        self.renderingManager.render(glfw.get_current_context())
+        self.managerObjects.render()
 
 
     def render_scene(self):
-        width, height = glfw.get_framebuffer_size(self.window)
-        gl.glViewport(0, 0, int(width / 2), int(height))
-        gl.glClearColor(Settings.guiClearColor[0],
-                        Settings.guiClearColor[1],
-                        Settings.guiClearColor[2],
-                        Settings.guiClearColor[3])
-        gl.glClear(gl.GL_COLOR_BUFFER_BIT)
+        self.renderingManager.render(glfw.get_current_context())
 
 
-    def getAppConsumption(self):
+    def get_app_consumption(self):
         consumption_str = Consumption.memory()
         return " --> {0} FPS | {1} objs, {2} verts, {3} indices ({4} tris, {5} faces) | {6}".format(
             ("%.1f" % imgui.get_io().framerate),
@@ -251,6 +261,12 @@ class ImGuiWindow():
             model_face.initBuffers(glfw.get_current_context(), self.parser.mesh_models[model])
             self.renderingManager.model_faces.append(model_face)
         Settings.log_info("[ImGuiWindow] Models initialized...")
+
+
+    def init_objects_manager(self):
+        self.managerObjects = ObjectsManager()
+        self.managerObjects.load_system_models()
+        self.managerObjects.init_manager()
 
 
     def printGLStrings(self):

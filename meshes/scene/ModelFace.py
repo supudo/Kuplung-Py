@@ -15,8 +15,7 @@ from settings import Settings
 
 class ModelFace:
     def __init__(self):
-        self.glVAO = 0
-        self.vboVertices = 0
+        pass
 
     def initBuffers(self, openGL_context, model):
         self.mesh_model = model

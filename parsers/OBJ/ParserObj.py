@@ -15,6 +15,7 @@ class ParserObj:
     def __init__(self):
         pass
 
+
     def parse_file(self, obj_folder, obj_filename):
         self.folder = obj_folder
         file_obj = open(obj_folder + obj_filename, 'r')
@@ -31,7 +32,7 @@ class ParserObj:
 
         for line in file_obj:
             values = line.split()
-            if not values:
+            if not values or values[0] == '#':
                 continue
             elif values[0] == 'mtllib':
                 self.parse_material_file(self.folder, values[1])
@@ -57,7 +58,7 @@ class ParserObj:
                 for v in map(float, values[1:3]):
                     self.textureCoordinates.append(v)
             elif values[0] in 'usemtl':
-                if not values[1] == 'off':
+                if not values[1] == 'off' and not values[0] == 's':
                     material = self.materials[values[1]]
                     self.mesh_models[str(current_mesh_model.ModelTitle)].MaterialTitle = material.material_title
                     self.mesh_models[str(current_mesh_model.ModelTitle)].ModelMaterial = material
@@ -88,38 +89,8 @@ class ParserObj:
                     self.mesh_models[model_key].countIndices += 1
                     indicesCounter += 1
 
-                # verts = []
-                # tcoords = []
-                # norms = []
-                # for v in values[1:]:
-                #     w = v.split('/')
-                #     verts.append(int(w[0]))
-                #     if len(w) >= 2 and len(w[1]) > 0:
-                #         tcoords.append(int(w[1]))
-                #     else:
-                #         tcoords.append(0)
-                #     if len(w) >= 3 and len(w[2]) > 0:
-                #         norms.append(int(w[2]))
-                #     else:
-                #         norms.append(0)
-
-                        # face = []
-                # texcoords = []
-                # norms = []
-                # for v in values[1:]:
-                #     w = v.split('/')
-                #     face.append(int(w[0]))
-                #     if len(w) >= 2 and len(w[1]) > 0:
-                #         texcoords.append(int(w[1]))
-                #     else:
-                #         texcoords.append(0)
-                #     if len(w) >= 3 and len(w[2]) > 0:
-                #         norms.append(int(w[2]))
-                #     else:
-                #         norms.append(0)
-                # self.faces.append((face, norms, texcoords, material))
-
         file_obj.close()
+
 
     def parse_material_file(self, folder, filename):
         self.materials = {}
@@ -168,6 +139,7 @@ class ParserObj:
                 current_material.texture_specular_exp = self.parse_texture(values[1:])
             elif values[0] == 'map_d':
                 current_material.texture_dissolve = self.parse_texture(values[1:])
+
 
     def parse_texture(self, values):
         return values[0]
