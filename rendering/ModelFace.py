@@ -7,70 +7,64 @@ __version__ = "1.0.0"
 
 import os
 import numpy
-from PyQt5.QtGui import (
-    QOpenGLBuffer,
-    QOpenGLVertexArrayObject,
-    QImage,
-    QOpenGLTexture
-)
-from OpenGL import *
+from OpenGL.GL import *
+from OpenGL.arrays import ArrayDatatype
+
 from settings import Settings
 
 
 class ModelFace:
     def __init__(self):
-        pass
+        self.glVAO = 0
+        self.vboVertices = 0
 
     def initBuffers(self, openGL_context, model):
         self.mesh_model = model
 
-        # glGenVertexArrays(1, self.glVAO)
+        self.glVAO = glGenVertexArrays(1)
+        glBindVertexArray(self.glVAO)
 
-        # self.glVAO = QOpenGLVertexArrayObject(openGL_context)
-        # self.glVAO.bind()
-        #
-        # # vertices
-        # self.vboVertices = QOpenGLBuffer(QOpenGLBuffer.VertexBuffer)
-        # self.vboVertices.create()
-        # self.vboVertices.setUsagePattern(QOpenGLBuffer.StaticDraw)
-        # self.vboVertices.bind()
-        # self.vboVertices.allocate(model.vertices[0] * len(model.vertices))
-        # self.vboVertices.write(0, numpy.array(model.vertices, numpy.float32), len(model.vertices))
-        #
-        # # normals
-        # self.vboNormals = QOpenGLBuffer(QOpenGLBuffer.VertexBuffer)
-        # self.vboNormals.create()
-        # self.vboNormals.setUsagePattern(QOpenGLBuffer.StaticDraw)
-        # self.vboNormals.bind()
-        # self.vboNormals.allocate(model.normals[0] * len(model.normals))
-        # self.vboNormals.write(0, numpy.array(model.normals, numpy.float32), len(model.normals))
-        #
-        # # textures
-        # if model.countTextureCoordinates > 0:
-        #     self.vboTextureCoordinates = QOpenGLBuffer(QOpenGLBuffer.VertexBuffer)
-        #     self.vboTextureCoordinates.create()
-        #     self.vboTextureCoordinates.setUsagePattern(QOpenGLBuffer.StaticDraw)
-        #     self.vboTextureCoordinates.bind()
-        #     self.vboTextureCoordinates.allocate(model.texture_coordinates[0] * len(model.texture_coordinates))
-        #     self.vboTextureCoordinates.write(0, numpy.array(model.texture_coordinates, numpy.float32), len(model.texture_coordinates))
-        #
-        # self.tex_ambient = self.loadTexture(model.ModelMaterial.texture_ambient, 'ambient')
-        # self.tex_diffuse = self.loadTexture(model.ModelMaterial.texture_diffuse, 'diffuse')
-        # self.tex_normal = self.loadTexture(model.ModelMaterial.texture_normal, 'normal')
-        # self.tex_displacement = self.loadTexture(model.ModelMaterial.texture_displacement, 'displacement')
-        # self.tex_specular = self.loadTexture(model.ModelMaterial.texture_specular, 'specular')
-        # self.tex_specular_exp = self.loadTexture(model.ModelMaterial.texture_specular_exp, 'specular_exp')
-        # self.tex_dissolve = self.loadTexture(model.ModelMaterial.texture_dissolve, 'dissolve')
-        #
-        # # indices
-        # self.vboIndices = QOpenGLBuffer(QOpenGLBuffer.IndexBuffer)
-        # self.vboIndices.create()
-        # self.vboIndices.setUsagePattern(QOpenGLBuffer.StaticDraw)
-        # self.vboIndices.bind()
-        # self.vboIndices.allocate(model.indices[0] * len(model.indices))
-        # self.vboIndices.write(0, numpy.array(model.indices, numpy.float32), len(model.indices))
-        #
-        # self.glVAO.release()
+        # vertices
+        vertices = numpy.array(model.vertices, dtype=numpy.float32)
+        self.vboVertices = glGenBuffers(1)
+        glBindBuffer(GL_ARRAY_BUFFER, self.vboVertices)
+        glBufferData(GL_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(vertices), vertices, GL_STATIC_DRAW)
+        glVertexAttribPointer(0, 3, GL_FLOAT, False, 0, None)
+        glEnableVertexAttribArray(0)
+
+        # normals
+        normals = numpy.array(model.normals, dtype=numpy.float32)
+        self.vboNormals = glGenBuffers(1)
+        glBindBuffer(GL_ARRAY_BUFFER, self.vboNormals)
+        glBufferData(GL_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(normals), normals, GL_STATIC_DRAW)
+        glVertexAttribPointer(1, 3, GL_FLOAT, False, 0, None)
+        glEnableVertexAttribArray(1)
+
+        # textures
+        if model.countTextureCoordinates > 0:
+            texCoords = numpy.array(model.texture_coordinates, dtype=numpy.float32)
+            self.vboTextureCoordinates = glGenBuffers(1)
+            glBindBuffer(GL_ARRAY_BUFFER, self.vboTextureCoordinates)
+            glBufferData(GL_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(texCoords), texCoords, GL_STATIC_DRAW)
+            glVertexAttribPointer(2, 2, GL_FLOAT, False, 0, None)
+            glEnableVertexAttribArray(2)
+
+        self.vbo_tex_ambient = self.loadTexture(model.ModelMaterial.texture_ambient, 'ambient')
+        self.vbo_tex_diffuse = self.loadTexture(model.ModelMaterial.texture_diffuse, 'diffuse')
+        self.vbo_tex_normal = self.loadTexture(model.ModelMaterial.texture_normal, 'normal')
+        self.vbo_tex_displacement = self.loadTexture(model.ModelMaterial.texture_displacement, 'displacement')
+        self.vbo_tex_specular = self.loadTexture(model.ModelMaterial.texture_specular, 'specular')
+        self.vbo_tex_specular_exp = self.loadTexture(model.ModelMaterial.texture_specular_exp, 'specular_exp')
+        self.vbo_tex_dissolve = self.loadTexture(model.ModelMaterial.texture_dissolve, 'dissolve')
+
+        # indices
+        indices = numpy.array(model.indices, dtype=numpy.uint)
+        self.vboIndices = glGenBuffers(1)
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, self.vboIndices)
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(indices), indices, GL_STATIC_DRAW)
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
+        glBindVertexArray(0)
 
         Settings.log_info("[Model Face] Buffers initialized ...")
 
@@ -78,18 +72,35 @@ class ModelFace:
         if not texture.image_url == '':
             image_file = Settings.ApplicationAssetsPath + texture.image_url
             if os.path.exists(image_file):
-                q_image = QImage(image_file).mirrored()
-                return QOpenGLTexture(q_image)
+                texture_image = open(image_file)
+                t_width = texture_image.size[0]
+                t_height = texture_image.size[1]
+                vbo_tex = glGenTextures(1)
+                glBindTexture(GL_TEXTURE_2D, vbo_tex)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+                glGenerateMipmap(GL_TEXTURE_2D)
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, t_width,
+                             t_height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                             texture_image)
+                return vbo_tex
             else:
                 Settings.log_error("[ModelFace] - Can't load " + type + " texture image! File doesn't exist!")
                 return None
         else:
-            return None
+             return None
 
-    def render(self, openGL_context):
-        # self.glVAO.bind()
-        # openGL_context.glDrawArrays(openGL_context.GL_TRIANGLE_STRIP, 0, 4)
-        # openGL_context.glDrawElements(openGL_context.GL_TRIANGLES, self.mesh_model.countIndices, openGL_context.GL_UNSIGNED_INT, 0);
-        # self.glVAO.release()
-        pass
+    def render(self):
+        if Settings.Setting_Wireframe:
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 
+        glBindVertexArray(self.glVAO)
+
+        glDrawElements(GL_TRIANGLES, self.mesh_model.countIndices, GL_UNSIGNED_INT, self.mesh_model.indices)
+
+        glBindVertexArray(0)
+
+        if Settings.Setting_Wireframe:
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)

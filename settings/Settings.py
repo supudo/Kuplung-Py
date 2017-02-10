@@ -11,8 +11,9 @@ import logging
 import time
 
 
-guiClearColor = [70.0 / 255.0, 70.0 / 255.0, 70.0 / 255.0, 255.0 / 255.0]
-
+# -------------------------------------------------------------------
+# App specific values
+# -------------------------------------------------------------------
 AppVersion = "1.0 d"
 
 AppMainWindowTitle = "Kuplung"
@@ -24,11 +25,20 @@ ApplicationAssetsPath = 'resources/shapes/'
 
 LogDebugWindow = True
 
+# -------------------------------------------------------------------
+# Scene Info
+# -------------------------------------------------------------------
 SceneCountObjects= 0
 SceneCountVertices = 0
 SceneCountIndices = 0
 SceneCountTriangles = 0
 SceneCountFaces = 0
+
+# -------------------------------------------------------------------
+# OpenGL specific
+# -------------------------------------------------------------------
+guiClearColor = [70.0 / 255.0, 70.0 / 255.0, 70.0 / 255.0, 255.0 / 255.0]
+Setting_Wireframe = False
 
 # -------------------------------------------------------------------
 # Logging

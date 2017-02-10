@@ -6,7 +6,10 @@ supudo.net
 __author__ = 'supudo'
 __version__ = "1.0.0"
 
+import time
 from OpenGL.GL import *
+import numpy
+from math import *
 from settings import Settings
 
 
@@ -45,10 +48,21 @@ class RenderingManager:
         if glGetProgramiv(self.shader_program, GL_LINK_STATUS) != GL_TRUE:
             Settings.log_error("[Rendering Manager] Shader linking failed! " + str(glGetProgramInfoLog(self.shader_program)))
 
+        glDeleteShader(vertex_shader)
+        glDeleteShader(fragment_shader)
+
+        self.glVS_MVPMatrix = glGetUniformLocation(self.shader_program, "vs_MVPMatrix")
+        if self.glVS_MVPMatrix == -1:
+            Settings.log_error("[Rendering Manager] Cannot fetch shader uniform - vs_MVPMatrix")
+
         Settings.log_info("[Rendering Manager] Shader program initialized...")
 
-    def render(self, openGL_context, openGL_functions):
+    def render(self, openGL_context):
         glUseProgram(self.shader_program)
+
+        # glUniformMatrix4fv(self.glVS_MVPMatrix, 1, GL_FALSE, mvp)
+
         for model in self.model_faces:
-            model.render(openGL_context)
+            model.render()
+
         glUseProgram(0)

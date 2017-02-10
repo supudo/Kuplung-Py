@@ -10,8 +10,12 @@ import OpenGL.GL as gl
 
 import imgui
 from imgui.impl import GlfwImpl
+
 from settings import Settings
 from consumption import Consumption
+from parsers.OBJ.ParserObj import ParserObj
+from rendering.RenderingManager import RenderingManager
+from rendering.ModelFace import ModelFace
 
 
 class ImGuiWindow():
@@ -29,8 +33,10 @@ class ImGuiWindow():
         self.init_gl()
         self.init_window()
         self.init_imgui_impl()
-
+        self.init_rendering_manager()
         self.imgui_style = imgui.GuiStyle()
+
+        self.printGLStrings()
 
         while not glfw.window_should_close(self.window):
             glfw.poll_events()
@@ -46,7 +52,7 @@ class ImGuiWindow():
 
     def init_gl(self):
         if not glfw.init():
-            Settings.log_error("Could not initialize OpenGL context")
+            Settings.log_error("[ImGuiWindow] Could not initialize OpenGL context")
             exit(1)
         glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 4)
         glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 1)
@@ -62,7 +68,7 @@ class ImGuiWindow():
         glfw.make_context_current(self.window)
         if not self.window:
             glfw.terminate()
-            Settings.log_error("Could not initialize Window")
+            Settings.log_error("[ImGuiWindow] Could not initialize Window")
             exit(1)
 
     def init_imgui_impl(self):
@@ -72,71 +78,76 @@ class ImGuiWindow():
 
     def render_main_menu(self):
         if imgui.begin_main_menu_bar():
-            if imgui.begin_menu("File".encode('utf-8'), True):
-                imgui.menu_item("New".encode('utf-8'), ''.encode('utf-8'), False, True)
-                imgui.menu_item("Open ...".encode('utf-8'), ''.encode('utf-8'), False, True)
-                if imgui.begin_menu("Open Recent".encode('utf-8'), True):
+            if imgui.begin_menu("File", True):
+                clicked_new, selected_new = imgui.menu_item("New", '', False, True)
+                if clicked_new:
+                    print("new was clicked")
+                imgui.menu_item("Open ...", '', False, True)
+                if imgui.begin_menu("Open Recent", True):
                     imgui.end_menu()
-                imgui.menu_item("Save ...".encode('utf-8'), ''.encode('utf-8'), False, True)
+                imgui.menu_item("Save ...", '', False, True)
                 imgui.separator()
-                if imgui.begin_menu("Import".encode('utf-8'), True):
-                    imgui.menu_item("Wavefront (.OBJ)".encode('utf-8'), ''.encode('utf-8'), False, True)
+                if imgui.begin_menu("Import", True):
+                    imgui.menu_item("Wavefront (.OBJ)", '', False, True)
                     imgui.end_menu()
-                if imgui.begin_menu("Import Recent".encode('utf-8'), True):
+                if imgui.begin_menu("Import Recent", True):
+                    imgui.menu_item("file 1...", '', False, True)
                     imgui.end_menu()
-                if imgui.begin_menu("Export".encode('utf-8'), True):
-                    imgui.menu_item("Wavefront (.OBJ)".encode('utf-8'), ''.encode('utf-8'), False, True)
+                if imgui.begin_menu("Export", True):
+                    imgui.menu_item("Wavefront (.OBJ)", '', False, True)
                     imgui.end_menu()
                 imgui.separator()
-                imgui.menu_item("Quit".encode('utf-8'), 'Cmd+Q'.encode('utf-8'), False, True)
+                clicked_quit, selected_quit = imgui.menu_item("Quit", 'Cmd+Q', False, True)
+                if clicked_quit:
+                    exit(1)
                 imgui.end_menu()
 
-            if imgui.begin_menu("Scene".encode('utf-8'), True):
-                if imgui.begin_menu("Add Light".encode('utf-8'), True):
-                    imgui.menu_item("Directional (Sun)".encode('utf-8'), ''.encode('utf-8'), False, True)
-                    imgui.menu_item("Point (Light bulb)".encode('utf-8'), ''.encode('utf-8'), False, True)
-                    imgui.menu_item("Spot (Flashlight)".encode('utf-8'), ''.encode('utf-8'), False, True)
+            if imgui.begin_menu("Scene", True):
+                if imgui.begin_menu("Add Light", True):
+                    imgui.menu_item("Directional (Sun)", '', False, True)
+                    imgui.menu_item("Point (Light bulb)", '', False, True)
+                    imgui.menu_item("Spot (Flashlight)", '', False, True)
                     imgui.end_menu()
                 imgui.separator()
-                if imgui.begin_menu("Scene Rendering".encode('utf-8'), True):
-                    imgui.menu_item("Solid".encode('utf-8'), ''.encode('utf-8'), False, True)
-                    imgui.menu_item("Material".encode('utf-8'), ''.encode('utf-8'), False, True)
-                    imgui.menu_item("Texture".encode('utf-8'), ''.encode('utf-8'), False, True)
-                    imgui.menu_item("Wireframe".encode('utf-8'), ''.encode('utf-8'), False, True)
-                    imgui.menu_item("Rendered".encode('utf-8'), ''.encode('utf-8'), False, True)
+                if imgui.begin_menu("Scene Rendering", True):
+                    imgui.menu_item("Solid", '', False, True)
+                    imgui.menu_item("Material", '', False, True)
+                    imgui.menu_item("Texture", '', False, True)
+                    imgui.menu_item("Wireframe", '', False, True)
+                    imgui.menu_item("Rendered", '', False, True)
                     imgui.separator()
-                    imgui.menu_item("Render - Depth".encode('utf-8'), ''.encode('utf-8'), False, True)
+                    imgui.menu_item("Render - Depth", '', False, True)
                     imgui.end_menu()
                 imgui.separator()
-                opened_show_render_image, self.show_save_image = imgui.menu_item("Render Image".encode('utf-8'), ''.encode('utf-8'), self.show_save_image, True)
-                opened_show_render_ui, self.show_render_ui = imgui.menu_item("Render UI".encode('utf-8'), ''.encode('utf-8'), self.show_render_ui, True)
+                opened_show_render_image, self.show_save_image = imgui.menu_item("Render Image", '', self.show_save_image, True)
+                opened_show_render_ui, self.show_render_ui = imgui.menu_item("Render UI", '', self.show_render_ui, True)
                 imgui.end_menu()
 
-            if imgui.begin_menu("View".encode('utf-8'), True):
-                imgui.menu_item("GUI Controls".encode('utf-8'), ''.encode('utf-8'), False, True)
-                imgui.menu_item("Scene Controls".encode('utf-8'), ''.encode('utf-8'), False, True)
-                imgui.menu_item("Hide Visual Artefacts".encode('utf-8'), ''.encode('utf-8'), False, True)
+            if imgui.begin_menu("View", True):
+                imgui.menu_item("GUI Controls", '', False, True)
+                imgui.menu_item("Scene Controls", '', False, True)
+                imgui.menu_item("Hide Visual Artefacts", '', False, True)
                 imgui.separator()
-                imgui.menu_item("Show Log Window".encode('utf-8'), ''.encode('utf-8'), False, True)
-                imgui.menu_item("Screenshot".encode('utf-8'), ''.encode('utf-8'), False, True)
-                imgui.menu_item("Scene Statistics".encode('utf-8'), ''.encode('utf-8'), False, True)
-                imgui.menu_item("Structured Volumetric Sampling".encode('utf-8'), ''.encode('utf-8'), False, True)
-                imgui.menu_item("Shadertoy".encode('utf-8'), ''.encode('utf-8'), False, True)
+                imgui.menu_item("Show Log Window", '', False, True)
+                imgui.menu_item("Screenshot", '', False, True)
+                imgui.menu_item("Scene Statistics", '', False, True)
+                imgui.menu_item("Structured Volumetric Sampling", '', False, True)
+                imgui.menu_item("Shadertoy", '', False, True)
                 imgui.separator()
-                imgui.menu_item("Shadertoy".encode('utf-8'), ''.encode('utf-8'), False, True)
-                imgui.menu_item("Options".encode('utf-8'), ''.encode('utf-8'), False, True)
+                imgui.menu_item("Shadertoy", '', False, True)
+                imgui.menu_item("Options", '', False, True)
                 imgui.end_menu()
 
-            if imgui.begin_menu("Help".encode('utf-8'), True):
-                imgui.menu_item("Metrics".encode('utf-8'), ''.encode('utf-8'), False, True)
-                imgui.menu_item("About ImGui".encode('utf-8'), ''.encode('utf-8'), False, True)
-                imgui.menu_item("About PyImGui".encode('utf-8'), ''.encode('utf-8'), False, True)
-                imgui.menu_item("About Kuplung".encode('utf-8'), ''.encode('utf-8'), False, True)
+            if imgui.begin_menu("Help", True):
+                imgui.menu_item("Metrics", '', False, True)
+                imgui.menu_item("About ImGui", '', False, True)
+                imgui.menu_item("About PyImGui", '', False, True)
+                imgui.menu_item("About Kuplung", '', False, True)
                 imgui.separator()
-                opened_show_imgui_test_window, self.show_imgui_test_window = imgui.menu_item("ImGui Demo Window".encode('utf-8'), ''.encode('utf-8'), self.show_imgui_test_window, True)
+                opened_test_window, self.show_imgui_test_window = imgui.menu_item("ImGui Demo Window", '', self.show_imgui_test_window, True)
                 imgui.end_menu()
 
-            imgui.text(self.getAppConsumption().encode('utf-8'))
+            imgui.text(self.getAppConsumption())
             imgui.end_main_menu_bar()
 
     def render_dialogs(self):
@@ -144,20 +155,10 @@ class ImGuiWindow():
             imgui.show_test_window()
 
     def render_ui_content(self):
-        pass
-        # imgui.show_user_guide()
-        # imgui.show_test_window()
-
-        # if self.app_is_running:
-        #     imgui.begin("fooo".encode('utf-8'), True)
-        #     imgui.text("Bar".encode('utf-8'))
-        #     imgui.text_colored("Eggs".encode('utf-8'), 0.2, 1., 0.)
-        #     imgui.end()
-        #
-        # with imgui.styled(imgui.STYLE_ALPHA, 1):
-        #     imgui.show_metrics_window()
-        #
-        # imgui.show_style_editor(self.imgui_style)
+        gl.glClear(gl.GL_COLOR_BUFFER_BIT |
+                   gl.GL_DEPTH_BUFFER_BIT |
+                   gl.GL_STENCIL_BUFFER_BIT)
+        self.renderingManager.render(glfw.get_current_context())
 
     def render_scene(self):
         width, height = glfw.get_framebuffer_size(self.window)
@@ -176,3 +177,22 @@ class ImGuiWindow():
             Settings.SceneCountIndices, Settings.SceneCountTriangles,
             Settings.SceneCountFaces,
             consumption_str)
+
+    def init_rendering_manager(self):
+        self.renderingManager = RenderingManager()
+        self.renderingManager.initShaderProgram(glfw.get_current_context())
+
+        self.parser = ParserObj()
+        self.parser.parse_file('resources/shapes/', 'monkey_head.obj')
+
+        for model in self.parser.mesh_models:
+            model_face = ModelFace()
+            model_face.initBuffers(glfw.get_current_context(), self.parser.mesh_models[model])
+            self.renderingManager.model_faces.append(model_face)
+        Settings.log_info("[ImGuiWindow] Models initialized...")
+
+    def printGLStrings(self):
+        Settings.log_info("[ImGuiWindow] Vendor: " + str(gl.glGetString(gl.GL_VENDOR)))
+        Settings.log_info("[ImGuiWindow] OpenGL version: " + str(gl.glGetString(gl.GL_VERSION)))
+        Settings.log_info("[ImGuiWindow] GLSL version: " + str(gl.glGetString(gl.GL_SHADING_LANGUAGE_VERSION)))
+        Settings.log_info("[ImGuiWindow] Renderer: " + str(gl.glGetString(gl.GL_RENDERER)))
