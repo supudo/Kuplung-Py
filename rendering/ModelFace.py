@@ -93,7 +93,7 @@ class ModelFace:
              return None
 
     def render(self):
-        if Settings.Setting_Wireframe:
+        if Settings.Setting_Wireframe or Settings.Setting_ModelViewSkin == Settings.ViewModelSkin.ViewModelSkin_Wireframe:
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 
         glBindVertexArray(self.glVAO)
@@ -102,5 +102,5 @@ class ModelFace:
 
         glBindVertexArray(0)
 
-        if Settings.Setting_Wireframe:
+        if Settings.Setting_Wireframe or Settings.Setting_ModelViewSkin == Settings.ViewModelSkin.ViewModelSkin_Wireframe:
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)

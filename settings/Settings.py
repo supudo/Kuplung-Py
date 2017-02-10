@@ -9,6 +9,7 @@ __version__ = "1.0.0"
 import platform
 import logging
 import time
+from enum import Enum
 
 
 # -------------------------------------------------------------------
@@ -39,6 +40,17 @@ SceneCountFaces = 0
 # -------------------------------------------------------------------
 guiClearColor = [70.0 / 255.0, 70.0 / 255.0, 70.0 / 255.0, 255.0 / 255.0]
 Setting_Wireframe = False
+
+class ViewModelSkin(Enum):
+    ViewModelSkin_Solid = 0
+    ViewModelSkin_Material = 1
+    ViewModelSkin_Texture = 2
+    ViewModelSkin_Wireframe = 3
+    ViewModelSkin_Rendered = 4
+
+Setting_ModelViewSkin = ViewModelSkin.ViewModelSkin_Solid
+
+Setting_Rendering_Depth = False
 
 # -------------------------------------------------------------------
 # Logging
