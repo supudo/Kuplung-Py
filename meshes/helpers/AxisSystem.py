@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 Kuplung - OpenGL Viewer, python port
 supudo.net
@@ -10,6 +12,8 @@ from gl_utils import GLUtils
 from OpenGL.GL import *
 from OpenGL.arrays import ArrayDatatype
 import numpy
+from maths.types.Matrix4x4 import Matrix4x4
+from maths import MathOps
 
 
 class AxisSystem():
@@ -108,32 +112,10 @@ class AxisSystem():
 
             glViewport(axisX, axisY, axisW, axisH)
 
-            matrixModel = numpy.array(numpy.ones((4, 4)), dtype=numpy.float32)
-            mvp = matrixModel * matrixProjection * matrixCamera
+            matrixModel = Matrix4x4(1.0)
+            matrixModel = matrixModel * matrixProjection * matrixCamera
 
-            # #debug
-            # mvp[0][0] = 1.387046
-            # mvp[0][1] = -0.530756
-            # mvp[0][2] = -0.605232
-            # mvp[0][3] = -0.604023
-            #
-            # mvp[1][0] = 0.000000
-            # mvp[1][1] = 2.268618
-            # mvp[1][2] = -0.342705
-            # mvp[1][3] = -0.342020
-            #
-            # mvp[2][0] = -1.163870
-            # mvp[2][1] = -0.632530
-            # mvp[2][2] = -0.721287
-            # mvp[2][3] = -0.719846
-            #
-            # mvp[3][0] = 0.000000
-            # mvp[3][1] = 0.000000
-            # mvp[3][2] = 24.050049
-            # mvp[3][3] = 26.000000
-
-            mvp = numpy.array(mvp, dtype=numpy.float32)
-            glUniformMatrix4fv(self.gl_mvp_matrix, 1, GL_FALSE, mvp)
+            glUniformMatrix4fv(self.gl_mvp_matrix, 1, GL_FALSE, MathOps.matrix_to_gl(matrixModel))
 
             glBindVertexArray(self.glVAO)
             glDrawArrays(GL_LINES, 0, 6)

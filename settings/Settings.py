@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 Kuplung - OpenGL Viewer, python port
 supudo.net
@@ -18,7 +20,7 @@ from enum import Enum
 AppVersion = "1.0 d"
 
 AppMainWindowTitle = "Kuplung"
-AppMainWindowWidth = 1200
+AppMainWindowWidth = 1300
 AppMainWindowHeight = 900
 
 ApplicationRootPath = ''
@@ -51,6 +53,12 @@ class ViewModelSkin(Enum):
 Setting_ModelViewSkin = ViewModelSkin.ViewModelSkin_Solid
 
 Setting_Rendering_Depth = False
+
+Setting_FOV = 45.0
+Setting_RatioWidth = 4.0
+Setting_RatioHeight = 3.0
+Setting_PlaneClose = 0.1
+Setting_PlaneFar = 100.0
 
 # -------------------------------------------------------------------
 # Logging

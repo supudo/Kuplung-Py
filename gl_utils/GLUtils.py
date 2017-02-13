@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Kuplung - OpenGL Viewer, python port
 supudo.net

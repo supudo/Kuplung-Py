@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 Kuplung - OpenGL Viewer, python port
 supudo.net
@@ -13,8 +15,7 @@ from meshes.helpers.CameraModel import CameraModel
 from meshes.helpers.WorldGrid import WorldGrid
 from parsers.OBJ.ParserObj import ParserObj
 from OpenGL.GL import *
-import numpy
-from pyrr import Matrix44 as mat4
+from maths import MathOps
 
 
 class ObjectsManager():
@@ -23,7 +24,12 @@ class ObjectsManager():
         self.systemModels = {}
         self.viewModelSkin = Settings.ViewModelSkin.ViewModelSkin_Rendered
 
-        self.matrixProjection = numpy.array(numpy.ones((4, 4)), dtype=numpy.float32)
+        self.matrixProjection = MathOps.perspective(
+            Settings.Setting_FOV,
+            Settings.Setting_RatioWidth / Settings.Setting_RatioHeight,
+            Settings.Setting_PlaneClose,
+            Settings.Setting_PlaneFar
+        )
 
         self.reset_settings()
 
@@ -45,36 +51,9 @@ class ObjectsManager():
         glDisable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-        self.matrixProjection = mat4.perspective_projection(
-            self.Setting_FOV,
-            float(self.Setting_RatioWidth / self.Setting_RatioHeight),
-            self.Setting_PlaneClose,
-            self.Setting_PlaneFar,
-            dtype='f')
-
-        # debug
-        # self.matrixProjection[0][0] = 1.810660
-        # self.matrixProjection[0][1] = 0.000000
-        # self.matrixProjection[0][2] = 0.000000
-        # self.matrixProjection[0][3] = 0.000000
-        #
-        # self.matrixProjection[1][0] = 0.000000
-        # self.matrixProjection[1][1] = 2.414213
-        # self.matrixProjection[1][2] = 0.000000
-        # self.matrixProjection[1][3] = 0.000000
-        #
-        # self.matrixProjection[2][0] = 0.000000
-        # self.matrixProjection[2][1] = 0.000000
-        # self.matrixProjection[2][2] = -1.002002
-        # self.matrixProjection[2][3] = -1.000000
-        #
-        # self.matrixProjection[3][0] = 0.000000
-        # self.matrixProjection[3][1] = 0.000000
-        # self.matrixProjection[3][2] = -2.002002
-        # self.matrixProjection[3][3] = 0.000000
-
         self.camera.render()
         self.axis_system.render(self.matrixProjection, self.camera.matrixCamera)
+        self.grid.render(self.matrixProjection, self.camera.matrixCamera, True)
 
 
     def reset_settings(self):
