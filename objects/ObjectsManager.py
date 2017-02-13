@@ -38,7 +38,7 @@ class ObjectsManager():
         self.axis_helpers_z_plus = AxisHelpers()
 
 
-    def render(self):
+    def render(self, glfw_window):
         glEnable(GL_DEPTH_TEST)
         glDepthFunc(GL_LESS)
         glDisable(GL_BLEND)
@@ -53,7 +53,7 @@ class ObjectsManager():
 
         self.camera.render()
 
-        self.axis_system.render(self.matrixProjection, self.camera.matrixCamera)
+        self.axis_system.render(glfw_window, self.matrixProjection, self.camera.matrixCamera)
 
         if self.Setting_GridSize != self.grid.grid_size:
             self.grid.grid_size = self.Setting_GridSize

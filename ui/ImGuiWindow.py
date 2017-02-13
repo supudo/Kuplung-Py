@@ -50,6 +50,7 @@ class ImGuiWindow():
             glfw.poll_events()
 
             width, height = glfw.get_framebuffer_size(self.window)
+            Settings.AppMainWindowWidth, Settings.AppMainWindowHeight = width, height
             gl.glViewport(0, 0, int(width / 2), int(height))
             gl.glClearColor(Settings.guiClearColor[0],
                             Settings.guiClearColor[1],
@@ -232,7 +233,7 @@ class ImGuiWindow():
 
 
     def render_ui_content(self):
-        self.managerObjects.render()
+        self.managerObjects.render(self.window)
 
 
     def render_scene(self):
