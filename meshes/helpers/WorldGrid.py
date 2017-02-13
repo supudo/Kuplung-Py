@@ -109,7 +109,7 @@ class WorldGrid():
             for i in range(self.grid_size_vertex * 2):
                 for j in range(self.grid_size_vertex):
                     h = True
-                    if i > self.grid_size_vertex:
+                    if i > self.grid_size_vertex - 1:
                         h = False
                     if h:
                         p = Vector3(.0)
@@ -172,7 +172,7 @@ class WorldGrid():
             vboColors = glGenBuffers(1)
             glBindBuffer(GL_ARRAY_BUFFER, vboColors)
             glBufferData(GL_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(data_colors), data_colors, GL_STATIC_DRAW)
-            glVertexAttribPointer(1, 4, GL_FLOAT, False, 0, None)
+            glVertexAttribPointer(1, 3, GL_FLOAT, False, 0, None)
             glEnableVertexAttribArray(1)
 
             # indices

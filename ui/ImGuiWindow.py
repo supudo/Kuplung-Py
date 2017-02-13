@@ -17,6 +17,7 @@ from meshes.scene.ModelFace import ModelFace
 from parsers.OBJ.ParserObj import ParserObj
 from objects.ObjectsManager import ObjectsManager
 from rendering.RenderingManager import RenderingManager
+from objects.ControlsManager import ControlsManager
 from settings import Settings
 
 
@@ -40,6 +41,7 @@ class ImGuiWindow():
         self.init_gl()
         self.init_window()
         self.init_imgui_impl()
+        self.init_glfw_handlers()
         self.init_rendering_manager()
         self.imgui_style = imgui.GuiStyle()
         self.init_objects_manager()
@@ -48,6 +50,8 @@ class ImGuiWindow():
 
         while not glfw.window_should_close(self.window):
             glfw.poll_events()
+
+            self.handle_controls_events()
 
             width, height = glfw.get_framebuffer_size(self.window)
             Settings.AppMainWindowWidth, Settings.AppMainWindowHeight = width, height
@@ -90,6 +94,11 @@ class ImGuiWindow():
             exit(1)
 
 
+    def init_glfw_handlers(self):
+        self.managerControls = ControlsManager()
+        self.managerControls.init_handlers(self.window)
+
+
     def init_imgui_impl(self):
         self.imgui_context = GlfwImpl(self.window)
         self.imgui_context.enable()
@@ -100,6 +109,14 @@ class ImGuiWindow():
         self.render_main_menu()
         self.render_ui_content()
         self.render_scene()
+
+
+    def handle_controls_events(self):
+        if self.managerControls.keyPressed_LALT:
+            pass
+        else:
+            self.managerObjects.camera.positionZ['point'] += self.managerControls.mouseWheel['y']
+            self.managerControls.reset_mouse_scroll()
 
 
     def render_main_menu(self):

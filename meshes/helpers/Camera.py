@@ -11,6 +11,7 @@ import numpy
 from maths.types.Vector3 import Vector3
 from maths.types.Vector4 import Vector4
 from maths import MathOps
+from settings import Settings
 
 
 class Camera():
@@ -28,7 +29,7 @@ class Camera():
         self.rotateCenterX = {'animate': False, 'point': 0}
         self.rotateCenterY = {'animate': False, 'point': 0}
         self.rotateCenterZ = {'animate': False, 'point': 0}
-        self.cameraPosition = (0, 0, 0)
+        self.cameraPosition = Vector3()
 
 
     def init_properties(self):
@@ -39,6 +40,7 @@ class Camera():
         self.positionX["point"] = 0.0
         self.positionY["point"] = 0.0
         self.positionZ["point"] = -16.0
+        Settings.Setting_ZScroll = -16.0
 
         self.rotateX["point"] = 160.0
         self.rotateY["point"] = 140.0
@@ -73,3 +75,6 @@ class Camera():
         self.matrixCamera = MathOps.matrix_rotate(self.matrixCamera, self.rotateCenterZ['point'], Vector3(0, 0, 1))
 
         self.cameraPosition = (self.matrixCamera[3].x, self.matrixCamera[3].y, self.matrixCamera[3].z)
+
+        # if Settings.Setting_ZScroll != 999:
+        #     self.positionZ['point'] = Settings.Setting_ZScroll

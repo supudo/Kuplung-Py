@@ -60,6 +60,7 @@ Setting_RatioHeight = 3.0
 Setting_PlaneClose = 0.1
 Setting_PlaneFar = 100.0
 
+Setting_ZScroll = 999
 Setting_GridSize = 30
 
 # -------------------------------------------------------------------
