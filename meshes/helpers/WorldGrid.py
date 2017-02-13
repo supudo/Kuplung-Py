@@ -206,9 +206,8 @@ class WorldGrid():
                         self.positionZ['point'],
                         .0)
             )
-            MathOps.print_matrix(self.matrixModel)
 
-            mvpModel = matrixProjection * matrixCamera * self.matrixModel
+            mvpModel =  matrixCamera * self.matrixModel * matrixProjection
             glUniformMatrix4fv(self.gl_mvp_matrix, 1, GL_FALSE, MathOps.matrix_to_gl(mvpModel))
 
             glBindVertexArray(self.glVAO)
