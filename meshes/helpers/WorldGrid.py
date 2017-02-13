@@ -12,6 +12,7 @@ from gl_utils import GLUtils
 from OpenGL.GL import *
 from OpenGL.arrays import ArrayDatatype
 import numpy
+from math import floor
 from maths.types.Matrix4x4 import Matrix4x4
 from maths.types.Vector3 import Vector3
 from maths.types.Vector4 import Vector4
@@ -100,7 +101,7 @@ class WorldGrid():
             if self.grid_size_vertex % 2 == 0:
                 self.grid_size_vertex += 1
 
-            grid_minus = self.grid_size_vertex / 2
+            grid_minus = floor(self.grid_size_vertex / 2)
             vertices = []
             colors = []
             indices = []
@@ -160,8 +161,8 @@ class WorldGrid():
 
             # vertices
             data_vertices = numpy.array(vertices, dtype=numpy.float32)
-            vboVertices = glGenBuffers(1)
-            glBindBuffer(GL_ARRAY_BUFFER, vboVertices)
+            self.vboVertices = glGenBuffers(1)
+            glBindBuffer(GL_ARRAY_BUFFER, self.vboVertices)
             glBufferData(GL_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(data_vertices), data_vertices, GL_STATIC_DRAW)
             glVertexAttribPointer(0, 3, GL_FLOAT, False, 0, None)
             glEnableVertexAttribArray(0)
@@ -199,15 +200,9 @@ class WorldGrid():
             self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateZ['point'], Vector3(0, 0, 1))
             self.matrixModel = MathOps.matrix_translate(self.matrixModel, Vector4(.0))
 
-            self.matrixModel = MathOps.matrix_translate(
-                self.matrixModel,
-                Vector4(self.positionX['point'],
-                        self.positionY['point'],
-                        self.positionZ['point'],
-                        .0)
-            )
+            self.matrixModel = MathOps.matrix_translate(self.matrixModel, Vector4(self.positionX['point'], self.positionY['point'], self.positionZ['point'], .0))
 
-            mvpModel =  matrixCamera * self.matrixModel * matrixProjection
+            mvpModel =  matrixProjection * matrixCamera * self.matrixModel
             glUniformMatrix4fv(self.gl_mvp_matrix, 1, GL_FALSE, MathOps.matrix_to_gl(mvpModel))
 
             glBindVertexArray(self.glVAO)

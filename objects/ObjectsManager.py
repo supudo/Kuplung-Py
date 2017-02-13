@@ -24,13 +24,6 @@ class ObjectsManager():
         self.systemModels = {}
         self.viewModelSkin = Settings.ViewModelSkin.ViewModelSkin_Rendered
 
-        self.matrixProjection = MathOps.perspective(
-            Settings.Setting_FOV,
-            Settings.Setting_RatioWidth / Settings.Setting_RatioHeight,
-            Settings.Setting_PlaneClose,
-            Settings.Setting_PlaneFar
-        )
-
         self.reset_settings()
 
         self.camera = Camera()
@@ -51,9 +44,21 @@ class ObjectsManager():
         glDisable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
+        self.matrixProjection = MathOps.perspective(
+            Settings.Setting_FOV,
+            Settings.Setting_RatioWidth / Settings.Setting_RatioHeight,
+            Settings.Setting_PlaneClose,
+            Settings.Setting_PlaneFar
+        )
+
         self.camera.render()
+
         self.axis_system.render(self.matrixProjection, self.camera.matrixCamera)
-        self.grid.render(self.matrixProjection, self.camera.matrixCamera, True)
+
+        if self.Setting_GridSize != self.grid.grid_size:
+            self.grid.grid_size = self.Setting_GridSize
+            self.grid.init_buffers(self.Setting_GridSize, 1)
+        self.grid.render(self.matrixProjection, self.camera.matrixCamera, self.Settings_ShowZAxis)
 
 
     def reset_settings(self):

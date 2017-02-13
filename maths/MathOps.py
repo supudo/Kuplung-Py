@@ -84,7 +84,12 @@ def dot(u, v):
 #region Matrix
 
 def matrix_to_gl(mtx):
-    return list(mtx)
+    mtx_ptr = []
+    mtx_ptr.append(list(mtx[0]))
+    mtx_ptr.append(list(mtx[1]))
+    mtx_ptr.append(list(mtx[2]))
+    mtx_ptr.append(list(mtx[3]))
+    return mtx_ptr
 
 def lookAt(eye, center, up):
     f = Vector3(normalize(center - eye))
@@ -130,3 +135,9 @@ def print_matrix(mtx):
 
 def print_vec4(vec):
     print("x = " + str(vec.x) + ", y = " + str(vec.y) + ", z = " + str(vec.z) + ", w = " + str(vec.w))
+
+def print_vec3(vec):
+    if not vec is None:
+        print("x = " + str(vec.x) + ", y = " + str(vec.y) + ", z = " + str(vec.z))
+    else:
+        print("Vector3 is None!")

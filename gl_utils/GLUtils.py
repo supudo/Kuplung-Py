@@ -28,3 +28,10 @@ def glGetUniform(shader_program, var_name):
     if var == -1:
         Settings.log_error("[GLUtils] Cannot fetch shader uniform - " + str(var_name))
     return var
+
+
+def glGetAttribute(shader_program, var_name):
+    var = glGetAttribLocation(shader_program, var_name)
+    if var == -1:
+        Settings.log_error("[GLUtils] Cannot fetch shader attribute - " + str(var_name))
+    return var
