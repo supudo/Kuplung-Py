@@ -18,6 +18,7 @@ class Log():
         self.position_y = 10
         self.width = 300
         self.height = 200
+        self.log_text = ''
 
 
     def draw_window(self, title, is_opened):
@@ -33,7 +34,7 @@ class Log():
         imgui.begin_child('scrolling'.encode('utf-8'))
         imgui.push_style_var(imgui.STYLE_ITEM_SPACING, imgui.Vec2(0, 1))
 
-        # log contents ...
+        imgui.text_unformatted(self.log_text)
 
         imgui.pop_style_var(1)
         imgui.end_child()
@@ -47,4 +48,9 @@ class Log():
 
 
     def clear_log(self):
-        pass
+        self.log_text = ''
+
+
+    def add_to_log(self, message):
+        self.log_text = message + '\n' + self.log_text
+
