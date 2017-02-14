@@ -113,10 +113,19 @@ class ImGuiWindow():
 
     def handle_controls_events(self):
         if self.managerControls.keyPressed_LALT:
-            pass
+            if self.managerControls.mouseWheel['y'] < 0:
+                self.managerObjects.Setting_FOV += 4
+            if self.managerControls.mouseWheel['y'] > 0:
+                self.managerObjects.Setting_FOV -= 4
+
+            if self.managerObjects.Setting_FOV > 180:
+                self.managerObjects.Setting_FOV = 180
+            if self.managerObjects.Setting_FOV < -180:
+                self.managerObjects.Setting_FOV = -180
         else:
             self.managerObjects.camera.positionZ['point'] += self.managerControls.mouseWheel['y']
-            self.managerControls.reset_mouse_scroll()
+
+        self.managerControls.reset_mouse_scroll()
 
 
     def render_main_menu(self):
