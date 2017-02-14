@@ -45,10 +45,10 @@ class ObjectsManager():
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         self.matrixProjection = MathOps.perspective(
-            Settings.Setting_FOV,
-            Settings.Setting_RatioWidth / Settings.Setting_RatioHeight,
-            Settings.Setting_PlaneClose,
-            Settings.Setting_PlaneFar
+            self.Setting_FOV,
+            self.Setting_RatioWidth / self.Setting_RatioHeight,
+            self.Setting_PlaneClose,
+            self.Setting_PlaneFar
         )
 
         self.camera.render()
