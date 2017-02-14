@@ -41,14 +41,12 @@ class RenderingManager:
 
         glLinkProgram(self.shader_program)
         if glGetProgramiv(self.shader_program, GL_LINK_STATUS) != GL_TRUE:
-            Settings.log_error("[RenderingManager] Shader linking failed! " + str(glGetProgramInfoLog(self.shader_program)))
+            Settings.do_log("[RenderingManager] Shader linking failed! " + str(glGetProgramInfoLog(self.shader_program)))
             return False
 
         self.glVS_MVPMatrix = glGetUniformLocation(self.shader_program, "vs_MVPMatrix")
         if self.glVS_MVPMatrix == -1:
-            Settings.log_error("[RenderingManager] Cannot fetch shader uniform - vs_MVPMatrix")
-
-        Settings.log_info("[RenderingManager] Shader program initialized...")
+            Settings.do_log("[RenderingManager] Cannot fetch shader uniform - vs_MVPMatrix")
 
         return True
 

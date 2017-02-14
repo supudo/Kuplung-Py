@@ -36,15 +36,15 @@ class ImGuiWindow():
     show_about_pyimgui = False
     show_about_kuplung = False
     show_scene_metrics = False
-    show_log_window = False
+    show_log_window = True
 
 
     def show_main_window(self):
         self.init_gl()
         self.init_window()
         self.init_imgui_impl()
-        self.init_glfw_handlers()
         self.init_components()
+        self.init_glfw_handlers()
         self.init_rendering_manager()
         self.imgui_style = imgui.GuiStyle()
         self.init_objects_manager()
@@ -76,7 +76,7 @@ class ImGuiWindow():
 
     def init_gl(self):
         if not glfw.init():
-            Settings.log_error("[ImGuiWindow] Could not initialize OpenGL context")
+            Settings.log_error("[ImGuiWindow] Could not initialize OpenGL context!")
             exit(1)
         glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 4)
         glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 1)
@@ -93,23 +93,27 @@ class ImGuiWindow():
         glfw.make_context_current(self.window)
         if not self.window:
             glfw.terminate()
-            Settings.log_error("[ImGuiWindow] Could not initialize Window")
+            Settings.log_error("[ImGuiWindow] Could not initialize Window!")
             exit(1)
 
 
     def init_glfw_handlers(self):
         self.managerControls = ControlsManager()
         self.managerControls.init_handlers(self.window)
+        Settings.do_log("Control events initialized.")
 
 
     def init_components(self):
         self.component_log = Log()
+        Settings.FuncDoLog = self.component_log.add_to_log
+        Settings.do_log("GUI components initialized.")
 
 
     def init_imgui_impl(self):
         self.imgui_context = GlfwImpl(self.window)
         self.imgui_context.enable()
         self.app_is_running = True
+        Settings.do_log("PyImGui initialized.")
 
 
     def render_screen(self):
@@ -119,20 +123,21 @@ class ImGuiWindow():
 
 
     def handle_controls_events(self):
-        if self.managerControls.keyPressed_LALT:
-            if self.managerControls.mouseWheel['y'] < 0:
-                self.managerObjects.Setting_FOV += 4
-            if self.managerControls.mouseWheel['y'] > 0:
-                self.managerObjects.Setting_FOV -= 4
+        if not imgui.is_mouse_hovering_any_window():
+            if self.managerControls.keyPressed_LALT:
+                if self.managerControls.mouseWheel['y'] < 0:
+                    self.managerObjects.Setting_FOV += 4
+                if self.managerControls.mouseWheel['y'] > 0:
+                    self.managerObjects.Setting_FOV -= 4
 
-            if self.managerObjects.Setting_FOV > 180:
-                self.managerObjects.Setting_FOV = 180
-            if self.managerObjects.Setting_FOV < -180:
-                self.managerObjects.Setting_FOV = -180
-        else:
-            self.managerObjects.camera.positionZ['point'] += self.managerControls.mouseWheel['y']
+                if self.managerObjects.Setting_FOV > 180:
+                    self.managerObjects.Setting_FOV = 180
+                if self.managerObjects.Setting_FOV < -180:
+                    self.managerObjects.Setting_FOV = -180
+            else:
+                self.managerObjects.camera.positionZ['point'] += self.managerControls.mouseWheel['y']
 
-        self.managerControls.reset_mouse_scroll()
+            self.managerControls.reset_mouse_scroll()
 
 
     def render_main_menu(self):
@@ -291,6 +296,7 @@ class ImGuiWindow():
     def init_rendering_manager(self):
         self.renderingManager = RenderingManager()
         self.renderingManager.initShaderProgram(glfw.get_current_context())
+        Settings.do_log("Rendering Manager initialized.")
 
         self.parser = ParserObj()
         self.parser.parse_file('resources/shapes/', 'monkey_head.obj')
@@ -299,20 +305,20 @@ class ImGuiWindow():
             model_face = ModelFace()
             model_face.initBuffers(glfw.get_current_context(), self.parser.mesh_models[model])
             self.renderingManager.model_faces.append(model_face)
-        Settings.log_info("[ImGuiWindow] Models initialized...")
 
 
     def init_objects_manager(self):
         self.managerObjects = ObjectsManager()
         self.managerObjects.load_system_models()
         self.managerObjects.init_manager()
+        Settings.do_log("Objects Manager initialized.")
 
 
     def printGLStrings(self):
-        Settings.log_info("[ImGuiWindow] Vendor: " + str(gl.glGetString(gl.GL_VENDOR)))
-        Settings.log_info("[ImGuiWindow] OpenGL version: " + str(gl.glGetString(gl.GL_VERSION)))
-        Settings.log_info("[ImGuiWindow] GLSL version: " + str(gl.glGetString(gl.GL_SHADING_LANGUAGE_VERSION)))
-        Settings.log_info("[ImGuiWindow] Renderer: " + str(gl.glGetString(gl.GL_RENDERER)))
+        Settings.do_log("OpenGL Vendor: " + str(gl.glGetString(gl.GL_VENDOR)))
+        Settings.do_log("OpenGL version: " + str(gl.glGetString(gl.GL_VERSION)))
+        Settings.do_log("GLSL version: " + str(gl.glGetString(gl.GL_SHADING_LANGUAGE_VERSION)))
+        Settings.do_log("OpenGL Renderer: " + str(gl.glGetString(gl.GL_RENDERER)))
 
 
     def dialog_about_imgui(self):

@@ -67,8 +67,6 @@ class ModelFace:
         glBindBuffer(GL_ARRAY_BUFFER, 0)
         glBindVertexArray(0)
 
-        Settings.log_info("[Model Face] Buffers initialized ...")
-
     def loadTexture(self, texture, type):
         if not texture.image_url == '':
             image_file = Settings.ApplicationAssetsPath + texture.image_url
@@ -88,7 +86,7 @@ class ModelFace:
                              texture_image)
                 return vbo_tex
             else:
-                Settings.log_error("[ModelFace] - Can't load " + type + " texture image! File doesn't exist!")
+                Settings.do_log("[ModelFace] - Can't load " + type + " texture image! File doesn't exist!")
                 return None
         else:
              return None

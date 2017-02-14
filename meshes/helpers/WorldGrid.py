@@ -75,12 +75,12 @@ class WorldGrid():
         shader_compilation &= GLUtils.compileAndAttachShader(self.shader_program, GL_FRAGMENT_SHADER, fs_str)
 
         if not shader_compilation:
-            Settings.log_error("[WorldGrid] Shader compilation failed!")
+            Settings.do_log("[WorldGrid] Shader compilation failed!")
             return False
 
         glLinkProgram(self.shader_program)
         if glGetProgramiv(self.shader_program, GL_LINK_STATUS) != GL_TRUE:
-            Settings.log_error("[WorldGrid] Shader linking failed! " + str(glGetProgramInfoLog(self.shader_program)))
+            Settings.do_log("[WorldGrid] Shader linking failed! " + str(glGetProgramInfoLog(self.shader_program)))
             return False
 
         self.gl_mvp_matrix = GLUtils.glGetUniform(self.shader_program, "u_MVPMatrix")

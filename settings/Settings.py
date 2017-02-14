@@ -76,6 +76,13 @@ def log_info(*args):
 def log_error(*args):
     logger.log(logging.ERROR, "{0} {1} [Kuplung] Error! {2}".format(time.strftime("%Y/%m/%d"), time.strftime("%H:%M:%S"), ' '.join(args)))
 
+FuncDoLog = None
+def do_log(*args):
+    if not FuncDoLog is None:
+        for msg in args:
+            FuncDoLog(msg)
+    for msg in args:
+        log_info(msg)
 
 # -------------------------------------------------------------------
 # OS

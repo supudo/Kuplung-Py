@@ -16,4 +16,4 @@ class ParserManager:
     def __init__(self, parent=None):
         self.ParserMethod = 0
         self.parserObj = ParserObj()
-        Settings.logInfo("Parser Manager initialized...")
+        Settings.do_log("Parser Manager initialized.")
