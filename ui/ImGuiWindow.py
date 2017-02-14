@@ -18,6 +18,7 @@ from parsers.OBJ.ParserObj import ParserObj
 from objects.ObjectsManager import ObjectsManager
 from rendering.RenderingManager import RenderingManager
 from objects.ControlsManager import ControlsManager
+from ui.components.Log import Log
 from settings import Settings
 
 
@@ -35,6 +36,7 @@ class ImGuiWindow():
     show_about_pyimgui = False
     show_about_kuplung = False
     show_scene_metrics = False
+    show_log_window = False
 
 
     def show_main_window(self):
@@ -42,6 +44,7 @@ class ImGuiWindow():
         self.init_window()
         self.init_imgui_impl()
         self.init_glfw_handlers()
+        self.init_components()
         self.init_rendering_manager()
         self.imgui_style = imgui.GuiStyle()
         self.init_objects_manager()
@@ -97,6 +100,10 @@ class ImGuiWindow():
     def init_glfw_handlers(self):
         self.managerControls = ControlsManager()
         self.managerControls.init_handlers(self.window)
+
+
+    def init_components(self):
+        self.component_log = Log()
 
 
     def init_imgui_impl(self):
@@ -202,7 +209,7 @@ class ImGuiWindow():
                 imgui.menu_item("Scene Controls", '', False, True)
                 imgui.menu_item("Hide Visual Artefacts", '', False, True)
                 imgui.separator()
-                imgui.menu_item("Show Log Window", '', False, True)
+                _, self.show_log_window = imgui.menu_item("Show Log Window", '', self.show_log_window, True)
                 imgui.menu_item("Screenshot", '', False, True)
                 imgui.menu_item("Scene Statistics", '', False, True)
                 imgui.menu_item("Structured Volumetric Sampling", '', False, True)
@@ -256,6 +263,9 @@ class ImGuiWindow():
 
         if self.show_scene_metrics:
             self.dialog_scene_metrics()
+
+        if self.show_log_window:
+            self.dialog_log_window()
 
 
     def render_ui_content(self):
@@ -353,3 +363,8 @@ class ImGuiWindow():
         imgui.text(str(imgui_io.metrics_render_vertices) + " vertices, 0 indices (0 triangles)")
         imgui.text(str(imgui_io.metrics_allocs) + " allocations")
         imgui.end()
+
+
+    def dialog_log_window(self):
+        self.show_log_window = self.component_log.draw_window('Log Window', self.show_log_window)
+
