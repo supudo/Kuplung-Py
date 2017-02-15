@@ -139,6 +139,23 @@ class ImGuiWindow():
 
             self.managerControls.reset_mouse_scroll()
 
+            if self.managerControls.mouseButton_MIDDLE:
+                if self.managerControls.mouseGoUp or self.managerControls.mouseGoDown:
+                    self.managerObjects.camera.rotateX['point'] += self.managerControls.mouse_rel_y
+                if self.managerObjects.camera.rotateX['point'] > 360:
+                    self.managerObjects.camera.rotateX['point'] = .0
+                if self.managerObjects.camera.rotateX['point'] < .0:
+                    self.managerObjects.camera.rotateX['point'] = 360
+
+                if self.managerControls.mouseGoLeft or self.managerControls.mouseGoRight:
+                    self.managerObjects.camera.rotateY['point'] += self.managerControls.mouse_rel_x
+                if self.managerObjects.camera.rotateY['point'] > 360:
+                    self.managerObjects.camera.rotateY['point'] = .0
+                if self.managerObjects.camera.rotateY['point'] < .0:
+                    self.managerObjects.camera.rotateY['point'] = 360
+
+            self.managerControls.reset_mouse_motion()
+
 
     def render_main_menu(self):
         if imgui.begin_main_menu_bar():
