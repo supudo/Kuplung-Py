@@ -94,6 +94,10 @@ class WorldGrid():
         self.glVAO = glGenVertexArrays(1)
         glBindVertexArray(self.glVAO)
 
+        vboVertices = -1
+        vboColors = -1
+        vboIndices = -1
+
         if not self.act_as_mirror:
             self.grid_size = grid_size
             self.grid_size_vertex = self.grid_size
@@ -161,8 +165,8 @@ class WorldGrid():
 
             # vertices
             data_vertices = numpy.array(vertices, dtype=numpy.float32)
-            self.vboVertices = glGenBuffers(1)
-            glBindBuffer(GL_ARRAY_BUFFER, self.vboVertices)
+            vboVertices = glGenBuffers(1)
+            glBindBuffer(GL_ARRAY_BUFFER, vboVertices)
             glBufferData(GL_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(data_vertices), data_vertices, GL_STATIC_DRAW)
             glVertexAttribPointer(0, 3, GL_FLOAT, False, 0, None)
             glEnableVertexAttribArray(0)
@@ -177,14 +181,16 @@ class WorldGrid():
 
             # indices
             indices = numpy.array(indices, dtype=numpy.uint)
-            self.vboIndices = glGenBuffers(1)
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, self.vboIndices)
+            vboIndices = glGenBuffers(1)
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIndices)
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(indices), indices, GL_STATIC_DRAW)
 
         else:
             pass
 
         glBindVertexArray(0)
+
+        glDeleteBuffers(3, [vboVertices, vboColors, vboIndices])
 
 
     def render(self, matrixProjection, matrixCamera, showZAxis):

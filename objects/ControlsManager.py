@@ -8,6 +8,7 @@ __author__ = 'supudo'
 __version__ = "1.0.0"
 
 import glfw
+from settings import Settings
 
 
 class ControlsManager():
@@ -28,6 +29,13 @@ class ControlsManager():
         self.keyPresset_TAB = False
         self.mouseWheel = {'x': 0, 'y': 0}
         self.mousePosition = {'x': 0, 'y': 0}
+        self.mouseGoLeft = False
+        self.mouseGoRight = False
+        self.mouseGoUp = False
+        self.mouseGoDown = False
+        self.mouse_rel_x = 0
+        self.mouse_rel_y = 0
+        self.mouse_relative_pos = [0, 0]
 
 
     def init_handlers(self, glfw_window):
@@ -87,6 +95,40 @@ class ControlsManager():
     def glfw_mouse_cursor_pos_callback(self, window, pos_x, pos_y):
         self.mousePosition['x'] = pos_x
         self.mousePosition['y'] = pos_y
+        if self.mouseButton_MIDDLE:
+            self.mouse_rel_x = self.mousePosition['x'] - self.mouse_relative_pos[0]
+            self.mouse_rel_y = self.mousePosition['y'] - self.mouse_relative_pos[1]
+
+            self.mouseGoLeft = False
+            self.mouseGoRight = False
+            self.mouseGoUp = False
+            self.mouseGoDown = False
+
+            if self.mouse_rel_x < 0:
+                self.mouseGoLeft = True
+            if self.mouse_rel_x > 0:
+                self.mouseGoRight = True
+            if self.mouse_rel_y < 0:
+                self.mouseGoUp = True
+            if self.mouse_rel_y > 0:
+                self.mouseGoDown = True
+        else:
+            self.mouse_relative_pos = [0, 0]
+            self.mouse_rel_x = 0
+            self.mouse_rel_y = 0
+            self.mouseGoLeft = False
+            self.mouseGoRight = False
+            self.mouseGoUp = False
+            self.mouseGoDown = False
+
+
+    def reset_mouse_motion(self):
+        self.mouse_rel_x = 0
+        self.mouse_rel_y = 0
+        self.mouseGoLeft = False
+        self.mouseGoRight = False
+        self.mouseGoUp = False
+        self.mouseGoDown = False
 
 
     def glfw_on_mouse_scroll_callback(self, window, x_offset, y_offset):
@@ -100,7 +142,7 @@ class ControlsManager():
 
 
     def glfw_mouse_button_callback(self, window, button, action, mods):
-        if glfw.PRESS:
+        if action == glfw.PRESS:
             self.mouseButton_LEFT = False
             self.mouseButton_MIDDLE = False
             self.mouseButton_RIGHT = False
@@ -109,7 +151,14 @@ class ControlsManager():
             self.mouseButton_MIDDLE = (button == glfw.MOUSE_BUTTON_MIDDLE)
             self.mouseButton_RIGHT = (button == glfw.MOUSE_BUTTON_RIGHT)
 
-        if glfw.RELEASE:
+        if action == glfw.RELEASE:
+            if self.mouseButton_MIDDLE:
+                self.mouse_relative_pos = [0, 0]
+
             self.mouseButton_LEFT = False
             self.mouseButton_MIDDLE = False
             self.mouseButton_RIGHT = False
+
+        if self.mouseButton_MIDDLE:
+            self.mouse_relative_pos[0] = self.mousePosition['x']
+            self.mouse_relative_pos[1] = self.mousePosition['y']

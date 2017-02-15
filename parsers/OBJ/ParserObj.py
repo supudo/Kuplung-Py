@@ -110,23 +110,23 @@ class ParserObj:
                 current_material.material_title = values[1]
                 self.materials[current_material.material_title] = current_material
             elif values[0] == 'Ka':
-                current_material.color_ambient = values[1]
+                current_material.color_ambient = [float(i) for i in values[1:]]
             elif values[0] == 'Kd':
-                current_material.color_diffuse = values[1]
+                current_material.color_diffuse = [float(i) for i in values[1:]]
             elif values[0] == 'Ks':
-                current_material.color_specular = values[1]
+                current_material.color_specular = [float(i) for i in values[1:]]
             elif values[0] == 'Ke':
-                current_material.color_emission = values[1]
+                current_material.color_emission = [float(i) for i in values[1:]]
             elif values[0] == 'Ns':
-                current_material.specular_exp = values[1]
+                current_material.specular_exp = float(values[1])
             elif values[0] == 'Tr':
-                current_material.transparency1 = values[1]
+                current_material.transparency1 = float(values[1])
             elif values[0] == 'd':
-                current_material.transparency2 = values[1]
+                current_material.transparency2 = float(values[1])
             elif values[0] == 'Ni':
-                current_material.optical_density = values[1]
+                current_material.optical_density = float(values[1])
             elif values[0] == 'illum':
-                current_material.illumination_mode = values[1]
+                current_material.illumination_mode = int(values[1])
             elif values[0] == 'map_Ka':
                 current_material.texture_ambient = self.parse_texture(values[1:])
             elif values[0] == 'map_Kd':

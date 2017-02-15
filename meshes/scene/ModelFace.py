@@ -25,18 +25,20 @@ class ModelFace:
         self.glVAO = glGenVertexArrays(1)
         glBindVertexArray(self.glVAO)
 
+        vboTextureCoordinates = -1
+
         # vertices
         vertices = numpy.array(model.vertices, dtype=numpy.float32)
-        self.vboVertices = glGenBuffers(1)
-        glBindBuffer(GL_ARRAY_BUFFER, self.vboVertices)
+        vboVertices = glGenBuffers(1)
+        glBindBuffer(GL_ARRAY_BUFFER, vboVertices)
         glBufferData(GL_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(vertices), vertices, GL_STATIC_DRAW)
         glVertexAttribPointer(0, 3, GL_FLOAT, False, 0, None)
         glEnableVertexAttribArray(0)
 
         # normals
         normals = numpy.array(model.normals, dtype=numpy.float32)
-        self.vboNormals = glGenBuffers(1)
-        glBindBuffer(GL_ARRAY_BUFFER, self.vboNormals)
+        vboNormals = glGenBuffers(1)
+        glBindBuffer(GL_ARRAY_BUFFER, vboNormals)
         glBufferData(GL_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(normals), normals, GL_STATIC_DRAW)
         glVertexAttribPointer(1, 3, GL_FLOAT, False, 0, None)
         glEnableVertexAttribArray(1)
@@ -44,8 +46,8 @@ class ModelFace:
         # textures
         if model.countTextureCoordinates > 0:
             texCoords = numpy.array(model.texture_coordinates, dtype=numpy.float32)
-            self.vboTextureCoordinates = glGenBuffers(1)
-            glBindBuffer(GL_ARRAY_BUFFER, self.vboTextureCoordinates)
+            vboTextureCoordinates = glGenBuffers(1)
+            glBindBuffer(GL_ARRAY_BUFFER, vboTextureCoordinates)
             glBufferData(GL_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(texCoords), texCoords, GL_STATIC_DRAW)
             glVertexAttribPointer(2, 2, GL_FLOAT, False, 0, None)
             glEnableVertexAttribArray(2)
@@ -60,12 +62,14 @@ class ModelFace:
 
         # indices
         indices = numpy.array(model.indices, dtype=numpy.uint)
-        self.vboIndices = glGenBuffers(1)
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, self.vboIndices)
+        vboIndices = glGenBuffers(1)
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIndices)
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(indices), indices, GL_STATIC_DRAW)
 
         glBindBuffer(GL_ARRAY_BUFFER, 0)
         glBindVertexArray(0)
+
+        glDeleteBuffers(4, [vboVertices, vboNormals, vboTextureCoordinates, vboIndices])
 
     def loadTexture(self, texture, type):
         if not texture.image_url == '':

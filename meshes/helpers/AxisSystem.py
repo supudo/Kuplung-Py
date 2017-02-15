@@ -101,6 +101,8 @@ class AxisSystem():
 
         glBindVertexArray(0)
 
+        glDeleteBuffers(2, [vboVertices, vboColors])
+
 
     def render(self, glfw_window, matrixProjection, matrixCamera):
         if self.glVAO > 0:
@@ -124,4 +126,4 @@ class AxisSystem():
             glBindVertexArray(0)
 
             glUseProgram(0)
-            glViewport(0, 0, Settings.AppMainWindowWidth, Settings.AppMainWindowHeight)
+            glViewport(0, 0, width, height)

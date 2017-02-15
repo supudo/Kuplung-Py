@@ -16,6 +16,7 @@ from meshes.helpers.WorldGrid import WorldGrid
 from parsers.OBJ.ParserObj import ParserObj
 from OpenGL.GL import *
 from maths import MathOps
+from maths.types.Vector3 import Vector3
 
 
 class ObjectsManager():
@@ -59,6 +60,16 @@ class ObjectsManager():
             self.grid.grid_size = self.Setting_GridSize
             self.grid.init_buffers(self.Setting_GridSize, 1)
         self.grid.render(self.matrixProjection, self.camera.matrixCamera, self.Settings_ShowZAxis)
+
+        if self.Setting_ShowAxisHelpers:
+            ahPosition = self.Setting_GridSize / 2
+
+            self.axis_helpers_x_minus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(-ahPosition, .0, .0))
+            self.axis_helpers_x_plus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(ahPosition, .0, .0))
+            self.axis_helpers_y_minus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(.0, -ahPosition, .0))
+            self.axis_helpers_y_plus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(.0, ahPosition, .0))
+            self.axis_helpers_z_minus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(.0, .0, -ahPosition))
+            self.axis_helpers_z_plus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(.0, .0, ahPosition))
 
 
     def reset_settings(self):
