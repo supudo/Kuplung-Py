@@ -8,12 +8,13 @@ supudo.net
 __author__ = 'supudo'
 __version__ = "1.0.0"
 
-import time
 from OpenGL.GL import *
-import numpy
-from math import *
 from settings import Settings
 from gl_utils import GLUtils
+from maths.types.Matrix4x4 import Matrix4x4
+from maths.types.Vector3 import Vector3
+from maths.types.Vector4 import Vector4
+from maths import MathOps
 
 
 class RenderingManager:
@@ -21,6 +22,7 @@ class RenderingManager:
         self.faces = []
         self.model_faces = []
         self.shader_program = None
+        self.gl_mvp_matrix = -1
 
 
     def initShaderProgram(self, openGL_context):
@@ -44,19 +46,34 @@ class RenderingManager:
             Settings.do_log("[RenderingManager] Shader linking failed! " + str(glGetProgramInfoLog(self.shader_program)))
             return False
 
-        self.glVS_MVPMatrix = glGetUniformLocation(self.shader_program, "vs_MVPMatrix")
-        if self.glVS_MVPMatrix == -1:
-            Settings.do_log("[RenderingManager] Cannot fetch shader uniform - vs_MVPMatrix")
+        self.gl_mvp_matrix = GLUtils.glGetUniform(self.shader_program, "vs_MVPMatrix")
 
         return True
 
 
-    def render(self, openGL_context):
+    def render(self, matrixProjection, matrixCamera, matrixGrid):
         glUseProgram(self.shader_program)
 
-        # glUniformMatrix4fv(self.glVS_MVPMatrix, 1, GL_FALSE, mvp)
-
         for model in self.model_faces:
+
+            matrixModel = Matrix4x4(1.0)
+            # grid
+            matrixModel *= matrixGrid
+            # scale
+            matrixModel = MathOps.matrix_scale( matrixModel, (model.scaleX['point'], model.scaleY['point'], model.scaleZ['point']))
+            # translate
+            matrixModel = MathOps.matrix_translate(matrixModel, (model.positionX['point'], model.positionY['point'], model.positionZ['point']))
+            # rotate
+            matrixModel = MathOps.matrix_translate(matrixModel, Vector4(.0))
+            matrixModel = MathOps.matrix_rotate(matrixModel, model.rotateX['point'], Vector3(1, 0, 0))
+            matrixModel = MathOps.matrix_rotate(matrixModel, model.rotateY['point'], Vector3(0, 1, 0))
+            matrixModel = MathOps.matrix_rotate(matrixModel, model.rotateZ['point'], Vector3(0, 0, 1))
+            matrixModel = MathOps.matrix_translate(matrixModel, Vector4(.0))
+            # world
+            model.matrixModel = matrixProjection * matrixCamera * matrixModel
+
+            glUniformMatrix4fv(self.gl_mvp_matrix, 1, GL_FALSE, MathOps.matrix_to_gl(model.matrixModel))
+
             model.render()
 
         glUseProgram(0)

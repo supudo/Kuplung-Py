@@ -17,6 +17,7 @@ from parsers.OBJ.ParserObj import ParserObj
 from OpenGL.GL import *
 from maths import MathOps
 from maths.types.Vector3 import Vector3
+from maths.types.Matrix4x4 import Matrix4x4
 
 
 class ObjectsManager():
@@ -24,6 +25,8 @@ class ObjectsManager():
         self.lightSources = []
         self.systemModels = {}
         self.viewModelSkin = Settings.ViewModelSkin.ViewModelSkin_Rendered
+
+        self.matrixProjection = Matrix4x4()
 
         self.reset_settings()
 
@@ -64,8 +67,8 @@ class ObjectsManager():
         if self.Setting_ShowAxisHelpers:
             ahPosition = self.Setting_GridSize / 2
 
-            self.axis_helpers_x_minus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(-ahPosition, .0, .0))
             self.axis_helpers_x_plus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(ahPosition, .0, .0))
+            self.axis_helpers_x_minus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(-ahPosition, .0, .0))
             self.axis_helpers_y_minus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(.0, -ahPosition, .0))
             self.axis_helpers_y_plus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(.0, ahPosition, .0))
             self.axis_helpers_z_minus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(.0, .0, -ahPosition))
@@ -81,16 +84,16 @@ class ObjectsManager():
         self.Setting_GridSize = 30
         self.Setting_GridUnitSize = 1
         self.Setting_FixedGridWorld = True
-        self.Setting_ShowAxisHelpers = True
+        self.Setting_ShowAxisHelpers = False
         self.Settings_ShowZAxis = True
 
 
     def init_manager(self):
         self.init_camera()
-        self.init_cameraModel()
+        # self.init_cameraModel()
         self.init_grid()
         self.init_axis_system()
-        self.init_axis_helpers()
+        # self.init_axis_helpers()
 
 
     def init_camera(self):
@@ -117,60 +120,61 @@ class ObjectsManager():
 
 
     def init_axis_helpers(self):
-        self.axis_helpers_x_minus.set_model(self.systemModels["axis_x_minus"])
-        self.axis_helpers_x_minus.init_shader_program()
-        self.axis_helpers_x_minus.init_buffers()
+        pass
+        # self.axis_helpers_x_plus.set_model(self.systemModels["axis_x_plus"])
+        # self.axis_helpers_x_plus.init_shader_program()
+        # self.axis_helpers_x_plus.init_buffers()
 
-        self.axis_helpers_x_plus.set_model(self.systemModels["axis_x_plus"])
-        self.axis_helpers_x_plus.init_shader_program()
-        self.axis_helpers_x_plus.init_buffers()
-
-        self.axis_helpers_y_minus.set_model(self.systemModels["axis_y_minus"])
-        self.axis_helpers_y_minus.init_shader_program()
-        self.axis_helpers_y_minus.init_buffers()
-
-        self.axis_helpers_y_plus.set_model(self.systemModels["axis_y_plus"])
-        self.axis_helpers_y_plus.init_shader_program()
-        self.axis_helpers_y_plus.init_buffers()
-
-        self.axis_helpers_z_minus.set_model(self.systemModels["axis_z_minus"])
-        self.axis_helpers_z_minus.init_shader_program()
-        self.axis_helpers_z_minus.init_buffers()
-
-        self.axis_helpers_z_plus.set_model(self.systemModels["axis_z_plus"])
-        self.axis_helpers_z_plus.init_shader_program()
-        self.axis_helpers_z_plus.init_buffers()
+        # self.axis_helpers_x_minus.set_model(self.systemModels["axis_x_minus"])
+        # self.axis_helpers_x_minus.init_shader_program()
+        # self.axis_helpers_x_minus.init_buffers()
+        #
+        # self.axis_helpers_y_minus.set_model(self.systemModels["axis_y_minus"])
+        # self.axis_helpers_y_minus.init_shader_program()
+        # self.axis_helpers_y_minus.init_buffers()
+        #
+        # self.axis_helpers_y_plus.set_model(self.systemModels["axis_y_plus"])
+        # self.axis_helpers_y_plus.init_shader_program()
+        # self.axis_helpers_y_plus.init_buffers()
+        #
+        # self.axis_helpers_z_minus.set_model(self.systemModels["axis_z_minus"])
+        # self.axis_helpers_z_minus.init_shader_program()
+        # self.axis_helpers_z_minus.init_buffers()
+        #
+        # self.axis_helpers_z_plus.set_model(self.systemModels["axis_z_plus"])
+        # self.axis_helpers_z_plus.init_shader_program()
+        # self.axis_helpers_z_plus.init_buffers()
 
 
     def load_system_models(self):
         self.parser = ParserObj()
 
-        self.parser.parse_file('resources/gui/', 'light_directional.obj')
-        self.systemModels["light_directional"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
-
-        self.parser.parse_file('resources/gui/', 'light_point.obj')
-        self.systemModels["light_point"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
-
-        self.parser.parse_file('resources/gui/', 'light_spot.obj')
-        self.systemModels["light_spot"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
-
-        self.parser.parse_file('resources/gui/', 'camera.obj')
-        self.systemModels["camera"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
+        # self.parser.parse_file('resources/gui/', 'light_directional.obj')
+        # self.systemModels["light_directional"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
+        #
+        # self.parser.parse_file('resources/gui/', 'light_point.obj')
+        # self.systemModels["light_point"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
+        #
+        # self.parser.parse_file('resources/gui/', 'light_spot.obj')
+        # self.systemModels["light_spot"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
+        #
+        # self.parser.parse_file('resources/gui/', 'camera.obj')
+        # self.systemModels["camera"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
 
         self.parser.parse_file('resources/axis_helpers/', 'x_plus.obj')
         self.systemModels["axis_x_plus"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
 
-        self.parser.parse_file('resources/axis_helpers/', 'x_minus.obj')
-        self.systemModels["axis_x_minus"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
-
-        self.parser.parse_file('resources/axis_helpers/', 'y_plus.obj')
-        self.systemModels["axis_y_plus"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
-
-        self.parser.parse_file('resources/axis_helpers/', 'y_minus.obj')
-        self.systemModels["axis_y_minus"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
-
-        self.parser.parse_file('resources/axis_helpers/', 'z_plus.obj')
-        self.systemModels["axis_z_plus"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
-
-        self.parser.parse_file('resources/axis_helpers/', 'z_minus.obj')
-        self.systemModels["axis_z_minus"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
+        # self.parser.parse_file('resources/axis_helpers/', 'x_minus.obj')
+        # self.systemModels["axis_x_minus"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
+        #
+        # self.parser.parse_file('resources/axis_helpers/', 'y_plus.obj')
+        # self.systemModels["axis_y_plus"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
+        #
+        # self.parser.parse_file('resources/axis_helpers/', 'y_minus.obj')
+        # self.systemModels["axis_y_minus"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
+        #
+        # self.parser.parse_file('resources/axis_helpers/', 'z_plus.obj')
+        # self.systemModels["axis_z_plus"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
+        #
+        # self.parser.parse_file('resources/axis_helpers/', 'z_minus.obj')
+        # self.systemModels["axis_z_minus"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]

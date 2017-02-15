@@ -8,8 +8,11 @@ supudo.net
 __author__ = 'supudo'
 __version__ = "1.0.0"
 
+import scanf
 from gl_utils.MeshModel import MeshModel
 from gl_utils.Material import Material
+from maths.types.Vector3 import Vector3
+from maths.types.Vector2 import Vector2
 
 
 class ParserObj:
@@ -26,11 +29,19 @@ class ParserObj:
         self.normals = []
         self.textureCoordinates = []
         self.indices = []
+
         self.faces = []
         self.mesh_models = {}
+        self.models = []
+
         current_mesh_model = None
         meshModelCounter = 0
         indicesCounter = 0
+
+        indexModels = []
+        indexVertices = []
+        indexTexture = []
+        indexNormals = []
 
         for line in file_obj:
             values = line.split()
@@ -39,7 +50,7 @@ class ParserObj:
             elif values[0] == 'mtllib':
                 self.parse_material_file(self.folder, values[1])
             elif values[0] == 'o':
-                self.model_title = values[1:]
+                self.model_title = ' '.join(values[1:])
                 current_mesh_model = MeshModel()
                 current_mesh_model.ModelTitle = self.model_title
                 current_mesh_model.ID = meshModelCounter
@@ -50,48 +61,196 @@ class ParserObj:
                 current_mesh_model.countIndices = 0
                 self.mesh_models[str(current_mesh_model.ModelTitle)] = current_mesh_model
                 meshModelCounter += 1
+                self.models.append(current_mesh_model)
             elif values[0] == 'v':
-                for v in map(float, values[1:4]):
-                    self.vertices.append(v)
+                self.vertices.append(Vector3([float(i) for i in values[1:4]]))
             elif values[0] == 'vn':
-                for v in map(float, values[1:4]):
-                    self.normals.append(v)
+                self.normals.append(Vector3([float(i) for i in values[1:4]]))
             elif values[0] == 'vt':
-                for v in map(float, values[1:3]):
-                    self.textureCoordinates.append(v)
+                self.textureCoordinates.append(Vector2([float(i) for i in values[1:3]]))
             elif values[0] in 'usemtl':
                 if not values[1] == 'off' and not values[0] == 's':
                     material = self.materials[values[1]]
                     self.mesh_models[str(current_mesh_model.ModelTitle)].MaterialTitle = material.material_title
                     self.mesh_models[str(current_mesh_model.ModelTitle)].ModelMaterial = material
+                    self.models[meshModelCounter - 1].MaterialTitle = material.material_title
+                    self.models[meshModelCounter - 1].ModelMaterial = material
             elif values[0] == 's':
                 pass
             elif values[0] == 'f':
-                 for v in values[1:]:
-                    w = v.split('/')
-                    model_key = str(current_mesh_model.ModelTitle)
+                if len(values) == 4:
+                    tri_uvIndex = []
+                    line = ' '.join(values[1:])
+                    face_values = scanf.scanf('%d/%d/%d %d/%d/%d %d/%d/%d', line)
+                    if face_values is None:
+                        face_values = scanf.scanf('%d//%d %d//%d %d//%d', line)
+                        tri_vertexIndex = [
+                            face_values[0],
+                            face_values[2],
+                            face_values[4]
+                        ]
+                        tri_normalIndex = [
+                            face_values[1],
+                            face_values[3],
+                            face_values[5]
+                        ]
+                    else:
+                        tri_vertexIndex = [
+                            face_values[0],
+                            face_values[3],
+                            face_values[6]
+                        ]
+                        tri_uvIndex = [
+                            face_values[1],
+                            face_values[4],
+                            face_values[7]
+                        ]
+                        tri_normalIndex = [
+                            face_values[2],
+                            face_values[5],
+                            face_values[8]
+                        ]
 
-                    vert = float(self.vertices[int(w[0])])
-                    self.mesh_models[model_key].vertices.append(vert)
-                    self.mesh_models[model_key].countVertices += 1
+                    indexModels.append(meshModelCounter)
+                    indexModels.append(meshModelCounter)
+                    indexModels.append(meshModelCounter)
+                    indexVertices.append(tri_vertexIndex[0])
+                    indexVertices.append(tri_vertexIndex[1])
+                    indexVertices.append(tri_vertexIndex[2])
+                    if len(tri_uvIndex) > 0:
+                        indexTexture.append(tri_uvIndex[0])
+                        indexTexture.append(tri_uvIndex[1])
+                        indexTexture.append(tri_uvIndex[2])
+                    indexNormals.append(tri_normalIndex[0])
+                    indexNormals.append(tri_normalIndex[1])
+                    indexNormals.append(tri_normalIndex[2])
+                elif len(values) == 5:
+                    tri_uvIndex = []
+                    line = ' '.join(values[1:])
+                    face_values = scanf.scanf('%d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d', line)
+                    if face_values is None:
+                        face_values = scanf.scanf('%d//%d %d//%d %d//%d %d//%d', line)
+                        tri_vertexIndex = [
+                            face_values[0],
+                            face_values[2],
+                            face_values[4],
+                            face_values[6]
+                        ]
+                        tri_normalIndex = [
+                            face_values[1],
+                            face_values[3],
+                            face_values[5],
+                            face_values[7]
+                        ]
+                    else:
+                        tri_vertexIndex = [
+                            face_values[0],
+                            face_values[3],
+                            face_values[6],
+                            face_values[9]
+                        ]
+                        tri_uvIndex = [
+                            face_values[1],
+                            face_values[4],
+                            face_values[7],
+                            face_values[10]
+                        ]
+                        tri_normalIndex = [
+                            face_values[2],
+                            face_values[5],
+                            face_values[8],
+                            face_values[11]
+                        ]
 
-                    if len(w) >= 2 and len(w[1]) > 0:
-                        tc = float(self.textureCoordinates[int(w[1])])
-                        self.mesh_models[model_key].texture_coordinates.append(tc)
-                        self.mesh_models[model_key].countTextureCoordinates += 1
+                    indexModels.append(meshModelCounter)
+                    indexModels.append(meshModelCounter)
+                    indexModels.append(meshModelCounter)
+                    indexVertices.append(tri_vertexIndex[0])
+                    indexVertices.append(tri_vertexIndex[1])
+                    indexVertices.append(tri_vertexIndex[2])
+                    if len(tri_uvIndex) > 0:
+                        indexTexture.append(tri_uvIndex[0])
+                        indexTexture.append(tri_uvIndex[1])
+                        indexTexture.append(tri_uvIndex[2])
+                    indexNormals.append(tri_normalIndex[0])
+                    indexNormals.append(tri_normalIndex[1])
+                    indexNormals.append(tri_normalIndex[2])
 
-                    nrm = 0
-                    if len(w) >= 3 and len(w[2]) > 0:
-                        nrm = float(self.normals[int(w[2])])
-                    self.mesh_models[model_key].normals.append(nrm)
-                    if nrm > 0:
-                        self.mesh_models[model_key].countNormals += 1
+                    indexModels.append(meshModelCounter)
+                    indexModels.append(meshModelCounter)
+                    indexModels.append(meshModelCounter)
+                    indexVertices.append(tri_vertexIndex[2])
+                    indexVertices.append(tri_vertexIndex[3])
+                    indexVertices.append(tri_vertexIndex[0])
+                    if len(tri_uvIndex) > 0:
+                        indexTexture.append(tri_uvIndex[2])
+                        indexTexture.append(tri_uvIndex[3])
+                        indexTexture.append(tri_uvIndex[0])
+                    indexNormals.append(tri_normalIndex[2])
+                    indexNormals.append(tri_normalIndex[3])
+                    indexNormals.append(tri_normalIndex[0])
 
-                    self.mesh_models[model_key].indices.append(indicesCounter)
-                    self.mesh_models[model_key].countIndices += 1
-                    indicesCounter += 1
+        for i in range(len(indexVertices)):
+            modelIndex = indexModels[i]
+            vertexIndex = indexVertices[i]
+            normalIndex = indexNormals[i]
+
+            v = self.vertices[vertexIndex - 1]
+            n = self.normals[normalIndex - 1]
+            self.models[modelIndex - 1].vertices.append(v)
+            self.models[modelIndex - 1].countVertices += 1
+            self.models[modelIndex - 1].normals.append(n)
+            self.models[modelIndex - 1].countNormals += 1
+
+            if len(self.textureCoordinates) > 0:
+                uvIndex = indexTexture[i]
+                uv = self.textureCoordinates[uvIndex - 1]
+                self.models[modelIndex - 1].texture_coordinates.append(uv)
+                self.models[modelIndex - 1].countTextureCoordinates += 1
+            else:
+                self.models[modelIndex - 1].countTextureCoordinates = 0
+
+        vertexToOutIndex = {}
+        for i in range(len(self.models)):
+            m = self.models[i]
+            outVertices = []
+            outNormals = []
+            outTextureCoordinates = []
+            for j in range(len(m.vertices)):
+                packed = {
+                    'vertices': m.vertices[j],
+                    'uvs': m.texture_coordinates[j] if len(m.texture_coordinates) else [0, 0],
+                    'normals': m.normals[j]
+                }
+
+                index = self.get_similar_vertex_index(packed, vertexToOutIndex)
+                if index >= 0:
+                    m.indices.append(index)
+                else:
+                    outVertices.append(m.vertices[j])
+                    if len(m.texture_coordinates) > 0:
+                        outTextureCoordinates.append(m.m.texture_coordinates[j])
+                    outNormals.append(m.normals[j])
+                    newIndex = len(outVertices) - 1
+                    m.indices.append(newIndex)
+                    vertexToOutIndex[newIndex] = packed
+
+            self.models[i].vertices = outVertices
+            self.models[i].texture_coordinates = outTextureCoordinates
+            self.models[i].normals = outNormals
+            self.models[i].indices = m.indices
+            self.models[i].countIndices = len(m.indices)
 
         file_obj.close()
+
+
+    def get_similar_vertex_index(self, packed, vertexToOutIndex):
+        result = -1
+        for idx in range(len(vertexToOutIndex)):
+            m = vertexToOutIndex[idx]
+            if m['vertices'] == packed['vertices'] and m['normals'] == packed['normals']:
+                result = idx
+        return result
 
 
     def parse_material_file(self, folder, filename):

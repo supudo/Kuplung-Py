@@ -11,15 +11,31 @@ import os
 import numpy
 from OpenGL.GL import *
 from OpenGL.arrays import ArrayDatatype
-
 from settings import Settings
+from maths.types.Matrix4x4 import Matrix4x4
 
 
 class ModelFace:
     def __init__(self):
-        pass
+        self.positionX = {'animate': False, 'point': .0}
+        self.positionY = {'animate': False, 'point': .0}
+        self.positionZ = {'animate': False, 'point': .0}
 
-    def initBuffers(self, openGL_context, model):
+        self.rotateX = {'animate': False, 'point': .0}
+        self.rotateY = {'animate': False, 'point': .0}
+        self.rotateZ = {'animate': False, 'point': .0}
+
+        self.scaleX = {'animate': False, 'point': 1.}
+        self.scaleY = {'animate': False, 'point': 1.}
+        self.scaleZ = {'animate': False, 'point': 1.}
+
+        self.displaceX = {'animate': False, 'point': 1.}
+        self.displaceY = {'animate': False, 'point': 1.}
+        self.displaceZ = {'animate': False, 'point': 1.}
+
+        self.matrixModel = Matrix4x4(1.)
+
+    def initBuffers(self, model):
         self.mesh_model = model
 
         self.glVAO = glGenVertexArrays(1)
@@ -28,27 +44,27 @@ class ModelFace:
         vboTextureCoordinates = -1
 
         # vertices
-        vertices = numpy.array(model.vertices, dtype=numpy.float32)
+        data_vertices = numpy.array(model.vertices, dtype=numpy.float32)
         vboVertices = glGenBuffers(1)
         glBindBuffer(GL_ARRAY_BUFFER, vboVertices)
-        glBufferData(GL_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(vertices), vertices, GL_STATIC_DRAW)
+        glBufferData(GL_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(data_vertices), data_vertices, GL_STATIC_DRAW)
         glVertexAttribPointer(0, 3, GL_FLOAT, False, 0, None)
         glEnableVertexAttribArray(0)
 
         # normals
-        normals = numpy.array(model.normals, dtype=numpy.float32)
+        data_normals = numpy.array(model.normals, dtype=numpy.float32)
         vboNormals = glGenBuffers(1)
         glBindBuffer(GL_ARRAY_BUFFER, vboNormals)
-        glBufferData(GL_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(normals), normals, GL_STATIC_DRAW)
+        glBufferData(GL_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(data_normals), data_normals, GL_STATIC_DRAW)
         glVertexAttribPointer(1, 3, GL_FLOAT, False, 0, None)
         glEnableVertexAttribArray(1)
 
         # textures
         if model.countTextureCoordinates > 0:
-            texCoords = numpy.array(model.texture_coordinates, dtype=numpy.float32)
+            data_texCoords = numpy.array(model.texture_coordinates, dtype=numpy.float32)
             vboTextureCoordinates = glGenBuffers(1)
             glBindBuffer(GL_ARRAY_BUFFER, vboTextureCoordinates)
-            glBufferData(GL_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(texCoords), texCoords, GL_STATIC_DRAW)
+            glBufferData(GL_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(data_texCoords), data_texCoords, GL_STATIC_DRAW)
             glVertexAttribPointer(2, 2, GL_FLOAT, False, 0, None)
             glEnableVertexAttribArray(2)
 
@@ -61,12 +77,11 @@ class ModelFace:
         self.vbo_tex_dissolve = self.loadTexture(model.ModelMaterial.texture_dissolve, 'dissolve')
 
         # indices
-        indices = numpy.array(model.indices, dtype=numpy.uint)
+        data_indices = numpy.array(model.indices, dtype=numpy.uint)
         vboIndices = glGenBuffers(1)
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIndices)
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(indices), indices, GL_STATIC_DRAW)
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(data_indices), data_indices, GL_STATIC_DRAW)
 
-        glBindBuffer(GL_ARRAY_BUFFER, 0)
         glBindVertexArray(0)
 
         glDeleteBuffers(4, [vboVertices, vboNormals, vboTextureCoordinates, vboIndices])
@@ -101,7 +116,8 @@ class ModelFace:
 
         glBindVertexArray(self.glVAO)
 
-        glDrawElements(GL_TRIANGLES, self.mesh_model.countIndices, GL_UNSIGNED_INT, self.mesh_model.indices)
+        data_indices = numpy.array(self.mesh_model.indices, dtype=numpy.uint)
+        glDrawElements(GL_TRIANGLES, self.mesh_model.countIndices, GL_UNSIGNED_INT, data_indices)
 
         glBindVertexArray(0)
 

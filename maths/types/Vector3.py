@@ -348,7 +348,7 @@ class Vector3(object):
         return self.x == 0 and self.y == 0 and self.z == 0
 
     def __str__(self):
-        return "Vector3(%.3f, %.3f, %.3f)" % (self.x, self.y, self.z)
+        return "Vector3 (%.3f, %.3f, %.3f)" % (self.x, self.y, self.z)
 
     __repr__ = __str__
 

@@ -40,6 +40,7 @@ class AxisHelpers():
         fs_str = str(file_fs.read())
 
         self.shader_program = glCreateProgram()
+
         shader_compilation = True
         shader_compilation &= GLUtils.compileAndAttachShader(self.shader_program, GL_VERTEX_SHADER, vs_str)
         shader_compilation &= GLUtils.compileAndAttachShader(self.shader_program, GL_FRAGMENT_SHADER, fs_str)
@@ -72,10 +73,10 @@ class AxisHelpers():
         glEnableVertexAttribArray(0)
 
         # indices
-        indices = numpy.array(self.mesh_model.indices, dtype=numpy.uint)
+        data_indices = numpy.array(self.mesh_model.indices, dtype=numpy.uint)
         vboIndices = glGenBuffers(1)
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIndices)
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(indices), indices, GL_STATIC_DRAW)
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(data_indices), data_indices, GL_STATIC_DRAW)
 
         glBindVertexArray(0)
 
@@ -88,7 +89,7 @@ class AxisHelpers():
 
             matrixModel = Matrix4x4(1.0)
             matrixModel = MathOps.matrix_translate(matrixModel, position)
-            matrixModel = matrixModel * matrixProjection * matrixCamera
+            matrixModel = matrixProjection * matrixCamera * matrixModel
 
             glUniformMatrix4fv(self.gl_mvp_matrix, 1, GL_FALSE, MathOps.matrix_to_gl(matrixModel))
             glUniform3f(self.gl_fs_color,

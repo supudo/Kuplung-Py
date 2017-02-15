@@ -41,7 +41,7 @@ class WorldGrid():
         self.act_as_mirror = False
         self.transparency = 0.5
 
-        self.matrixModel = Matrix4x4()
+        self.matrixModel = Matrix4x4(1.)
 
 
     def init_properties(self):
@@ -60,7 +60,7 @@ class WorldGrid():
         self.act_as_mirror = False
         self.transparency = 0.5
 
-        self.matrixModel = Matrix4x4()
+        self.matrixModel = Matrix4x4(1.)
 
 
     def init_shader_program(self):

@@ -295,7 +295,11 @@ class ImGuiWindow():
 
 
     def render_scene(self):
-        self.renderingManager.render(glfw.get_current_context())
+        self.renderingManager.render(
+            self.managerObjects.matrixProjection,
+            self.managerObjects.camera.matrixCamera,
+            self.managerObjects.grid.matrixModel
+        )
 
 
     def get_app_consumption(self):
@@ -316,11 +320,11 @@ class ImGuiWindow():
         Settings.do_log("Rendering Manager initialized.")
 
         self.parser = ParserObj()
-        self.parser.parse_file('resources/shapes/', 'monkey_head.obj')
+        self.parser.parse_file('resources/shapes/', 'cube.obj')
 
-        for model in self.parser.mesh_models:
+        for i in range(len(self.parser.models)):
             model_face = ModelFace()
-            model_face.initBuffers(glfw.get_current_context(), self.parser.mesh_models[model])
+            model_face.initBuffers(self.parser.models[i])
             self.renderingManager.model_faces.append(model_face)
 
 
