@@ -11,6 +11,7 @@ import os
 import numpy
 from OpenGL.GL import *
 from OpenGL.arrays import ArrayDatatype
+from PIL import Image
 from settings import Settings
 from maths.types.Matrix4x4 import Matrix4x4
 
@@ -82,33 +83,46 @@ class ModelFace:
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIndices)
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(data_indices), data_indices, GL_STATIC_DRAW)
 
+        # print('Vertices:')
+        # pstr = ''
+        # for v in data_vertices:
+        #     pstr += str(v[0]) + ', ' + str(v[1]) + ', ' + str(v[2]) + ', '
+        # print(pstr)
+        #
+        # print('Indices:')
+        # pstr = ''
+        # for v in data_indices:
+        #     pstr += str(v) + ', '
+        # print(pstr)
+
         glBindVertexArray(0)
 
         glDeleteBuffers(4, [vboVertices, vboNormals, vboTextureCoordinates, vboIndices])
 
     def loadTexture(self, texture, type):
-        if not texture.image_url == '':
-            image_file = Settings.ApplicationAssetsPath + texture.image_url
-            if os.path.exists(image_file):
-                texture_image = open(image_file)
-                t_width = texture_image.size[0]
-                t_height = texture_image.size[1]
-                vbo_tex = glGenTextures(1)
-                glBindTexture(GL_TEXTURE_2D, vbo_tex)
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-                glGenerateMipmap(GL_TEXTURE_2D)
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, t_width,
-                             t_height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                             texture_image)
-                return vbo_tex
-            else:
-                Settings.do_log("[ModelFace] - Can't load " + type + " texture image! File doesn't exist!")
-                return None
-        else:
-             return None
+        if texture is not None:
+            if not texture.image_url == '':
+                image_file = Settings.ApplicationAssetsPath + texture.image_url
+                if os.path.exists(image_file):
+                    texture_image = Image.open(image_file, 'r')
+                    texture_image_data = numpy.array(list(texture_image.getdata()), numpy.uint8)
+                    t_width = texture_image.width
+                    t_height = texture_image.height
+                    vbo_tex = glGenTextures(1)
+                    glBindTexture(GL_TEXTURE_2D, vbo_tex)
+                    glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+                    glGenerateMipmap(GL_TEXTURE_2D)
+                    if texture_image.mode == "RGBA":
+                        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, t_width, t_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture_image_data)
+                    elif texture_image.mode == "RGB":
+                        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, t_width, t_height, 0, GL_RGB, GL_UNSIGNED_BYTE, texture_image_data)
+                    return vbo_tex
+        Settings.do_log("[ModelFace] - Can't load " + type + " texture image! File doesn't exist!")
+        return None
 
     def render(self):
         if Settings.Setting_Wireframe or Settings.Setting_ModelViewSkin == Settings.ViewModelSkin.ViewModelSkin_Wireframe:
@@ -116,8 +130,7 @@ class ModelFace:
 
         glBindVertexArray(self.glVAO)
 
-        data_indices = numpy.array(self.mesh_model.indices, dtype=numpy.uint)
-        glDrawElements(GL_TRIANGLES, self.mesh_model.countIndices, GL_UNSIGNED_INT, data_indices)
+        glDrawElements(GL_TRIANGLES, self.mesh_model.countIndices, GL_UNSIGNED_INT, None)
 
         glBindVertexArray(0)
 

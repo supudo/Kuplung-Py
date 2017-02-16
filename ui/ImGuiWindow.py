@@ -14,7 +14,7 @@ from imgui.impl import GlfwImpl
 
 from consumption import Consumption
 from meshes.scene.ModelFace import ModelFace
-from parsers.OBJ.ParserObj import ParserObj
+from parsers.ParserManager import ParserManager
 from objects.ObjectsManager import ObjectsManager
 from rendering.RenderingManager import RenderingManager
 from objects.ControlsManager import ControlsManager
@@ -23,6 +23,11 @@ from settings import Settings
 
 
 class ImGuiWindow():
+
+    # app
+    managerParser = None
+
+    # dialogs
     gui_controls_visible = True
     scene_controls_visible = True
     visual_artefacts_visible = True
@@ -140,15 +145,23 @@ class ImGuiWindow():
             self.managerControls.reset_mouse_scroll()
 
             if self.managerControls.mouseButton_MIDDLE:
-                if self.managerControls.mouseGoUp or self.managerControls.mouseGoDown:
-                    self.managerObjects.camera.rotateX['point'] += self.managerControls.mouse_rel_y
+                # if self.managerControls.mouseGoUp or self.managerControls.mouseGoDown:
+                #     self.managerObjects.camera.rotateX['point'] += self.managerControls.mouse_rel_y
+                if self.managerControls.mouseGoDown:
+                    self.managerObjects.camera.rotateX['point'] -= 2
+                if self.managerControls.mouseGoUp:
+                    self.managerObjects.camera.rotateX['point'] += 2
                 if self.managerObjects.camera.rotateX['point'] > 360:
                     self.managerObjects.camera.rotateX['point'] = .0
                 if self.managerObjects.camera.rotateX['point'] < .0:
                     self.managerObjects.camera.rotateX['point'] = 360
 
-                if self.managerControls.mouseGoLeft or self.managerControls.mouseGoRight:
-                    self.managerObjects.camera.rotateY['point'] += self.managerControls.mouse_rel_x
+                # if self.managerControls.mouseGoLeft or self.managerControls.mouseGoRight:
+                #     self.managerObjects.camera.rotateY['point'] += self.managerControls.mouse_rel_x
+                if self.managerControls.mouseGoLeft:
+                    self.managerObjects.camera.rotateY['point'] += 2
+                if self.managerControls.mouseGoRight:
+                    self.managerObjects.camera.rotateY['point'] -= 2
                 if self.managerObjects.camera.rotateY['point'] > 360:
                     self.managerObjects.camera.rotateY['point'] = .0
                 if self.managerObjects.camera.rotateY['point'] < .0:
@@ -319,12 +332,13 @@ class ImGuiWindow():
         self.renderingManager.initShaderProgram(glfw.get_current_context())
         Settings.do_log("Rendering Manager initialized.")
 
-        self.parser = ParserObj()
-        self.parser.parse_file('resources/shapes/', 'cube.obj')
+        self.managerParser = ParserManager()
+        self.managerParser.init_parser()
+        models = self.managerParser.parse_file('resources/shapes/', 'cube.obj')
 
-        for i in range(len(self.parser.models)):
+        for i in range(len(models)):
             model_face = ModelFace()
-            model_face.initBuffers(self.parser.models[i])
+            model_face.initBuffers(models[i])
             self.renderingManager.model_faces.append(model_face)
 
 

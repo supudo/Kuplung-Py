@@ -28,6 +28,13 @@ ApplicationAssetsPath = 'resources/shapes/'
 
 LogDebugWindow = True
 
+class ModelFileParserTypes(Enum):
+    ModelFileParser_Own1 = 0
+    ModelFileParser_Own2 = 1
+    ModelFileParser_Assimp = 2
+
+ModelFileParser = ModelFileParserTypes.ModelFileParser_Assimp
+
 # -------------------------------------------------------------------
 # Scene Info
 # -------------------------------------------------------------------

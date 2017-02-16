@@ -98,7 +98,7 @@ class AxisHelpers():
                         self.mesh_model.ModelMaterial.color_diffuse[2])
 
             glBindVertexArray(self.glVAO)
-            glDrawElements(GL_TRIANGLES, self.mesh_model.countIndices, GL_UNSIGNED_INT, self.mesh_model.indices)
+            glDrawElements(GL_TRIANGLES, self.mesh_model.countIndices, GL_UNSIGNED_INT, None)
             glBindVertexArray(0)
 
             glUseProgram(0)

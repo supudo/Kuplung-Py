@@ -13,7 +13,7 @@ from PyQt5.QtGui import QOpenGLContext
 from PyQt5.QtWidgets import QOpenGLWidget
 
 from meshes.scene.ModelFace import ModelFace
-from parsers.OBJ.ParserObj import ParserObj
+from parsers.OBJ.ParserObj2 import ParserObj2
 from rendering.RenderingManager import RenderingManager
 from settings import Settings
 

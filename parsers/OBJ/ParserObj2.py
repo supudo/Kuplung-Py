@@ -11,11 +11,12 @@ __version__ = "1.0.0"
 import scanf
 from gl_utils.MeshModel import MeshModel
 from gl_utils.Material import Material
+from gl_utils.Material import MaterialTextureImage
 from maths.types.Vector3 import Vector3
 from maths.types.Vector2 import Vector2
 
 
-class ParserObj:
+class ParserObj2:
 
     def __init__(self):
         pass
@@ -243,6 +244,8 @@ class ParserObj:
 
         file_obj.close()
 
+        return self.models
+
 
     def get_similar_vertex_index(self, packed, vertexToOutIndex):
         result = -1
@@ -287,21 +290,23 @@ class ParserObj:
             elif values[0] == 'illum':
                 current_material.illumination_mode = int(values[1])
             elif values[0] == 'map_Ka':
-                current_material.texture_ambient = self.parse_texture(values[1:])
+                current_material.texture_ambient = self.load_texture(values[1:])
             elif values[0] == 'map_Kd':
-                current_material.texture_diffuse = self.parse_texture(values[1:])
+                current_material.texture_diffuse = self.load_texture(values[1:])
             elif values[0] == 'map_Bump':
-                current_material.texture_normal = self.parse_texture(values[1:])
+                current_material.texture_normal = self.load_texture(values[1:])
             elif values[0] == 'disp':
-                current_material.texture_displacement = self.parse_texture(values[1:])
+                current_material.texture_displacement = self.load_texture(values[1:])
             elif values[0] == 'map_Ks':
-                current_material.texture_specular = self.parse_texture(values[1:])
+                current_material.texture_specular = self.load_texture(values[1:])
             elif values[0] == 'map_Ns':
-                current_material.texture_specular_exp = self.parse_texture(values[1:])
+                current_material.texture_specular_exp = self.load_texture(values[1:])
             elif values[0] == 'map_d':
-                current_material.texture_dissolve = self.parse_texture(values[1:])
+                current_material.texture_dissolve = self.load_texture(values[1:])
 
 
-    def parse_texture(self, values):
-        return values[0]
+    def load_texture(self, values):
+        mti = MaterialTextureImage()
+        mti.image_url = values[0]
+        return mti
 
