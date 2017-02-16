@@ -74,6 +74,8 @@ class ObjectsManager():
             self.axis_helpers_z_minus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(.0, .0, -ahPosition))
             self.axis_helpers_z_plus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(.0, .0, ahPosition))
 
+        self.camera_model.render(self.matrixProjection, self.camera.matrixCamera, self.grid.matrixModel, self.Setting_FixedGridWorld)
+
 
     def reset_settings(self):
         self.Setting_FOV = 45.0
@@ -86,6 +88,7 @@ class ObjectsManager():
         self.Setting_FixedGridWorld = True
         self.Setting_ShowAxisHelpers = True
         self.Settings_ShowZAxis = True
+        self.Setting_FixedGridWorld = True
 
 
     def init_manager(self):
