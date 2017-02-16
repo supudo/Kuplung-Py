@@ -33,7 +33,7 @@ class ModelFileParserTypes(Enum):
     ModelFileParser_Own2 = 1
     ModelFileParser_Assimp = 2
 
-ModelFileParser = ModelFileParserTypes.ModelFileParser_Assimp
+ModelFileParser = ModelFileParserTypes.ModelFileParser_Own2
 
 # -------------------------------------------------------------------
 # Scene Info
@@ -57,7 +57,7 @@ class ViewModelSkin(Enum):
     ViewModelSkin_Wireframe = 3
     ViewModelSkin_Rendered = 4
 
-Setting_ModelViewSkin = ViewModelSkin.ViewModelSkin_Solid
+Setting_ModelViewSkin = ViewModelSkin.ViewModelSkin_Wireframe
 
 Setting_Rendering_Depth = False
 

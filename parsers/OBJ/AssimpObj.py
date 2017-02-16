@@ -25,7 +25,7 @@ class AssimpObj:
     def parse_file(self, obj_folder, obj_filename):
         self.folder = obj_folder
         self.file_obj = obj_folder + obj_filename
-        self.models = []
+        self.mesh_models = []
         self.index_model = 0
         scene = pyassimp.load(
             self.file_obj,
@@ -33,12 +33,12 @@ class AssimpObj:
         )
         self.process_node(scene)
         pyassimp.release(scene)
-        return self.models
+        return self.mesh_models
 
 
     def process_node(self, scene):
         for index, mesh in enumerate(scene.meshes):
-            self.models.append(self.process_mesh(mesh, scene, mesh.name))
+            self.mesh_models.append(self.process_mesh(mesh, scene, mesh.name))
             self.index_model += 1
 
 

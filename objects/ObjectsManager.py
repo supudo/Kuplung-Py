@@ -13,7 +13,7 @@ from meshes.helpers.AxisHelpers import AxisHelpers
 from meshes.helpers.AxisSystem import AxisSystem
 from meshes.helpers.CameraModel import CameraModel
 from meshes.helpers.WorldGrid import WorldGrid
-from parsers.OBJ.ParserObj1 import ParserObj1
+from parsers.OBJ.AssimpObj import AssimpObj
 from OpenGL.GL import *
 from maths import MathOps
 from maths.types.Vector3 import Vector3
@@ -84,7 +84,7 @@ class ObjectsManager():
         self.Setting_GridSize = 30
         self.Setting_GridUnitSize = 1
         self.Setting_FixedGridWorld = True
-        self.Setting_ShowAxisHelpers = False
+        self.Setting_ShowAxisHelpers = True
         self.Settings_ShowZAxis = True
 
 
@@ -146,34 +146,34 @@ class ObjectsManager():
 
 
     def load_system_models(self):
-        self.parser = ParserObj1()
+        self.parser = AssimpObj()
 
         self.parser.parse_file('resources/gui/', 'light_directional.obj')
-        self.systemModels["light_directional"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
+        self.systemModels["light_directional"] = self.parser.mesh_models[0]
 
         self.parser.parse_file('resources/gui/', 'light_point.obj')
-        self.systemModels["light_point"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
+        self.systemModels["light_point"] = self.parser.mesh_models[0]
 
         self.parser.parse_file('resources/gui/', 'light_spot.obj')
-        self.systemModels["light_spot"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
+        self.systemModels["light_spot"] = self.parser.mesh_models[0]
 
         self.parser.parse_file('resources/gui/', 'camera.obj')
-        self.systemModels["camera"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
+        self.systemModels["camera"] = self.parser.mesh_models[0]
 
         self.parser.parse_file('resources/axis_helpers/', 'x_plus.obj')
-        self.systemModels["axis_x_plus"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
+        self.systemModels["axis_x_plus"] = self.parser.mesh_models[0]
 
         self.parser.parse_file('resources/axis_helpers/', 'x_minus.obj')
-        self.systemModels["axis_x_minus"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
+        self.systemModels["axis_x_minus"] = self.parser.mesh_models[0]
 
         self.parser.parse_file('resources/axis_helpers/', 'y_plus.obj')
-        self.systemModels["axis_y_plus"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
+        self.systemModels["axis_y_plus"] = self.parser.mesh_models[0]
 
         self.parser.parse_file('resources/axis_helpers/', 'y_minus.obj')
-        self.systemModels["axis_y_minus"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
+        self.systemModels["axis_y_minus"] = self.parser.mesh_models[0]
 
         self.parser.parse_file('resources/axis_helpers/', 'z_plus.obj')
-        self.systemModels["axis_z_plus"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
+        self.systemModels["axis_z_plus"] = self.parser.mesh_models[0]
 
         self.parser.parse_file('resources/axis_helpers/', 'z_minus.obj')
-        self.systemModels["axis_z_minus"] = self.parser.mesh_models[list(self.parser.mesh_models.keys())[0]]
+        self.systemModels["axis_z_minus"] = self.parser.mesh_models[0]

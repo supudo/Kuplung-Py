@@ -79,7 +79,8 @@ class AxisHelpers():
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(data_indices), data_indices, GL_STATIC_DRAW)
 
         glBindVertexArray(0)
-
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
         glDeleteBuffers(2, [vboVertices, vboIndices])
 
 
