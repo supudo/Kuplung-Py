@@ -73,7 +73,7 @@ class AxisHelpers():
         glEnableVertexAttribArray(0)
 
         # indices
-        data_indices = numpy.array(self.mesh_model.indices, dtype=numpy.uint)
+        data_indices = numpy.array(self.mesh_model.indices, dtype=numpy.uint32)
         vboIndices = glGenBuffers(1)
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIndices)
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(data_indices), data_indices, GL_STATIC_DRAW)

@@ -180,7 +180,7 @@ class WorldGrid():
             glEnableVertexAttribArray(1)
 
             # indices
-            indices = numpy.array(indices, dtype=numpy.uint)
+            indices = numpy.array(indices, dtype=numpy.uint32)
             vboIndices = glGenBuffers(1)
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIndices)
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(indices), indices, GL_STATIC_DRAW)

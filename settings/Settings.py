@@ -57,7 +57,7 @@ class ViewModelSkin(Enum):
     ViewModelSkin_Wireframe = 3
     ViewModelSkin_Rendered = 4
 
-Setting_ModelViewSkin = ViewModelSkin.ViewModelSkin_Wireframe
+Setting_ModelViewSkin = ViewModelSkin.ViewModelSkin_Rendered
 
 Setting_Rendering_Depth = False
 
