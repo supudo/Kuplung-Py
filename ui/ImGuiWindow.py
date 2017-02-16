@@ -13,19 +13,23 @@ import imgui
 from imgui.impl import GlfwImpl
 
 from consumption import Consumption
-from meshes.scene.ModelFace import ModelFace
 from parsers.ParserManager import ParserManager
 from objects.ObjectsManager import ObjectsManager
 from rendering.RenderingManager import RenderingManager
 from objects.ControlsManager import ControlsManager
-from ui.components.Log import Log
 from settings import Settings
+from meshes.scene.ModelFace import ModelFace
+from ui.components.Log import Log
+from ui.dialogs.DialogControlsModels import DialogControlsModels
+from ui.dialogs.DialogControlsGUI import DialogControlsGUI
 
 
 class ImGuiWindow():
 
     # app
     managerParser = None
+    controlsModels = None
+    controlsGUI = None
 
     # dialogs
     gui_controls_visible = True
@@ -42,12 +46,15 @@ class ImGuiWindow():
     show_about_kuplung = False
     show_scene_metrics = False
     show_log_window = True
+    show_controls_models = True
+    show_controls_gui = True
 
 
     def show_main_window(self):
         self.init_gl()
         self.init_window()
         self.init_imgui_impl()
+        self.init_sub_windows()
         self.init_components()
         self.init_glfw_handlers()
         self.init_rendering_manager()
@@ -106,6 +113,12 @@ class ImGuiWindow():
         self.managerControls = ControlsManager()
         self.managerControls.init_handlers(self.window)
         Settings.do_log("Control events initialized.")
+
+
+    def init_sub_windows(self):
+        self.controlsModels = DialogControlsModels()
+        self.controlsGUI = DialogControlsGUI()
+        Settings.do_log("GUI sub windows initialized.")
 
 
     def init_components(self):
@@ -240,8 +253,8 @@ class ImGuiWindow():
                 imgui.end_menu()
 
             if imgui.begin_menu("View", True):
-                imgui.menu_item("GUI Controls", '', False, True)
-                imgui.menu_item("Scene Controls", '', False, True)
+                _, self.show_controls_gui = imgui.menu_item("GUI Controls", '', self.show_controls_gui, True)
+                _, self.show_controls_models = imgui.menu_item("Scene Controls", '', self.show_controls_models, True)
                 imgui.menu_item("Hide Visual Artefacts", '', False, True)
                 imgui.separator()
                 _, self.show_log_window = imgui.menu_item("Show Log Window", '', self.show_log_window, True)
@@ -303,8 +316,29 @@ class ImGuiWindow():
             self.dialog_log_window()
 
 
+    def render_controls(self):
+        if self.show_controls_models:
+            self.show_controls_models = self.controlsModels.render(self, self.show_controls_models)
+
+        if self.show_controls_gui:
+            self.show_controls_gui = self.controlsGUI.render(self.show_controls_gui)
+
+
+    def add_shape(self, shapeType):
+        models = self.managerParser.parse_file('resources/shapes/', shapeType.value + '.obj')
+        for i in range(len(models)):
+            model_face = ModelFace()
+            model_face.initBuffers(models[i])
+            self.renderingManager.model_faces.append(model_face)
+
+
+    def add_light(self):
+        pass
+
+
     def render_ui_content(self):
         self.managerObjects.render(self.window)
+        self.render_controls()
 
 
     def render_scene(self):
@@ -334,12 +368,12 @@ class ImGuiWindow():
 
         self.managerParser = ParserManager()
         self.managerParser.init_parser()
-        models = self.managerParser.parse_file('resources/shapes/', 'cube.obj')
 
-        for i in range(len(models)):
-            model_face = ModelFace()
-            model_face.initBuffers(models[i])
-            self.renderingManager.model_faces.append(model_face)
+        # models = self.managerParser.parse_file('resources/shapes/', 'cube.obj')
+        # for i in range(len(models)):
+        #     model_face = ModelFace()
+        #     model_face.initBuffers(models[i])
+        #     self.renderingManager.model_faces.append(model_face)
 
 
     def init_objects_manager(self):

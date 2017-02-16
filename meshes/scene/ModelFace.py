@@ -122,7 +122,8 @@ class ModelFace:
                     elif texture_image.mode == "RGB":
                         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, t_width, t_height, 0, GL_RGB, GL_UNSIGNED_BYTE, texture_image_data)
                     return vbo_tex
-        Settings.do_log("[ModelFace] - Can't load " + type + " texture image! File doesn't exist!")
+                else:
+                    Settings.do_log("[ModelFace] - Can't load " + type + " texture image! File doesn't exist!")
         return None
 
     def render(self):

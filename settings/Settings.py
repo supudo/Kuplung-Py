@@ -28,12 +28,37 @@ ApplicationAssetsPath = 'resources/shapes/'
 
 LogDebugWindow = True
 
+class ShapeTypes(Enum):
+    ShapeType_None = ''
+    ShapeType_BrickWall = 'brick_wall'
+    ShapeType_MaterialBall = 'MaterialBall'
+    ShapeType_MaterialBallBlender = 'MaterialBallBlender'
+    ShapeType_Epcot = 'epcot'
+    ShapeType_Cone = 'cone'
+    ShapeType_Cube = 'cube'
+    ShapeType_Cylinder = 'cylinder'
+    ShapeType_Grid = 'grid'
+    ShapeType_IcoSphere = 'ico_sphere'
+    ShapeType_MonkeyHead = 'monkey_head'
+    ShapeType_Plane = 'plane'
+    ShapeType_PlaneObjects = 'plane_objects'
+    ShapeType_PlaneObjectsLargePlane = 'plane_objects_large'
+    ShapeType_Triangle = 'triangle'
+    ShapeType_Torus = 'torus'
+    ShapeType_Tube = 'tube'
+    ShapeType_UVSphere = 'uv_sphere'
+
+class LightSourceType(Enum):
+    LightSourceType_Directional = 0
+    LightSourceType_Point = 1
+    LightSourceType_Spot = 2
+
 class ModelFileParserTypes(Enum):
     ModelFileParser_Own1 = 0
     ModelFileParser_Own2 = 1
     ModelFileParser_Assimp = 2
 
-ModelFileParser = ModelFileParserTypes.ModelFileParser_Own2
+ModelFileParser = ModelFileParserTypes.ModelFileParser_Assimp
 
 # -------------------------------------------------------------------
 # Scene Info
