@@ -36,6 +36,7 @@ class ImGuiWindow():
     scene_controls_visible = True
     visual_artefacts_visible = True
     app_is_running = False
+    new_scene_clear = False
 
     # Main menu
     show_save_image = False
@@ -186,9 +187,7 @@ class ImGuiWindow():
     def render_main_menu(self):
         if imgui.begin_main_menu_bar():
             if imgui.begin_menu("File", True):
-                clicked_new, selected_new = imgui.menu_item("New", '', False, True)
-                if clicked_new:
-                    pass
+                _, self.new_scene_clear = imgui.menu_item("New", '', False, True)
                 imgui.menu_item("Open ...", '', False, True)
                 if imgui.begin_menu("Open Recent", True):
                     imgui.end_menu()
@@ -315,6 +314,10 @@ class ImGuiWindow():
         if self.show_log_window:
             self.dialog_log_window()
 
+        # actions
+        if self.new_scene_clear:
+            self.gui_clear_scene()
+
 
     def render_controls(self):
         if self.show_controls_models:
@@ -325,15 +328,16 @@ class ImGuiWindow():
 
 
     def add_shape(self, shapeType):
-        models = self.managerParser.parse_file('resources/shapes/', shapeType.value + '.obj')
+        models = self.managerParser.parse_file('resources/shapes/', shapeType.value[0] + '.obj')
         for i in range(len(models)):
             model_face = ModelFace()
-            model_face.initBuffers(models[i])
+            model_face.initModelProperties(models[i])
+            model_face.initBuffers()
             self.renderingManager.model_faces.append(model_face)
 
 
-    def add_light(self):
-        pass
+    def add_light(self, lightType):
+        self.managerObjects.add_light(lightType)
 
 
     def render_ui_content(self):
@@ -345,7 +349,8 @@ class ImGuiWindow():
         self.renderingManager.render(
             self.managerObjects.matrixProjection,
             self.managerObjects.camera.matrixCamera,
-            self.managerObjects.grid.matrixModel
+            self.managerObjects.grid.matrixModel,
+            self.managerObjects
         )
 
 
@@ -443,3 +448,8 @@ class ImGuiWindow():
     def dialog_log_window(self):
         self.show_log_window = self.component_log.draw_window('Log Window', self.show_log_window)
 
+
+    def gui_clear_scene(self):
+        self.renderingManager.model_faces.clear()
+        self.managerObjects.lightSources.clear()
+        self.new_scene_clear = False

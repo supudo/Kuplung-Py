@@ -12,6 +12,7 @@ class MaterialTextureImage:
 
     def __init__(self):
         self.image_url = ''
+        self.use_texture = False
 
 class Material:
 
@@ -24,8 +25,7 @@ class Material:
         self.color_emission = []
 
         self.specular_exp = 0
-        self.transparency1 = 0
-        self.transparency2 = 0
+        self.transparency = 0
         self.optical_density = 0
         self.illumination_mode = 0
 

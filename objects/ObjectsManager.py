@@ -12,6 +12,7 @@ from meshes.helpers.Camera import Camera
 from meshes.helpers.AxisHelpers import AxisHelpers
 from meshes.helpers.AxisSystem import AxisSystem
 from meshes.helpers.CameraModel import CameraModel
+from meshes.helpers.Light import Light
 from meshes.helpers.WorldGrid import WorldGrid
 from parsers.OBJ.AssimpObj import AssimpObj
 from OpenGL.GL import *
@@ -40,6 +41,22 @@ class ObjectsManager():
         self.axis_helpers_y_plus = AxisHelpers()
         self.axis_helpers_z_minus = AxisHelpers()
         self.axis_helpers_z_plus = AxisHelpers()
+
+        self.Setting_UIAmbientLight = Vector3(0.2)
+        self.Setting_GammaCoeficient = 1.0
+        self.viewModelSkin = Settings.ViewModelSkin.ViewModelSkin_Rendered
+
+        self.SolidLight_Direction = Vector3(0.0, 1.0, 0.0)
+        self.SolidLight_MaterialColor = Vector3(0.7)
+        self.SolidLight_Ambient = Vector3(1.0)
+        self.SolidLight_Diffuse = Vector3(1.0)
+        self.SolidLight_Specular = Vector3(1.0)
+        self.SolidLight_Ambient_Strength = 0.3
+        self.SolidLight_Diffuse_Strength = 1.0
+        self.SolidLight_Specular_Strength = 0.0
+        self.SolidLight_Ambient_ColorPicker = False
+        self.SolidLight_Diffuse_ColorPicker = False
+        self.SolidLight_Specular_ColorPicker = False
 
 
     def render(self, glfw_window):
@@ -76,6 +93,9 @@ class ObjectsManager():
 
         self.camera_model.render(self.matrixProjection, self.camera.matrixCamera, self.grid.matrixModel, self.Setting_FixedGridWorld)
 
+        for light in self.lightSources:
+            light.render(self.matrixProjection, self.camera.matrixCamera)
+
 
     def reset_settings(self):
         self.Setting_FOV = 45.0
@@ -89,6 +109,20 @@ class ObjectsManager():
         self.Setting_ShowAxisHelpers = True
         self.Settings_ShowZAxis = True
         self.Setting_FixedGridWorld = True
+        self.Setting_Rendering_Depth = False
+        self.Setting_UIAmbientLight = Vector3(0.2)
+        self.Setting_GammaCoeficient = 1.0
+        self.SolidLight_Direction = Vector3(0.0, 1.0, 0.0)
+        self.SolidLight_MaterialColor = Vector3(0.7)
+        self.SolidLight_Ambient = Vector3(1.0)
+        self.SolidLight_Diffuse = Vector3(1.0)
+        self.SolidLight_Specular = Vector3(1.0)
+        self.SolidLight_Ambient_Strength = 0.3
+        self.SolidLight_Diffuse_Strength = 1.0
+        self.SolidLight_Specular_Strength = 0.0
+        self.SolidLight_Ambient_ColorPicker = False
+        self.SolidLight_Diffuse_ColorPicker = False
+        self.SolidLight_Specular_ColorPicker = False
 
 
     def init_manager(self):
@@ -180,3 +214,34 @@ class ObjectsManager():
 
         self.parser.parse_file('resources/axis_helpers/', 'z_minus.obj')
         self.systemModels["axis_z_minus"] = self.parser.mesh_models[0]
+
+
+    def add_light(self, lightType, title='', description=''):
+        l = Light()
+        l.type = lightType
+        l.init_properties()
+        l.title = title
+        l.description = description
+        l.set_model(self.systemModels[lightType.value[1]])
+        if lightType == Settings.LightSourceTypes.LightSourceType_Directional:
+            if title == '':
+                l.title = 'Directional ' + str(len(self.lightSources) + 1)
+            if description == '':
+                l.title = 'Directional ' + str(len(self.lightSources) + 1)
+        if lightType == Settings.LightSourceTypes.LightSourceType_Point:
+            if title == '':
+                l.title = 'Point ' + str(len(self.lightSources) + 1)
+            if description == '':
+                l.title = 'Point ' + str(len(self.lightSources) + 1)
+        if lightType == Settings.LightSourceTypes.LightSourceType_Spot:
+            if title == '':
+                l.title = 'Spot ' + str(len(self.lightSources) + 1)
+            if description == '':
+                l.title = 'Spot ' + str(len(self.lightSources) + 1)
+        l.init_shader_program()
+        l.init_buffers()
+        self.lightSources.append(l)
+
+
+    def clear_all_lights(self):
+        self.lightSources.clear()

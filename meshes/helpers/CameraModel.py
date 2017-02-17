@@ -7,12 +7,11 @@ supudo.net
 __author__ = 'supudo'
 __version__ = "1.0.0"
 
-import glfw
-from settings import Settings
-from gl_utils import GLUtils
 from OpenGL.GL import *
 from OpenGL.arrays import ArrayDatatype
 import numpy
+from settings import Settings
+from gl_utils import GLUtils
 from maths.types.Matrix4x4 import Matrix4x4
 from maths import MathOps
 from maths.types.Vector3 import Vector3

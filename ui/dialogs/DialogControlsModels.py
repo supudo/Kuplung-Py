@@ -34,46 +34,19 @@ class DialogControlsModels():
 
 
     def draw_shapes_tab(self, delegate):
-        simple_shapes = {
-            "Triangle": Settings.ShapeTypes.ShapeType_Triangle,
-            "Cone": Settings.ShapeTypes.ShapeType_Cone,
-            "Cube": Settings.ShapeTypes.ShapeType_Cube,
-            "Cylinder": Settings.ShapeTypes.ShapeType_Cylinder,
-            "Grid": Settings.ShapeTypes.ShapeType_Grid,
-            "Ico Sphere": Settings.ShapeTypes.ShapeType_IcoSphere,
-            "Plane": Settings.ShapeTypes.ShapeType_Plane,
-            "Torus": Settings.ShapeTypes.ShapeType_Torus,
-            "Tube": Settings.ShapeTypes.ShapeType_Tube,
-            "UV Sphere": Settings.ShapeTypes.ShapeType_UVSphere,
-            "Monkey Head": Settings.ShapeTypes.ShapeType_MonkeyHead
-        }
-        for shape_name in simple_shapes:
-            if imgui.button(shape_name, -1, 0):
-                delegate.add_shape(simple_shapes[shape_name])
+        # shapes
+        for shape in Settings.ShapeTypes:
+            if shape.name != 'ShapeType_None' and shape.name != 'ShapeType_Separator':
+                if imgui.button(shape.value[1], -1, 0):
+                    delegate.add_shape(shape)
+            if shape.name == 'ShapeType_Separator':
+                imgui.separator()
+                imgui.separator()
 
         imgui.separator()
         imgui.separator()
 
-        complex_shapes = {
-            "Epcot": Settings.ShapeTypes.ShapeType_Epcot,
-            "Brick Wall": Settings.ShapeTypes.ShapeType_BrickWall,
-            "Plane Objects": Settings.ShapeTypes.ShapeType_PlaneObjects,
-            "Plane Objects - Large Plane": Settings.ShapeTypes.ShapeType_PlaneObjectsLargePlane,
-            "Material Ball": Settings.ShapeTypes.ShapeType_MaterialBall,
-            "Material Ball - Blender": Settings.ShapeTypes.ShapeType_MaterialBallBlender
-        }
-        for shape_name in complex_shapes:
-            if imgui.button(shape_name, -1, 0):
-                delegate.add_shape(complex_shapes[shape_name])
-
-        imgui.separator()
-        imgui.separator()
-
-        lights = {
-            "Directional (Sun)": Settings.LightSourceType.LightSourceType_Directional,
-            "Point (Light bulb)": Settings.LightSourceType.LightSourceType_Point,
-            "Spot (Flashlight)": Settings.LightSourceType.LightSourceType_Spot
-        }
-        for light_name in lights:
-            if imgui.button(light_name, -1, 0):
-                delegate.add_light(lights[light_name])
+        # lights
+        for light in Settings.LightSourceTypes:
+            if imgui.button(light.value[0], -1, 0):
+                delegate.add_light(light)

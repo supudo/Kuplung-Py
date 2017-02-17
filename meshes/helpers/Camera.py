@@ -74,7 +74,9 @@ class Camera():
         self.matrixCamera = MathOps.matrix_rotate(self.matrixCamera, self.rotateCenterY['point'], Vector3(0, 1, 0))
         self.matrixCamera = MathOps.matrix_rotate(self.matrixCamera, self.rotateCenterZ['point'], Vector3(0, 0, 1))
 
-        self.cameraPosition = (self.matrixCamera[3].x, self.matrixCamera[3].y, self.matrixCamera[3].z)
+        self.cameraPosition.x = self.matrixCamera[3].x
+        self.cameraPosition.y = self.matrixCamera[3].y
+        self.cameraPosition.z = self.matrixCamera[3].z
 
         # if Settings.Setting_ZScroll != 999:
         #     self.positionZ['point'] = Settings.Setting_ZScroll

@@ -8,12 +8,11 @@ supudo.net
 __author__ = 'supudo'
 __version__ = "1.0.0"
 
-import scanf
-from gl_utils.MeshModel import MeshModel
-from gl_utils.Material import Material
-from gl_utils.Material import MaterialTextureImage
-from maths.types.Vector3 import Vector3
+from gl_utils.objects.MeshModel import MeshModel
+from gl_utils.objects.Material import Material
+from gl_utils.objects.Material import MaterialTextureImage
 from maths.types.Vector2 import Vector2
+from maths.types.Vector3 import Vector3
 
 
 class ParserObj1:
@@ -142,10 +141,8 @@ class ParserObj1:
                 current_material.color_emission = [float(i) for i in values[1:]]
             elif values[0] == 'Ns':
                 current_material.specular_exp = float(values[1])
-            elif values[0] == 'Tr':
-                current_material.transparency1 = float(values[1])
-            elif values[0] == 'd':
-                current_material.transparency2 = float(values[1])
+            elif values[0] == 'Tr' or values[0] == 'd':
+                current_material.transparency = float(values[1])
             elif values[0] == 'Ni':
                 current_material.optical_density = float(values[1])
             elif values[0] == 'illum':

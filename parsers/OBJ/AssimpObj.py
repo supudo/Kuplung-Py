@@ -9,11 +9,11 @@ __version__ = "1.0.0"
 
 import pyassimp
 import pyassimp.postprocess
-from gl_utils.MeshModel import MeshModel
-from gl_utils.Material import Material
-from gl_utils.Material import MaterialTextureImage
-from maths.types.Vector3 import Vector3
+from gl_utils.objects.MeshModel import MeshModel
+from gl_utils.objects.Material import Material
+from gl_utils.objects.Material import MaterialTextureImage
 from maths.types.Vector2 import Vector2
+from maths.types.Vector3 import Vector3
 
 
 class AssimpObj:
@@ -85,8 +85,8 @@ class AssimpObj:
 
             entityMaterial.specular_exp = float(material.properties['shininess'] / 4.0)
             entityMaterial.optical_density = float(material.properties['refracti'])
-            entityMaterial.transparency1 = float(material.properties['opacity'])
-            entityMaterial.illumination_mode = float(material.properties['shadingm'])
+            entityMaterial.transparency = float(material.properties['opacity'])
+            entityMaterial.illumination_mode = int(material.properties['shadingm'])
 
             entityMaterial.color_ambient = Vector3(material.properties['ambient'])
             entityMaterial.color_diffuse = Vector3(material.properties['diffuse'])

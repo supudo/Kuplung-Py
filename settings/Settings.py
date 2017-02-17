@@ -29,29 +29,33 @@ ApplicationAssetsPath = 'resources/shapes/'
 LogDebugWindow = True
 
 class ShapeTypes(Enum):
-    ShapeType_None = ''
-    ShapeType_BrickWall = 'brick_wall'
-    ShapeType_MaterialBall = 'MaterialBall'
-    ShapeType_MaterialBallBlender = 'MaterialBallBlender'
-    ShapeType_Epcot = 'epcot'
-    ShapeType_Cone = 'cone'
-    ShapeType_Cube = 'cube'
-    ShapeType_Cylinder = 'cylinder'
-    ShapeType_Grid = 'grid'
-    ShapeType_IcoSphere = 'ico_sphere'
-    ShapeType_MonkeyHead = 'monkey_head'
-    ShapeType_Plane = 'plane'
-    ShapeType_PlaneObjects = 'plane_objects'
-    ShapeType_PlaneObjectsLargePlane = 'plane_objects_large'
-    ShapeType_Triangle = 'triangle'
-    ShapeType_Torus = 'torus'
-    ShapeType_Tube = 'tube'
-    ShapeType_UVSphere = 'uv_sphere'
+    ShapeType_None = ['', '', 0]
 
-class LightSourceType(Enum):
-    LightSourceType_Directional = 0
-    LightSourceType_Point = 1
-    LightSourceType_Spot = 2
+    ShapeType_Triangle = ['triangle', 'Triangle', 1]
+    ShapeType_Cone = ['cone', 'Cone', 1]
+    ShapeType_Cube = ['cube', 'Cube', 1]
+    ShapeType_Cylinder = ['cylinder', 'Cylinder', 1]
+    ShapeType_Grid = ['grid', 'Grid', 1]
+    ShapeType_IcoSphere = ['ico_sphere', 'ICO Sphere', 1]
+    ShapeType_Plane = ['plane', 'Plane', 1]
+    ShapeType_Torus = ['torus', 'Torus', 1]
+    ShapeType_Tube = ['tube', 'Tube', 1]
+    ShapeType_UVSphere = ['uv_sphere', 'UV Sphere', 1]
+    ShapeType_MonkeyHead = ['monkey_head', 'Monkey Head', 1]
+
+    ShapeType_Separator = ['separator', 'separator', -1]
+
+    ShapeType_Epcot = ['epcot', 'Epcot', 2]
+    ShapeType_BrickWall = ['brick_wall', 'Brick Wall', 2]
+    ShapeType_PlaneObjects = ['plane_objects', 'Plane Objects', 2]
+    ShapeType_PlaneObjectsLargePlane = ['plane_objects_large', 'Plane Objects - Large Plane', 2]
+    ShapeType_MaterialBall = ['MaterialBall', 'Material Ball', 2]
+    ShapeType_MaterialBallBlender = ['MaterialBallBlender', 'Material Ball - Blender', 2]
+
+class LightSourceTypes(Enum):
+    LightSourceType_Directional = ['Directional (Sun)', 'light_directional', 0]
+    LightSourceType_Point = ['Point (Light bulb)', 'light_point', 1]
+    LightSourceType_Spot = ['Spot (Flashlight)', 'light_spot', 2]
 
 class ModelFileParserTypes(Enum):
     ModelFileParser_Own1 = 0

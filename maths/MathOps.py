@@ -10,6 +10,7 @@ __version__ = "1.0.0"
 import math
 import numpy
 from maths.types.Matrix4x4 import Matrix4x4
+from maths.types.Matrix3x3 import Matrix3x3
 from maths.types.Vector3 import Vector3
 
 
@@ -58,6 +59,108 @@ def matrix_scale(m, v):
     result[3] = m[3]
     return result
 
+
+def matrix_inverse_transpose(m):
+    subfactor00 = m[2][2] * m[3][3] - m[3][2] * m[2][3]
+    subfactor01 = m[2][1] * m[3][3] - m[3][1] * m[2][3]
+    subfactor02 = m[2][1] * m[3][2] - m[3][1] * m[2][2]
+    subfactor03 = m[2][0] * m[3][3] - m[3][0] * m[2][3]
+    subfactor04 = m[2][0] * m[3][2] - m[3][0] * m[2][2]
+    subfactor05 = m[2][0] * m[3][1] - m[3][0] * m[2][1]
+    subfactor06 = m[1][2] * m[3][3] - m[3][2] * m[1][3]
+    subfactor07 = m[1][1] * m[3][3] - m[3][1] * m[1][3]
+    subfactor08 = m[1][1] * m[3][2] - m[3][1] * m[1][2]
+    subfactor09 = m[1][0] * m[3][3] - m[3][0] * m[1][3]
+    subfactor10 = m[1][0] * m[3][2] - m[3][0] * m[1][2]
+    subfactor11 = m[1][1] * m[3][3] - m[3][1] * m[1][3]
+    subfactor12 = m[1][0] * m[3][1] - m[3][0] * m[1][1]
+    subfactor13 = m[1][2] * m[2][3] - m[2][2] * m[1][3]
+    subfactor14 = m[1][1] * m[2][3] - m[2][1] * m[1][3]
+    subfactor15 = m[1][1] * m[2][2] - m[2][1] * m[1][2]
+    subfactor16 = m[1][0] * m[2][3] - m[2][0] * m[1][3]
+    subfactor17 = m[1][0] * m[2][2] - m[2][0] * m[1][2]
+    subfactor18 = m[1][0] * m[2][1] - m[2][0] * m[1][1]
+
+    inverse = Matrix4x4()
+    inverse[0][0] = + (m[1][1] * subfactor00 - m[1][2] * subfactor01 + m[1][3] * subfactor02)
+    inverse[0][1] = - (m[1][0] * subfactor00 - m[1][2] * subfactor03 + m[1][3] * subfactor04)
+    inverse[0][2] = + (m[1][0] * subfactor01 - m[1][1] * subfactor03 + m[1][3] * subfactor05)
+    inverse[0][3] = - (m[1][0] * subfactor02 - m[1][1] * subfactor04 + m[1][2] * subfactor05)
+
+    inverse[1][0] = - (m[0][1] * subfactor00 - m[0][2] * subfactor01 + m[0][3] * subfactor02)
+    inverse[1][1] = + (m[0][0] * subfactor00 - m[0][2] * subfactor03 + m[0][3] * subfactor04)
+    inverse[1][2] = - (m[0][0] * subfactor01 - m[0][1] * subfactor03 + m[0][3] * subfactor05)
+    inverse[1][3] = + (m[0][0] * subfactor02 - m[0][1] * subfactor04 + m[0][2] * subfactor05)
+
+    inverse[2][0] = + (m[0][1] * subfactor06 - m[0][2] * subfactor07 + m[0][3] * subfactor08)
+    inverse[2][1] = - (m[0][0] * subfactor06 - m[0][2] * subfactor09 + m[0][3] * subfactor10)
+    inverse[2][2] = + (m[0][0] * subfactor11 - m[0][1] * subfactor09 + m[0][3] * subfactor12)
+    inverse[2][3] = - (m[0][0] * subfactor08 - m[0][1] * subfactor10 + m[0][2] * subfactor12)
+
+    inverse[3][0] = - (m[0][1] * subfactor13 - m[0][2] * subfactor14 + m[0][3] * subfactor15)
+    inverse[3][1] = + (m[0][0] * subfactor13 - m[0][2] * subfactor16 + m[0][3] * subfactor17)
+    inverse[3][2] = - (m[0][0] * subfactor14 - m[0][1] * subfactor16 + m[0][3] * subfactor18)
+    inverse[3][3] = + (m[0][0] * subfactor15 - m[0][1] * subfactor17 + m[0][2] * subfactor18)
+
+    determinant = m[0][0] * inverse[0][0] + m[0][1] * inverse[0][1] + m[0][2] * inverse[0][2] + m[0][3] * inverse[0][3]
+
+    inverse /= determinant
+
+    return inverse
+
+
+def compute_tangent_basis(vertices, uvs, normals):
+    tangents = []
+    bitangents = []
+
+    for i in range(len(vertices)):
+        # Shortcuts for vertices
+        v0 = vertices[i + 0]
+        v1 = vertices[i + 1]
+        v2 = vertices[i + 2]
+
+        # Shortcuts for UVs
+        uv0 = uvs[i + 0]
+        uv1 = uvs[i + 1]
+        uv2 = uvs[i + 2]
+
+        # Edges of the triangle: postion delta
+        deltaPos1 = v1 - v0
+        deltaPos2 = v2 - v0
+
+        # UV delta
+        deltaUV1 = uv1 - uv0
+        deltaUV2 = uv2 - uv0
+
+        r = 1 / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x)
+        tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y) * r
+        bitangent = (deltaPos2 * deltaUV1.x - deltaPos1 * deltaUV2.x) * r
+
+        # Set the same tangent for all three vertices of the triangle.
+        # They will be merged later, in vboindexer.cpp
+        tangents.append(tangent)
+        tangents.append(tangent)
+        tangents.append(tangent)
+
+        # Same thing for binormals
+        bitangents.append(bitangent)
+        bitangents.append(bitangent)
+        bitangents.append(bitangent)
+
+    for i in range(len(vertices)):
+        n = normals[i]
+        t = tangents[i]
+        b = bitangents[i]
+
+        # Gram-Schmidt orthogonalize
+        t = normalize(t - n * dot(n, t))
+
+        # Calculate handedness
+        if dot(cross(n, t), b) < 0.0:
+            t = t * -1.0
+
+    return tangents, bitangents
+
 #endregion
 
 #region Vectors
@@ -89,6 +192,13 @@ def matrix_to_gl(mtx):
     mtx_ptr.append(list(mtx[1]))
     mtx_ptr.append(list(mtx[2]))
     mtx_ptr.append(list(mtx[3]))
+    return mtx_ptr
+
+def matrix3_to_gl(mtx):
+    mtx_ptr = []
+    mtx_ptr.append(list(mtx[0]))
+    mtx_ptr.append(list(mtx[1]))
+    mtx_ptr.append(list(mtx[2]))
     return mtx_ptr
 
 def lookAt(eye, center, up):
