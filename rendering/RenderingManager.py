@@ -80,29 +80,39 @@ class RenderingManager:
         self.mfLights_Spot = []
 
 
-    def initShaderProgram(self, openGL_context):
+    def initShaderProgram(self):
         if self.simple_shading:
-            file_vs = open('resources/shaders/simple_model_face.vert', 'r', encoding='utf-8')
+            file_vs = open('resources/shaders/simple_model_face.vert', 'r',
+                           encoding='utf-8')
             vs_str = str(file_vs.read())
-            file_fs = open('resources/shaders/simple_model_face.frag', 'r', encoding='utf-8')
+            file_fs = open('resources/shaders/simple_model_face.frag', 'r',
+                           encoding='utf-8')
             fs_str = str(file_fs.read())
 
             self.shader_program = glCreateProgram()
 
             shader_compilation = True
-            shader_compilation &= GLUtils.compileAndAttachShader(self.shader_program, GL_VERTEX_SHADER, vs_str)
-            shader_compilation &= GLUtils.compileAndAttachShader(self.shader_program, GL_FRAGMENT_SHADER, fs_str)
+            shader_compilation &= GLUtils.compileAndAttachShader(
+                self.shader_program, GL_VERTEX_SHADER, vs_str)
+            shader_compilation &= GLUtils.compileAndAttachShader(
+                self.shader_program, GL_FRAGMENT_SHADER, fs_str)
 
             if not shader_compilation:
-                Settings.log_error("[RenderingManager] Shader compilation failed!")
+                Settings.log_error(
+                    "[RenderingManager] Shader compilation failed!"
+                )
                 return False
 
             glLinkProgram(self.shader_program)
             if glGetProgramiv(self.shader_program, GL_LINK_STATUS) != GL_TRUE:
-                Settings.do_log("[RenderingManager] Shader linking failed! " + str(glGetProgramInfoLog(self.shader_program)))
+                Settings.do_log(
+                    "[RenderingManager] Shader linking failed! " +
+                    str(glGetProgramInfoLog(self.shader_program))
+                )
                 return False
 
-            self.gl_mvp_matrix = GLUtils.glGetUniform(self.shader_program, "vs_MVPMatrix")
+            self.gl_mvp_matrix = GLUtils.glGetUniform(
+                self.shader_program, "vs_MVPMatrix")
 
             return True
 
@@ -310,13 +320,22 @@ class RenderingManager:
         return True
 
 
-    def render(self, matrixProjection, matrixCamera, matrixGrid, managerObjects, selectedModel):
+    def render(self, managerObjects, selectedModel):
+        self.matrixProjection = managerObjects.matrixProjection
+        self.matrixCamera = managerObjects.camera.matrixCamera
+        self.vecCameraPosition = managerObjects.camera.cameraPosition
+        self.uiAmbientLight = managerObjects.Setting_UIAmbientLight
+        self.lightingPass_DrawMode = managerObjects.Setting_LightingPass_DrawMode
+        self.render_models(managerObjects, selectedModel)
+
+
+    def render_models(self, managerObjects, selectedModel):
         glUseProgram(self.shader_program)
 
         if self.simple_shading:
             for model in self.model_faces:
                 matrixModel = Matrix4x4(1.0)
-                matrixModel *= matrixGrid
+                matrixModel *= managerObjects.grid.matrixGrid
                 matrixModel = MathOps.matrix_scale(matrixModel, (model.scaleX['point'], model.scaleY['point'], model.scaleZ['point']))
                 matrixModel = MathOps.matrix_translate(matrixModel, (model.positionX['point'], model.positionY['point'], model.positionZ['point']))
                 matrixModel = MathOps.matrix_translate(matrixModel, Vector4(.0))
@@ -324,7 +343,7 @@ class RenderingManager:
                 matrixModel = MathOps.matrix_rotate(matrixModel, model.rotateY['point'], Vector3(0, 1, 0))
                 matrixModel = MathOps.matrix_rotate(matrixModel, model.rotateZ['point'], Vector3(0, 0, 1))
                 matrixModel = MathOps.matrix_translate(matrixModel, Vector4(.0))
-                model.matrixModel = matrixProjection * matrixCamera * matrixModel
+                model.matrixModel = self.matrixProjection * self.matrixCamera * matrixModel
                 glUniformMatrix4fv(self.gl_mvp_matrix, 1, GL_FALSE, MathOps.matrix_to_gl(model.matrixModel))
                 model.render()
             return
@@ -337,7 +356,7 @@ class RenderingManager:
 
             matrixModel = Matrix4x4(1.0)
             # grid
-            matrixModel *= matrixGrid
+            matrixModel *= managerObjects.grid.matrixModel
             # scale
             matrixModel = MathOps.matrix_scale( matrixModel, (model.scaleX['point'], model.scaleY['point'], model.scaleZ['point']))
             # translate
@@ -349,20 +368,20 @@ class RenderingManager:
             matrixModel = MathOps.matrix_rotate(matrixModel, model.rotateZ['point'], Vector3(0, 0, 1))
             matrixModel = MathOps.matrix_translate(matrixModel, Vector4(.0))
             # world
-            model.matrixModel = matrixProjection * matrixCamera * matrixModel
+            model.matrixModel = self.matrixProjection * self.matrixCamera * matrixModel
 
             model.Setting_ModelViewSkin = managerObjects.viewModelSkin
             model.lightSources = managerObjects.lightSources
 
-            mvpMatrix = matrixProjection * matrixCamera * matrixModel
+            mvpMatrix = self.matrixProjection * self.matrixCamera * matrixModel
 
             glUniformMatrix4fv(self.gl_mvp_matrix, 1, GL_FALSE, MathOps.matrix_to_gl(mvpMatrix))
             glUniformMatrix4fv(self.glVS_MVPMatrix, 1, GL_FALSE, MathOps.matrix_to_gl(matrixModel))
 
-            matrixModelView = matrixCamera * matrixModel
+            matrixModelView = self.matrixCamera * matrixModel
             glUniformMatrix4fv(self.glFS_MMatrix, 1, GL_FALSE, MathOps.matrix_to_gl(matrixModelView))
 
-            matrixNormal = MathOps.matrix_inverse_transpose(matrixCamera * matrixModel)
+            matrixNormal = MathOps.matrix_inverse_transpose(self.matrixCamera * matrixModel)
             matrixNormal = MathOps.to_matrix3(matrixNormal)
             glUniformMatrix3fv(self.glVS_NormalMatrix, 1, GL_FALSE, MathOps.matrix3_to_gl(matrixNormal))
 
@@ -629,7 +648,8 @@ class RenderingManager:
                 glUniform1i(self.glMaterial_HasTextureBump, 0)
 
             # textures - displacement
-            if model.vbo_tex_displacement is not None and model.mesh_model.ModelMaterial.texture_displacement.use_texture:
+            if model.vbo_tex_displacement is not None and\
+                model.mesh_model.ModelMaterial.texture_displacement.use_texture:
                 glUniform1i(self.glMaterial_HasTextureDisplacement, 1)
                 glUniform1i(self.glMaterial_SamplerDisplacement, 0)
                 glActiveTexture(GL_TEXTURE6)
@@ -640,20 +660,29 @@ class RenderingManager:
             # effects - gaussian blur
             glUniform1i(self.glEffect_GB_Mode, model.Effect_GBlur_Mode - 1)
             glUniform1f(self.glEffect_GB_W, model.Effect_GBlur_Width['point'])
-            glUniform1f(self.glEffect_GB_Radius, model.Effect_GBlur_Radius['point'])
+            glUniform1f(self.glEffect_GB_Radius,
+                        model.Effect_GBlur_Radius['point'])
 
             # effects - bloom
             # TODO: Bloom effect
-            glUniform1i(self.glEffect_Bloom_doBloom, model.Effect_Bloom_doBloom)
-            glUniform1f(self.glEffect_Bloom_WeightA, model.Effect_Bloom_WeightA)
-            glUniform1f(self.glEffect_Bloom_WeightB, model.Effect_Bloom_WeightB)
-            glUniform1f(self.glEffect_Bloom_WeightC, model.Effect_Bloom_WeightC)
-            glUniform1f(self.glEffect_Bloom_WeightD, model.Effect_Bloom_WeightD)
-            glUniform1f(self.glEffect_Bloom_Vignette, model.Effect_Bloom_Vignette)
-            glUniform1f(self.glEffect_Bloom_VignetteAtt, model.Effect_Bloom_VignetteAtt)
+            glUniform1i(self.glEffect_Bloom_doBloom,
+                        model.Effect_Bloom_doBloom)
+            glUniform1f(self.glEffect_Bloom_WeightA,
+                        model.Effect_Bloom_WeightA)
+            glUniform1f(self.glEffect_Bloom_WeightB,
+                        model.Effect_Bloom_WeightB)
+            glUniform1f(self.glEffect_Bloom_WeightC,
+                        model.Effect_Bloom_WeightC)
+            glUniform1f(self.glEffect_Bloom_WeightD,
+                        model.Effect_Bloom_WeightD)
+            glUniform1f(self.glEffect_Bloom_Vignette,
+                        model.Effect_Bloom_Vignette)
+            glUniform1f(self.glEffect_Bloom_VignetteAtt,
+                        model.Effect_Bloom_VignetteAtt)
 
             # effects - tone mapping
-            glUniform1i(self.glEffect_ToneMapping_ACESFilmRec2020, int(model.Effect_ToneMapping_ACESFilmRec2020))
+            glUniform1i(self.glEffect_ToneMapping_ACESFilmRec2020,
+                        int(model.Effect_ToneMapping_ACESFilmRec2020))
 
             # border
             glUniform1f(self.glVS_IsBorder, 0.0)

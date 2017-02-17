@@ -95,6 +95,10 @@ class ImGuiWindow():
         if not glfw.init():
             Settings.log_error("[ImGuiWindow] Could not initialize OpenGL context!")
             exit(1)
+        glfw.window_hint(glfw.DOUBLEBUFFER, 1)
+        glfw.window_hint(glfw.DEPTH_BITS, 24)
+        glfw.window_hint(glfw.STENCIL_BITS, 8)
+        glfw.window_hint(glfw.SAMPLES, 16)
         glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 4)
         glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 1)
         glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
@@ -351,9 +355,6 @@ class ImGuiWindow():
 
     def render_scene(self):
         self.renderingManager.render(
-            self.managerObjects.matrixProjection,
-            self.managerObjects.camera.matrixCamera,
-            self.managerObjects.grid.matrixModel,
             self.managerObjects,
             self.sceneSelectedModelObject
         )
@@ -373,17 +374,11 @@ class ImGuiWindow():
 
     def init_rendering_manager(self):
         self.renderingManager = RenderingManager()
-        self.renderingManager.initShaderProgram(glfw.get_current_context())
+        self.renderingManager.initShaderProgram()
         Settings.do_log("Rendering Manager initialized.")
 
         self.managerParser = ParserManager()
         self.managerParser.init_parser()
-
-        # models = self.managerParser.parse_file('resources/shapes/', 'cube.obj')
-        # for i in range(len(models)):
-        #     model_face = ModelFace()
-        #     model_face.initBuffers(models[i])
-        #     self.renderingManager.model_faces.append(model_face)
 
 
     def init_objects_manager(self):
@@ -394,15 +389,19 @@ class ImGuiWindow():
 
 
     def printGLStrings(self):
-        Settings.do_log("OpenGL Vendor: " + str(gl.glGetString(gl.GL_VENDOR)))
-        Settings.do_log("OpenGL version: " + str(gl.glGetString(gl.GL_VERSION)))
-        Settings.do_log("GLSL version: " + str(gl.glGetString(gl.GL_SHADING_LANGUAGE_VERSION)))
-        Settings.do_log("OpenGL Renderer: " + str(gl.glGetString(gl.GL_RENDERER)))
+        Settings.do_log("OpenGL Vendor: " +
+                        str(gl.glGetString(gl.GL_VENDOR)))
+        Settings.do_log("OpenGL version: " +
+                        str(gl.glGetString(gl.GL_VERSION)))
+        Settings.do_log("GLSL version: " +
+                        str(gl.glGetString(gl.GL_SHADING_LANGUAGE_VERSION)))
+        Settings.do_log("OpenGL Renderer: " +
+                        str(gl.glGetString(gl.GL_RENDERER)))
 
 
     def dialog_about_imgui(self):
         imgui.set_next_window_centered()
-        _, self.show_about_imgui = imgui.begin("About ImGui", self.show_about_imgui, imgui.WINDOW_ALWAYS_AUTO_RESIZE | imgui.WINDOW_NO_COLLAPSE)
+        _, self.show_about_imgui = imgui.begin("About ImGui",self.show_about_imgui, imgui.WINDOW_ALWAYS_AUTO_RESIZE | imgui.WINDOW_NO_COLLAPSE)
         imgui.text("ImGui 1.49")
         imgui.separator()
         imgui.text("By Omar Cornut and all github contributors.")

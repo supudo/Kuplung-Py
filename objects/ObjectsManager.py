@@ -57,6 +57,7 @@ class ObjectsManager():
         self.SolidLight_Ambient_ColorPicker = False
         self.SolidLight_Diffuse_ColorPicker = False
         self.SolidLight_Specular_ColorPicker = False
+        self.Setting_LightingPass_DrawMode = 0
 
 
     def render(self, glfw_window):
@@ -123,6 +124,7 @@ class ObjectsManager():
         self.SolidLight_Ambient_ColorPicker = False
         self.SolidLight_Diffuse_ColorPicker = False
         self.SolidLight_Specular_ColorPicker = False
+        self.Setting_LightingPass_DrawMode = 0
 
 
     def init_manager(self):
