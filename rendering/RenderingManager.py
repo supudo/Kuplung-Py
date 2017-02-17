@@ -393,7 +393,8 @@ class RenderingManager:
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
                 glEnable(GL_BLEND)
                 if model.meshModel.ModelMaterial.transparency < 1.0:
-                    glUniform1f(self.glFS_AlphaBlending, model.meshModel.ModelMaterial.transparency)
+                    glUniform1f(self.glFS_AlphaBlending,
+                                model.meshModel.ModelMaterial.transparency)
                 else:
                     glUniform1f(self.glFS_AlphaBlending, model.Setting_Alpha)
             else:
@@ -408,14 +409,19 @@ class RenderingManager:
             if managerObjects.Setting_PlaneClose >= 1.0:
                 pc = managerObjects.Setting_PlaneClose
             glUniform1f(self.glFS_planeClose, pc)
-            glUniform1f(self.glFS_planeFar, managerObjects.Setting_PlaneFar / 100.0)
-            glUniform1i(self.glFS_showDepthColor, int(managerObjects.Setting_Rendering_Depth))
+            glUniform1f(self.glFS_planeFar,
+                        managerObjects.Setting_PlaneFar / 100.0)
+            glUniform1i(self.glFS_showDepthColor,
+                        int(managerObjects.Setting_Rendering_Depth))
             glUniform1i(self.glFS_ShadowPass, 0)
 
             # tessellation
-            glUniform1i(self.glTCS_UseCullFace, int(model.Setting_UseCullFace))
-            glUniform1i(self.glTCS_UseTessellation, int(model.Setting_UseTessellation))
-            glUniform1i(self.glTCS_TessellationSubdivision, int(model.Setting_TessellationSubdivision))
+            glUniform1i(self.glTCS_UseCullFace,
+                        int(model.Setting_UseCullFace))
+            glUniform1i(self.glTCS_UseTessellation,
+                        int(model.Setting_UseTessellation))
+            glUniform1i(self.glTCS_TessellationSubdivision,
+                        int(model.Setting_TessellationSubdivision))
 
             # cel - shading
             glUniform1i(self.glFS_CelShading, int(model.Setting_CelShading))
@@ -457,13 +463,16 @@ class RenderingManager:
             )
 
             # mapping
-            glUniform1i(self.glMaterial_ParallaxMapping, int(model.Setting_ParallaxMapping))
+            glUniform1i(self.glMaterial_ParallaxMapping,
+                        int(model.Setting_ParallaxMapping))
 
             # gamma correction
-            glUniform1f(self.glFS_GammaCoeficient, managerObjects.Setting_GammaCoeficient)
+            glUniform1f(self.glFS_GammaCoeficient,
+                        managerObjects.Setting_GammaCoeficient)
 
             # render skin
-            glUniform1i(self.gl_ModelViewSkin, int(model.Setting_ModelViewSkin.value))
+            glUniform1i(self.gl_ModelViewSkin,
+                        int(model.Setting_ModelViewSkin.value))
             glUniform3f(
                 self.glFS_solidSkin_materialColor,
                 model.solidLightSkin_MaterialColor.r,
@@ -562,7 +571,8 @@ class RenderingManager:
                         lightsCount_Spot += 1
 
 
-            for i in range(lightsCount_Directional, self.GLSL_LightSourceNumber_Directional):
+            for i in range(lightsCount_Directional,
+                           self.GLSL_LightSourceNumber_Directional):
                 glUniform1i(self.mfLights_Directional[i].gl_InUse, 0)
 
             for i in range(lightsCount_Point, self.GLSL_LightSourceNumber_Point):
@@ -572,10 +582,14 @@ class RenderingManager:
                 glUniform1i(self.mfLights_Spot[i].gl_InUse, 0)
 
             # material
-            glUniform1f(self.glMaterial_Refraction, model.Setting_MaterialRefraction['point'])
-            glUniform1f(self.glMaterial_SpecularExp, model.Setting_MaterialSpecularExp['point'])
-            glUniform1i(self.glMaterial_IlluminationModel, int(model.materialIlluminationModel))
-            glUniform1f(self.glMaterial_HeightScale, model.displacementHeightScale['point'])
+            glUniform1f(self.glMaterial_Refraction,
+                        model.Setting_MaterialRefraction['point'])
+            glUniform1f(self.glMaterial_SpecularExp,
+                        model.Setting_MaterialSpecularExp['point'])
+            glUniform1i(self.glMaterial_IlluminationModel,
+                        int(model.materialIlluminationModel))
+            glUniform1f(self.glMaterial_HeightScale,
+                        model.displacementHeightScale['point'])
             glUniform3f(self.glMaterial_Ambient,
                         model.materialAmbient.color.r,
                         model.materialAmbient.color.g,
@@ -594,7 +608,8 @@ class RenderingManager:
                         model.materialEmission.color.b)
 
             # textures - ambient
-            if model.vbo_tex_ambient is not None and model.mesh_model.ModelMaterial.texture_ambient.use_texture:
+            if model.vbo_tex_ambient is not None and\
+                model.mesh_model.ModelMaterial.texture_ambient.use_texture:
                 glUniform1i(self.glMaterial_HasTextureAmbient, 1)
                 glUniform1i(self.glMaterial_SamplerAmbient, 0)
                 glActiveTexture(GL_TEXTURE0)
@@ -603,7 +618,8 @@ class RenderingManager:
                 glUniform1i(self.glMaterial_HasTextureAmbient, 0)
 
             # textures - diffuse
-            if model.vbo_tex_diffuse is not None and model.mesh_model.ModelMaterial.texture_diffuse.use_texture:
+            if model.vbo_tex_diffuse is not None and\
+                model.mesh_model.ModelMaterial.texture_diffuse.use_texture:
                 glUniform1i(self.glMaterial_HasTextureDiffuse, 1)
                 glUniform1i(self.glMaterial_SamplerDiffuse, 0)
                 glActiveTexture(GL_TEXTURE1)
@@ -612,7 +628,8 @@ class RenderingManager:
                 glUniform1i(self.glMaterial_HasTextureDiffuse, 0)
 
             # textures - specular
-            if model.vbo_tex_specular is not None and model.mesh_model.ModelMaterial.texture_specular.use_texture:
+            if model.vbo_tex_specular is not None and\
+                model.mesh_model.ModelMaterial.texture_specular.use_texture:
                 glUniform1i(self.glMaterial_HasTextureSpecular, 1)
                 glUniform1i(self.glMaterial_SamplerSpecular, 0)
                 glActiveTexture(GL_TEXTURE2)
@@ -621,7 +638,8 @@ class RenderingManager:
                 glUniform1i(self.glMaterial_HasTextureSpecular, 0)
 
             # textures - specular exp
-            if model.vbo_tex_specular_exp is not None and model.mesh_model.ModelMaterial.texture_specular_exp.use_texture:
+            if model.vbo_tex_specular_exp is not None and\
+                model.mesh_model.ModelMaterial.texture_specular_exp.use_texture:
                 glUniform1i(self.glMaterial_HasTextureSpecularExp, 1)
                 glUniform1i(self.glMaterial_SamplerSpecularExp, 0)
                 glActiveTexture(GL_TEXTURE3)
@@ -630,7 +648,8 @@ class RenderingManager:
                 glUniform1i(self.glMaterial_HasTextureSpecularExp, 0)
 
             # textures - dissolve
-            if model.vbo_tex_dissolve is not None and model.mesh_model.ModelMaterial.texture_dissolve.use_texture:
+            if model.vbo_tex_dissolve is not None and\
+                    model.mesh_model.ModelMaterial.texture_dissolve.use_texture:
                 glUniform1i(self.glMaterial_HasTextureDissolve, 1)
                 glUniform1i(self.glMaterial_SamplerDissolve, 0)
                 glActiveTexture(GL_TEXTURE4)
@@ -639,7 +658,8 @@ class RenderingManager:
                 glUniform1i(self.glMaterial_HasTextureDissolve, 0)
 
             # textures - normal
-            if model.vbo_tex_normal is not None and model.mesh_model.ModelMaterial.texture_normal.use_texture:
+            if model.vbo_tex_normal is not None and\
+                    model.mesh_model.ModelMaterial.texture_normal.use_texture:
                 glUniform1i(self.glMaterial_HasTextureBump, 1)
                 glUniform1i(self.glMaterial_SamplerBump, 0)
                 glActiveTexture(GL_TEXTURE5)

@@ -7,6 +7,7 @@ __author__ = 'supudo'
 __version__ = "1.0.0"
 
 from OpenGL.GL import *
+from OpenGL.raw.GLU import *
 from settings import Settings
 
 
@@ -70,3 +71,9 @@ def printProgramLog(shader_program):
                 Settings.do_log("[GLUtils-Log-ShaderProgram] " + str(line))
     else:
         Settings.do_log("[GLUtils] Name " + str(shader_program) + " is not a shader program!")
+
+
+def print_gl_errors():
+    err = glGetError()
+    if (err != GL_NO_ERROR):
+        print('[GLUtils] [ERROR]', gluErrorString(err))
