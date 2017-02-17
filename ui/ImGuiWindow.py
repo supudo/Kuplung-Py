@@ -50,6 +50,8 @@ class ImGuiWindow():
     show_controls_models = True
     show_controls_gui = True
 
+    sceneSelectedModelObject = -1
+
 
     def show_main_window(self):
         self.init_gl()
@@ -350,7 +352,8 @@ class ImGuiWindow():
             self.managerObjects.matrixProjection,
             self.managerObjects.camera.matrixCamera,
             self.managerObjects.grid.matrixModel,
-            self.managerObjects
+            self.managerObjects,
+            self.sceneSelectedModelObject
         )
 
 

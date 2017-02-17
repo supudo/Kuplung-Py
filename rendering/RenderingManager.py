@@ -144,7 +144,6 @@ class RenderingManager:
             GLUtils.printProgramLog(self.shader_program)
             return False
 
-        GLUtils.printProgramLog(self.shader_program)
         glPatchParameteri(GL_PATCH_VERTICES, 3)
 
         self.gl_mvp_matrix = GLUtils.glGetUniform(self.shader_program, "vs_MVPMatrix")
@@ -293,10 +292,11 @@ class RenderingManager:
         #﻿effects - tone mapping
         self.glEffect_ToneMapping_ACESFilmRec2020 = GLUtils.glGetUniform(self.shader_program, "fs_ACESFilmRec2020")
 
+        GLUtils.printProgramLog(self.shader_program)
         return True
 
 
-    def render(self, matrixProjection, matrixCamera, matrixGrid, managerObjects):
+    def render(self, matrixProjection, matrixCamera, matrixGrid, managerObjects, selectedModel):
         glUseProgram(self.shader_program)
 
         if self.simple_shading:
@@ -315,7 +315,11 @@ class RenderingManager:
                 model.render()
             return
 
+        selectedModelID = -1
         for model in self.model_faces:
+
+            if model.so_selectedYn:
+                so_selectedYn = selectedModelID
 
             matrixModel = Matrix4x4(1.0)
             # grid
@@ -374,15 +378,15 @@ class RenderingManager:
             glUniform1f(self.glFS_planeClose, pc)
             glUniform1f(self.glFS_planeFar, managerObjects.Setting_PlaneFar / 100.0)
             glUniform1i(self.glFS_showDepthColor, managerObjects.Setting_Rendering_Depth)
-            glUniform1i(self.glFS_ShadowPass, False)
+            glUniform1i(self.glFS_ShadowPass, 0)
 
             # tessellation
-            glUniform1i(self.glTCS_UseCullFace, model.Setting_UseCullFace)
-            glUniform1i(self.glTCS_UseTessellation, model.Setting_UseTessellation)
-            glUniform1i(self.glTCS_TessellationSubdivision, model.Setting_TessellationSubdivision)
+            glUniform1i(self.glTCS_UseCullFace, int(model.Setting_UseCullFace))
+            glUniform1i(self.glTCS_UseTessellation, int(model.Setting_UseTessellation))
+            glUniform1i(self.glTCS_TessellationSubdivision, int(model.Setting_TessellationSubdivision))
 
             # cel - shading
-            glUniform1i(self.glFS_CelShading, model.Setting_CelShading)
+            glUniform1i(self.glFS_CelShading, int(model.Setting_CelShading))
 
             # camera position
             glUniform3f(
@@ -421,19 +425,24 @@ class RenderingManager:
             )
 
             # mapping
-            glUniform1i(self.glMaterial_ParallaxMapping, model.Setting_ParallaxMapping)
+            glUniform1i(self.glMaterial_ParallaxMapping, int(model.Setting_ParallaxMapping))
 
             # gamma correction
             glUniform1f(self.glFS_GammaCoeficient, managerObjects.Setting_GammaCoeficient)
 
             # render skin
-            glUniform1i(self.gl_ModelViewSkin, model.Setting_ModelViewSkin.value)
-            glUniform3f(self.glFS_solidSkin_materialColor, 0.9, 0.9, 0.9) # solidLightSkin_MaterialColor
+            glUniform1i(self.gl_ModelViewSkin, int(model.Setting_ModelViewSkin.value))
+            glUniform3f(
+                self.glFS_solidSkin_materialColor,
+                model.solidLightSkin_MaterialColor.r,
+                model.solidLightSkin_MaterialColor.g,
+                model.solidLightSkin_MaterialColor.b
+            )
 
             # shadows
-            glUniform1i(self.glFS_showShadows, False)
+            glUniform1i(self.glFS_showShadows, 0)
 
-            glUniform1i(self.solidLight.gl_InUse, True)
+            glUniform1i(self.solidLight.gl_InUse, 1)
             glUniform3f(self.solidLight.gl_Direction, managerObjects.SolidLight_Direction.x, managerObjects.SolidLight_Direction.y, managerObjects.SolidLight_Direction.z)
             glUniform3f(self.solidLight.gl_Ambient, managerObjects.SolidLight_Ambient.r, managerObjects.SolidLight_Ambient.g, managerObjects.SolidLight_Ambient.b)
             glUniform3f(self.solidLight.gl_Diffuse, managerObjects.SolidLight_Diffuse.r, managerObjects.SolidLight_Diffuse.g, managerObjects.SolidLight_Diffuse.b)
@@ -450,7 +459,7 @@ class RenderingManager:
                 if light.type == Settings.LightSourceTypes.LightSourceType_Directional:
                     if lightsCount_Directional < self.GLSL_LightSourceNumber_Directional:
                         f = self.mfLights_Directional[lightsCount_Directional]
-                        glUniform1i(f.gl_InUse, True)
+                        glUniform1i(f.gl_InUse, 1)
 
                         # light
                         glUniform3f(f.gl_Direction, light.positionX['point'], light.positionY['point'], light.positionZ['point'])
@@ -469,7 +478,7 @@ class RenderingManager:
                 if light.type == Settings.LightSourceTypes.LightSourceType_Point:
                     if lightsCount_Point < self.GLSL_LightSourceNumber_Point:
                         f = self.mfLights_Point[lightsCount_Point]
-                        glUniform1i(f.gl_InUse, True)
+                        glUniform1i(f.gl_InUse, 1)
 
                         # light
                         glUniform3f(f.gl_Position, light.matrixModel[3].x, light.matrixModel[3].y, light.matrixModel[3].z)
@@ -493,7 +502,7 @@ class RenderingManager:
                 if light.type == Settings.LightSourceTypes.LightSourceType_Spot:
                     if lightsCount_Spot < self.GLSL_LightSourceNumber_Spot:
                         f = self.mfLights_Spot[lightsCount_Spot]
-                        glUniform1i(f.gl_InUse, True)
+                        glUniform1i(f.gl_InUse, 1)
 
                         # light
                         glUniform3f(f.gl_Direction, light.positionX['point'], light.positionY['point'], light.positionZ['point'])
@@ -522,18 +531,18 @@ class RenderingManager:
 
 
             for i in range(lightsCount_Directional, self.GLSL_LightSourceNumber_Directional):
-                glUniform1i(self.mfLights_Directional[i].gl_InUse, False)
+                glUniform1i(self.mfLights_Directional[i].gl_InUse, 0)
 
             for i in range(lightsCount_Point, self.GLSL_LightSourceNumber_Point):
-                glUniform1i(self.mfLights_Point[i].gl_InUse, False)
+                glUniform1i(self.mfLights_Point[i].gl_InUse, 0)
 
             for i in range(lightsCount_Spot, self.GLSL_LightSourceNumber_Spot):
-                glUniform1i(self.mfLights_Spot[i].gl_InUse, False)
+                glUniform1i(self.mfLights_Spot[i].gl_InUse, 0)
 
             # material
             glUniform1f(self.glMaterial_Refraction, model.Setting_MaterialRefraction['point'])
             glUniform1f(self.glMaterial_SpecularExp, model.Setting_MaterialSpecularExp['point'])
-            glUniform1i(self.glMaterial_IlluminationModel, model.materialIlluminationModel)
+            glUniform1i(self.glMaterial_IlluminationModel, int(model.materialIlluminationModel))
             glUniform1f(self.glMaterial_HeightScale, model.displacementHeightScale['point'])
             glUniform3f(self.glMaterial_Ambient,
                         model.materialAmbient.color.r,
@@ -554,66 +563,66 @@ class RenderingManager:
 
             # textures - ambient
             if model.vbo_tex_ambient is not None and model.mesh_model.ModelMaterial.texture_ambient.use_texture:
-                glUniform1i(self.glMaterial_HasTextureAmbient, True)
+                glUniform1i(self.glMaterial_HasTextureAmbient, 1)
                 glUniform1i(self.glMaterial_SamplerAmbient, 0)
                 glActiveTexture(GL_TEXTURE0)
                 glBindTexture(GL_TEXTURE_2D, model.vbo_tex_ambient)
             else:
-                glUniform1i(self.glMaterial_HasTextureAmbient, False)
+                glUniform1i(self.glMaterial_HasTextureAmbient, 0)
 
             # textures - diffuse
             if model.vbo_tex_diffuse is not None and model.mesh_model.ModelMaterial.texture_diffuse.use_texture:
-                glUniform1i(self.glMaterial_HasTextureDiffuse, True)
+                glUniform1i(self.glMaterial_HasTextureDiffuse, 1)
                 glUniform1i(self.glMaterial_SamplerDiffuse, 0)
                 glActiveTexture(GL_TEXTURE1)
                 glBindTexture(GL_TEXTURE_2D, model.vbo_tex_diffuse)
             else:
-                glUniform1i(self.glMaterial_HasTextureDiffuse, False)
+                glUniform1i(self.glMaterial_HasTextureDiffuse, 0)
 
             # textures - specular
             if model.vbo_tex_specular is not None and model.mesh_model.ModelMaterial.texture_specular.use_texture:
-                glUniform1i(self.glMaterial_HasTextureSpecular, True)
+                glUniform1i(self.glMaterial_HasTextureSpecular, 1)
                 glUniform1i(self.glMaterial_SamplerSpecular, 0)
                 glActiveTexture(GL_TEXTURE2)
                 glBindTexture(GL_TEXTURE_2D, model.vbo_tex_specular)
             else:
-                glUniform1i(self.glMaterial_HasTextureSpecular, False)
+                glUniform1i(self.glMaterial_HasTextureSpecular, 0)
 
             # textures - specular exp
             if model.vbo_tex_specular_exp is not None and model.mesh_model.ModelMaterial.texture_specular_exp.use_texture:
-                glUniform1i(self.glMaterial_HasTextureSpecularExp, True)
+                glUniform1i(self.glMaterial_HasTextureSpecularExp, 1)
                 glUniform1i(self.glMaterial_SamplerSpecularExp, 0)
                 glActiveTexture(GL_TEXTURE3)
                 glBindTexture(GL_TEXTURE_2D, model.vbo_tex_specular_exp)
             else:
-                glUniform1i(self.glMaterial_HasTextureSpecularExp, False)
+                glUniform1i(self.glMaterial_HasTextureSpecularExp, 0)
 
             # textures - dissolve
             if model.vbo_tex_dissolve is not None and model.mesh_model.ModelMaterial.texture_dissolve.use_texture:
-                glUniform1i(self.glMaterial_HasTextureDissolve, True)
+                glUniform1i(self.glMaterial_HasTextureDissolve, 1)
                 glUniform1i(self.glMaterial_SamplerDissolve, 0)
                 glActiveTexture(GL_TEXTURE4)
                 glBindTexture(GL_TEXTURE_2D, model.vbo_tex_dissolve)
             else:
-                glUniform1i(self.glMaterial_HasTextureDissolve, False)
+                glUniform1i(self.glMaterial_HasTextureDissolve, 0)
 
             # textures - normal
             if model.vbo_tex_normal is not None and model.mesh_model.ModelMaterial.texture_normal.use_texture:
-                glUniform1i(self.glMaterial_HasTextureBump, True)
+                glUniform1i(self.glMaterial_HasTextureBump, 1)
                 glUniform1i(self.glMaterial_SamplerBump, 0)
                 glActiveTexture(GL_TEXTURE5)
                 glBindTexture(GL_TEXTURE_2D, model.vbo_tex_normal)
             else:
-                glUniform1i(self.glMaterial_HasTextureBump, False)
+                glUniform1i(self.glMaterial_HasTextureBump, 0)
 
             # textures - displacement
             if model.vbo_tex_displacement is not None and model.mesh_model.ModelMaterial.texture_displacement.use_texture:
-                glUniform1i(self.glMaterial_HasTextureDisplacement, True)
+                glUniform1i(self.glMaterial_HasTextureDisplacement, 1)
                 glUniform1i(self.glMaterial_SamplerDisplacement, 0)
                 glActiveTexture(GL_TEXTURE6)
                 glBindTexture(GL_TEXTURE_2D, model.vbo_tex_displacement)
             else:
-                glUniform1i(self.glMaterial_HasTextureDisplacement, False)
+                glUniform1i(self.glMaterial_HasTextureDisplacement, 0)
 
             # effects - gaussian blur
             glUniform1i(self.glEffect_GB_Mode, model.Effect_GBlur_Mode - 1)
@@ -631,12 +640,12 @@ class RenderingManager:
             glUniform1f(self.glEffect_Bloom_VignetteAtt, model.Effect_Bloom_VignetteAtt)
 
             # effects - tone mapping
-            glUniform1i(self.glEffect_ToneMapping_ACESFilmRec2020, model.Effect_ToneMapping_ACESFilmRec2020)
+            glUniform1i(self.glEffect_ToneMapping_ACESFilmRec2020, int(model.Effect_ToneMapping_ACESFilmRec2020))
 
             # border
             glUniform1f(self.glVS_IsBorder, 0.0)
 
             # render VAO
-            model.render()
+            model.render(True)
 
         glUseProgram(0)

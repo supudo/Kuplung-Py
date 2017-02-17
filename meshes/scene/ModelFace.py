@@ -107,6 +107,10 @@ class ModelFace:
 
         self.mesh_model = None
 
+        self.so_selectedYn = False
+        self.so_outlineColor = Vector4(1.0, 0.0, 0.0, 1.0)
+        self.solidLightSkin_MaterialColor = Vector3(1, 0, 0)
+
 
     def initModelProperties(self, model):
         self.mesh_model = model
@@ -180,6 +184,10 @@ class ModelFace:
         self.Setting_Gizmo_Translate = False
         self.Setting_Gizmo_Rotate = False
         self.Setting_Gizmo_Scale = False
+
+        self.so_selectedYn = False
+        self.so_outlineColor = Vector4(1.0, 0.0, 0.0, 1.0)
+        self.solidLightSkin_MaterialColor = Vector3(1, 0, 0)
 
 
     def initBuffers(self):
@@ -297,11 +305,15 @@ class ModelFace:
         return None
 
 
-    def render(self):
-        if Settings.Setting_Wireframe or Settings.Setting_ModelViewSkin == Settings.ViewModelSkin.ViewModelSkin_Wireframe:
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
-        glBindVertexArray(self.glVAO)
-        glDrawElements(GL_TRIANGLES, self.mesh_model.countIndices, GL_UNSIGNED_INT, None)
-        glBindVertexArray(0)
-        if Settings.Setting_Wireframe or Settings.Setting_ModelViewSkin == Settings.ViewModelSkin.ViewModelSkin_Wireframe:
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
+    def render(self, use_tessellation):
+        if self.glVAO > 0:
+            if Settings.Setting_Wireframe or Settings.Setting_ModelViewSkin == Settings.ViewModelSkin.ViewModelSkin_Wireframe:
+                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
+            glBindVertexArray(self.glVAO)
+            if use_tessellation:
+                glDrawElements(GL_PATCHES, self.mesh_model.countIndices, GL_UNSIGNED_INT, None)
+            else:
+                glDrawElements(GL_TRIANGLES, self.mesh_model.countIndices, GL_UNSIGNED_INT, None)
+            glBindVertexArray(0)
+            if Settings.Setting_Wireframe or Settings.Setting_ModelViewSkin == Settings.ViewModelSkin.ViewModelSkin_Wireframe:
+                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
