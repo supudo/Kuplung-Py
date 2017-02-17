@@ -20,8 +20,10 @@ from enum import Enum
 AppVersion = "1.0 d"
 
 AppMainWindowTitle = "Kuplung"
-AppMainWindowWidth = 1300
-AppMainWindowHeight = 900
+AppFramebufferWidth = 1300
+AppFramebufferHeight = 900
+AppWindowWidth = 1300
+AppWindowHeight = 900
 
 ApplicationRootPath = ''
 ApplicationAssetsPath = 'resources/shapes/'

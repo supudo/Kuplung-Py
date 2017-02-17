@@ -71,9 +71,11 @@ class ImGuiWindow():
 
             self.handle_controls_events()
 
+            w_width, w_height = glfw.get_window_size(self.window)
+            Settings.AppWindowWidth, Settings.AppWindowHeight = w_width, w_height
             width, height = glfw.get_framebuffer_size(self.window)
-            Settings.AppMainWindowWidth, Settings.AppMainWindowHeight = width, height
-            gl.glViewport(0, 0, int(width / 2), int(height))
+            Settings.AppFramebufferWidth, Settings.AppFramebufferHeight = width, height
+            gl.glViewport(0, 0, int(w_width / 2), int(w_height))
             gl.glClearColor(Settings.guiClearColor[0],
                             Settings.guiClearColor[1],
                             Settings.guiClearColor[2],
@@ -101,8 +103,8 @@ class ImGuiWindow():
 
     def init_window(self):
         self.window = glfw.create_window(
-            int(Settings.AppMainWindowWidth),
-            int(Settings.AppMainWindowHeight),
+            int(Settings.AppFramebufferWidth),
+            int(Settings.AppFramebufferHeight),
             Settings.AppMainWindowTitle, None, None
         )
         glfw.make_context_current(self.window)

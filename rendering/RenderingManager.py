@@ -5,20 +5,27 @@ Kuplung - OpenGL Viewer, python port
 supudo.net
 """
 
-__author__ = 'supudo'
-__version__ = "1.0.0"
-
 from OpenGL.GL import *
 from math import cos, radians
 from settings import Settings
 from gl_utils import GLUtils
-from gl_utils.objects.ModelFace_LightSource_Directional import ModelFace_LightSource_Directional
-from gl_utils.objects.ModelFace_LightSource_Point import ModelFace_LightSource_Point
-from gl_utils.objects.ModelFace_LightSource_Spot import ModelFace_LightSource_Spot
+from gl_utils.objects.ModelFace_LightSource_Directional import (
+    ModelFace_LightSource_Directional
+)
+from gl_utils.objects.ModelFace_LightSource_Point import (
+    ModelFace_LightSource_Point
+)
+from gl_utils.objects.ModelFace_LightSource_Spot import (
+    ModelFace_LightSource_Spot
+)
 from maths.types.Matrix4x4 import Matrix4x4
 from maths.types.Vector3 import Vector3
 from maths.types.Vector4 import Vector4
 from maths import MathOps
+
+
+__author__ = 'supudo'
+__version__ = "1.0.0"
 
 
 class RenderingManager:
@@ -100,29 +107,36 @@ class RenderingManager:
             return True
 
         # vertex shader
-        file_vs = open('resources/shaders/model_face.vert', 'r', encoding='utf-8')
+        file_vs = open('resources/shaders/model_face.vert', 'r',
+                       encoding='utf-8')
         vs_str = str(file_vs.read())
 
         # tessellation control shader
-        file_tcs = open('resources/shaders/model_face.tcs', 'r', encoding='utf-8')
+        file_tcs = open('resources/shaders/model_face.tcs',
+                        'r', encoding='utf-8')
         tcs_str = str(file_tcs.read())
 
         # tessellation evaluation shader
-        file_tes = open('resources/shaders/model_face.tes', 'r', encoding='utf-8')
+        file_tes = open('resources/shaders/model_face.tes',
+                        'r', encoding='utf-8')
         tes_str = str(file_tes.read())
 
         # geometry shader
-        file_geom = open('resources/shaders/model_face.geom', 'r', encoding='utf-8')
+        file_geom = open('resources/shaders/model_face.geom',
+                         'r', encoding='utf-8')
         geom_str = str(file_geom.read())
 
         # fragment shader
         fs_str = ''
-        fs_components = ["vars", "effects", "lights", "mapping", "shadow_mapping", "misc"]
+        fs_components = ["vars", "effects", "lights",
+                         "mapping", "shadow_mapping", "misc"]
         for comp in fs_components:
-            file_fs = open('resources/shaders/model_face_' + comp + '.frag', 'r', encoding='utf-8')
+            file_fs = open('resources/shaders/model_face_' + comp + '.frag',
+                           'r', encoding='utf-8')
             fs_str += str(file_fs.read())
 
-        file_fs = open('resources/shaders/model_face.frag', 'r', encoding='utf-8')
+        file_fs = open('resources/shaders/model_face.frag', 'r',
+                       encoding='utf-8')
         fs_str += str(file_fs.read())
 
         self.shader_program = glCreateProgram()
@@ -349,10 +363,10 @@ class RenderingManager:
             glUniformMatrix4fv(self.glFS_MMatrix, 1, GL_FALSE, MathOps.matrix_to_gl(matrixModelView))
 
             matrixNormal = MathOps.matrix_inverse_transpose(matrixCamera * matrixModel)
+            matrixNormal = MathOps.to_matrix3(matrixNormal)
             glUniformMatrix3fv(self.glVS_NormalMatrix, 1, GL_FALSE, MathOps.matrix3_to_gl(matrixNormal))
 
-            matrixWorld = matrixModel
-            glUniformMatrix4fv(self.glVS_WorldMatrix, 1, GL_FALSE, MathOps.matrix_to_gl(matrixWorld))
+            glUniformMatrix4fv(self.glVS_WorldMatrix, 1, GL_FALSE, MathOps.matrix_to_gl(matrixModel))
 
             # blending
             if model.mesh_model.ModelMaterial.transparency < 1.0 or model.Setting_Alpha < 1.0:
@@ -370,14 +384,13 @@ class RenderingManager:
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
                 glUniform1f(self.glFS_AlphaBlending, 1.0)
 
-
             # depth color
             pc = 1.0
             if managerObjects.Setting_PlaneClose >= 1.0:
                 pc = managerObjects.Setting_PlaneClose
             glUniform1f(self.glFS_planeClose, pc)
             glUniform1f(self.glFS_planeFar, managerObjects.Setting_PlaneFar / 100.0)
-            glUniform1i(self.glFS_showDepthColor, managerObjects.Setting_Rendering_Depth)
+            glUniform1i(self.glFS_showDepthColor, int(managerObjects.Setting_Rendering_Depth))
             glUniform1i(self.glFS_ShadowPass, 0)
 
             # tessellation
@@ -397,8 +410,8 @@ class RenderingManager:
             )
 
             # screen size
-            glUniform1f(self.glFS_ScreenResX, Settings.AppMainWindowWidth)
-            glUniform1f(self.glFS_ScreenResY, Settings.AppMainWindowHeight)
+            glUniform1f(self.glFS_ScreenResX, Settings.AppWindowWidth)
+            glUniform1f(self.glFS_ScreenResY, Settings.AppWindowHeight)
 
             # Outline color
             glUniform3f(

@@ -106,7 +106,30 @@ def matrix_inverse_transpose(m):
 
     inverse /= determinant
 
+    inverse[0].w = 0
+    inverse[1].w = 0
+    inverse[2].w = 0
+    inverse[3].w = 0
+    inverse[3].x = 0
+    inverse[3].y = 0
+    inverse[3].z = 0
+    inverse[3].w = 1
+
     return inverse
+
+
+def to_matrix3(m):
+    mtx = Matrix3x3()
+    mtx[0].x = m[0].x
+    mtx[0].y = m[0].y
+    mtx[0].z = m[0].z
+    mtx[1].x = m[1].x
+    mtx[1].y = m[1].y
+    mtx[1].z = m[1].z
+    mtx[2].x = m[2].x
+    mtx[2].y = m[2].y
+    mtx[2].z = m[2].z
+    return mtx
 
 
 def compute_tangent_basis(vertices, uvs, normals):
@@ -236,15 +259,24 @@ def perspective(fovy, aspect, zNear, zFar):
 
 #endregion
 
-def print_matrix(mtx):
+def print_matrix4(mtx):
     print_vec4(mtx[0])
     print_vec4(mtx[1])
     print_vec4(mtx[2])
     print_vec4(mtx[3])
     print("========")
 
+def print_matrix3(mtx):
+    print_vec3(mtx[0])
+    print_vec3(mtx[1])
+    print_vec3(mtx[2])
+    print("========")
+
 def print_vec4(vec):
-    print("x = " + str(vec.x) + ", y = " + str(vec.y) + ", z = " + str(vec.z) + ", w = " + str(vec.w))
+    if not vec is None:
+        print("x = " + str(vec.x) + ", y = " + str(vec.y) + ", z = " + str(vec.z) + ", w = " + str(vec.w))
+    else:
+        print("Vector4 is None!")
 
 def print_vec3(vec):
     if not vec is None:

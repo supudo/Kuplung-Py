@@ -52,11 +52,11 @@ class KuplungMainWindow(QMainWindow):
         dw = QApplication.desktop()
         screen = dw.screen()
         size = screen.geometry()
-        posX = (size.width() - Settings.AppMainWindowWidth) / 2
-        posY = (size.height() - Settings.AppMainWindowHeight) / 2
+        posX = (size.width() - Settings.AppFramebufferWidth) / 2
+        posY = (size.height() - Settings.AppFramebufferHeight) / 2
         self.setGeometry(posX, posY,
-                        Settings.AppMainWindowWidth,
-                        Settings.AppMainWindowHeight)
+                         Settings.AppFramebufferWidth,
+                         Settings.AppFramebufferHeight)
 
         # set theme
         # self.setStyleSheet(Stylesheet.KuplungTheme)

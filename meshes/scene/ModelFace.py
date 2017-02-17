@@ -109,7 +109,7 @@ class ModelFace:
 
         self.so_selectedYn = False
         self.so_outlineColor = Vector4(1.0, 0.0, 0.0, 1.0)
-        self.solidLightSkin_MaterialColor = Vector3(1, 0, 0)
+        self.solidLightSkin_MaterialColor = Vector3(0, 0, 0)
 
 
     def initModelProperties(self, model):
@@ -187,7 +187,7 @@ class ModelFace:
 
         self.so_selectedYn = False
         self.so_outlineColor = Vector4(1.0, 0.0, 0.0, 1.0)
-        self.solidLightSkin_MaterialColor = Vector3(1, 0, 0)
+        self.solidLightSkin_MaterialColor = Vector3(0, 0, 0)
 
 
     def initBuffers(self):
