@@ -52,7 +52,6 @@ class ImGuiWindow():
 
     sceneSelectedModelObject = -1
 
-
     def show_main_window(self):
         self.init_gl()
         self.init_window()
@@ -90,7 +89,6 @@ class ImGuiWindow():
 
         glfw.terminate()
 
-
     def init_gl(self):
         if not glfw.init():
             Settings.log_error("[ImGuiWindow] Could not initialize OpenGL context!")
@@ -104,12 +102,12 @@ class ImGuiWindow():
         glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
         glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, gl.GL_TRUE)
 
-
     def init_window(self):
         self.window = glfw.create_window(
             int(Settings.AppFramebufferWidth),
             int(Settings.AppFramebufferHeight),
-            Settings.AppMainWindowTitle, None, None
+            Settings.AppMainWindowTitle,
+            None, None
         )
         glfw.make_context_current(self.window)
         if not self.window:
@@ -117,24 +115,20 @@ class ImGuiWindow():
             Settings.log_error("[ImGuiWindow] Could not initialize Window!")
             exit(1)
 
-
     def init_glfw_handlers(self):
         self.managerControls = ControlsManager()
         self.managerControls.init_handlers(self.window)
         Settings.do_log("Control events initialized.")
-
 
     def init_sub_windows(self):
         self.controlsModels = DialogControlsModels()
         self.controlsGUI = DialogControlsGUI()
         Settings.do_log("GUI sub windows initialized.")
 
-
     def init_components(self):
         self.component_log = Log()
         Settings.FuncDoLog = self.component_log.add_to_log
         Settings.do_log("GUI components initialized.")
-
 
     def init_imgui_impl(self):
         self.imgui_context = GlfwImpl(self.window)
@@ -147,7 +141,6 @@ class ImGuiWindow():
         self.render_main_menu()
         self.render_ui_content()
         self.render_scene()
-
 
     def handle_controls_events(self):
         if not imgui.is_mouse_hovering_any_window():
@@ -190,7 +183,6 @@ class ImGuiWindow():
                     self.managerObjects.camera.rotateY['point'] = 360
 
             self.managerControls.reset_mouse_motion()
-
 
     def render_main_menu(self):
         if imgui.begin_main_menu_bar():
@@ -302,7 +294,6 @@ class ImGuiWindow():
 
         self.render_dialogs()
 
-
     def render_dialogs(self):
         if self.show_imgui_test_window:
             imgui.show_test_window()
@@ -326,14 +317,12 @@ class ImGuiWindow():
         if self.new_scene_clear:
             self.gui_clear_scene()
 
-
     def render_controls(self):
         if self.show_controls_models:
             self.show_controls_models = self.controlsModels.render(self, self.show_controls_models)
 
         if self.show_controls_gui:
             self.show_controls_gui = self.controlsGUI.render(self.show_controls_gui)
-
 
     def add_shape(self, shapeType):
         models = self.managerParser.parse_file('resources/shapes/', shapeType.value[0] + '.obj')
@@ -343,22 +332,18 @@ class ImGuiWindow():
             model_face.initBuffers()
             self.renderingManager.model_faces.append(model_face)
 
-
     def add_light(self, lightType):
         self.managerObjects.add_light(lightType)
-
 
     def render_ui_content(self):
         self.managerObjects.render(self.window)
         self.render_controls()
-
 
     def render_scene(self):
         self.renderingManager.render(
             self.managerObjects,
             self.sceneSelectedModelObject
         )
-
 
     def get_app_consumption(self):
         consumption_str = Consumption.memory()
@@ -371,7 +356,6 @@ class ImGuiWindow():
             Settings.SceneCountFaces,
             consumption_str)
 
-
     def init_rendering_manager(self):
         self.renderingManager = RenderingManager()
         self.renderingManager.initShaderProgram()
@@ -380,13 +364,11 @@ class ImGuiWindow():
         self.managerParser = ParserManager()
         self.managerParser.init_parser()
 
-
     def init_objects_manager(self):
         self.managerObjects = ObjectsManager()
         self.managerObjects.load_system_models()
         self.managerObjects.init_manager()
         Settings.do_log("Objects Manager initialized.")
-
 
     def printGLStrings(self):
         Settings.do_log("OpenGL Vendor: " +
@@ -398,7 +380,6 @@ class ImGuiWindow():
         Settings.do_log("OpenGL Renderer: " +
                         str(gl.glGetString(gl.GL_RENDERER)))
 
-
     def dialog_about_imgui(self):
         imgui.set_next_window_centered()
         _, self.show_about_imgui = imgui.begin("About ImGui",self.show_about_imgui, imgui.WINDOW_ALWAYS_AUTO_RESIZE | imgui.WINDOW_NO_COLLAPSE)
@@ -409,14 +390,12 @@ class ImGuiWindow():
         imgui.text("https://github.com/swistakm/pyimgui")
         imgui.end()
 
-
     def dialog_about_pyimgui(self):
         imgui.set_next_window_centered()
         _, self.show_about_pyimgui = imgui.begin("About PyImGui", self.show_about_pyimgui, imgui.WINDOW_ALWAYS_AUTO_RESIZE | imgui.WINDOW_NO_COLLAPSE)
         imgui.text("Cython-based Python bindings for dear imgui")
         imgui.text("https://github.com/swistakm/pyimgui")
         imgui.end()
-
 
     def dialog_about_kuplung(self):
         imgui.set_next_window_centered()
@@ -430,7 +409,6 @@ class ImGuiWindow():
         imgui.text("Left Alt + Mouse wheel to increase/decrease the FOV")
         imgui.text("Left Shift + Mouse wheel to increase/decrease the FOV")
         imgui.end()
-
 
     def dialog_scene_metrics(self):
         _, self.show_scene_metrics = imgui.begin("Scene Metrics", self.show_scene_metrics, imgui.WINDOW_ALWAYS_AUTO_RESIZE | imgui.WINDOW_NO_TITLE_BAR)
@@ -448,10 +426,8 @@ class ImGuiWindow():
         imgui.text(str(imgui_io.metrics_allocs) + " allocations")
         imgui.end()
 
-
     def dialog_log_window(self):
         self.show_log_window = self.component_log.draw_window('Log Window', self.show_log_window)
-
 
     def gui_clear_scene(self):
         self.renderingManager.model_faces.clear()

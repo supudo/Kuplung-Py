@@ -79,7 +79,6 @@ class RenderingManager:
         self.mfLights_Point = []
         self.mfLights_Spot = []
 
-
     def initShaderProgram(self):
         if self.simple_shading:
             file_vs = open('resources/shaders/simple_model_face.vert', 'r',
@@ -319,7 +318,6 @@ class RenderingManager:
         GLUtils.printProgramLog(self.shader_program)
         return True
 
-
     def render(self, managerObjects, selectedModel):
         self.matrixProjection = managerObjects.matrixProjection
         self.matrixCamera = managerObjects.camera.matrixCamera
@@ -327,7 +325,6 @@ class RenderingManager:
         self.uiAmbientLight = managerObjects.Setting_UIAmbientLight
         self.lightingPass_DrawMode = managerObjects.Setting_LightingPass_DrawMode
         self.render_models(managerObjects, selectedModel)
-
 
     def render_models(self, managerObjects, selectedModel):
         glUseProgram(self.shader_program)
@@ -409,19 +406,14 @@ class RenderingManager:
             if managerObjects.Setting_PlaneClose >= 1.0:
                 pc = managerObjects.Setting_PlaneClose
             glUniform1f(self.glFS_planeClose, pc)
-            glUniform1f(self.glFS_planeFar,
-                        managerObjects.Setting_PlaneFar / 100.0)
-            glUniform1i(self.glFS_showDepthColor,
-                        int(managerObjects.Setting_Rendering_Depth))
+            glUniform1f(self.glFS_planeFar, managerObjects.Setting_PlaneFar / 100.0)
+            glUniform1i(self.glFS_showDepthColor, int(managerObjects.Setting_Rendering_Depth))
             glUniform1i(self.glFS_ShadowPass, 0)
 
             # tessellation
-            glUniform1i(self.glTCS_UseCullFace,
-                        int(model.Setting_UseCullFace))
-            glUniform1i(self.glTCS_UseTessellation,
-                        int(model.Setting_UseTessellation))
-            glUniform1i(self.glTCS_TessellationSubdivision,
-                        int(model.Setting_TessellationSubdivision))
+            glUniform1i(self.glTCS_UseCullFace, int(model.Setting_UseCullFace))
+            glUniform1i(self.glTCS_UseTessellation, int(model.Setting_UseTessellation))
+            glUniform1i(self.glTCS_TessellationSubdivision, int(model.Setting_TessellationSubdivision))
 
             # cel - shading
             glUniform1i(self.glFS_CelShading, int(model.Setting_CelShading))
