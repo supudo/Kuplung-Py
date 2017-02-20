@@ -7,7 +7,6 @@ supudo.net
 __author__ = 'supudo'
 __version__ = "1.0.0"
 
-import glfw
 from settings import Settings
 from gl_utils import GLUtils
 from OpenGL.GL import *
@@ -105,13 +104,12 @@ class AxisSystem():
         glDeleteBuffers(2, [vboVertices, vboColors])
 
 
-    def render(self, glfw_window, matrixProjection, matrixCamera):
+    def render(self, window, matrixProjection, matrixCamera, win_width, win_height):
         if self.glVAO > 0:
             glUseProgram(self.shader_program)
 
-            width, height = glfw.get_framebuffer_size(glfw_window)
             axisW = 120
-            axisH = int((height * axisW) / width)
+            axisH = int((win_height * axisW) / win_width)
             axisX = 10
             axisY = 10
 
@@ -127,4 +125,4 @@ class AxisSystem():
             glBindVertexArray(0)
 
             glUseProgram(0)
-            glViewport(0, 0, width, height)
+            glViewport(0, 0, win_width, win_height)

@@ -8,21 +8,20 @@ supudo.net
 __author__ = 'supudo'
 __version__ = "1.0.0"
 
-import os, sys
+import os
 from settings import Settings
-from PyQt5.QtWidgets import QApplication
-from ui.MainWindow import KuplungMainWindow
-from ui.ImGuiWindow import ImGuiWindow
+from ui.ImGuiWindowGLFW3 import ImGuiWindowGLFW3
+from ui.ImGuiWindowSDL2 import ImGuiWindowSDL2
 
 if __name__ == '__main__':
     Settings.log_info("[MAIN] Application starting...")
     Settings.ApplicationRootPath = os.path.dirname(os.path.abspath(__file__))
 
-    # app = QApplication(sys.argv)
-    # mainWindow = KuplungMainWindow()
-    # sys.exit(app.exec_())
+    if Settings.ApplicationGLFW3:
+        app = ImGuiWindowGLFW3()
+    else:
+        app = ImGuiWindowSDL2()
 
-    app = ImGuiWindow()
     app.show_main_window()
 
     Settings.log_info("[MAIN] Running...")

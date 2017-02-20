@@ -60,7 +60,7 @@ class ObjectsManager():
         self.Setting_LightingPass_DrawMode = 0
 
 
-    def render(self, glfw_window):
+    def render(self, window):
         glEnable(GL_DEPTH_TEST)
         glDepthFunc(GL_LESS)
         glDisable(GL_BLEND)
@@ -75,7 +75,11 @@ class ObjectsManager():
 
         self.camera.render()
 
-        self.axis_system.render(glfw_window, self.matrixProjection, self.camera.matrixCamera)
+        if Settings.ApplicationGLFW3:
+            win_width, win_height = glfw.get_framebuffer_size(window)
+        else:
+            win_width, win_height = Settings.AppWindowWidth, Settings.AppWindowHeight
+        self.axis_system.render(window, self.matrixProjection, self.camera.matrixCamera, win_width, win_height)
 
         if self.Setting_GridSize != self.grid.grid_size:
             self.grid.grid_size = self.Setting_GridSize

@@ -28,6 +28,8 @@ AppWindowHeight = 900
 ApplicationRootPath = ''
 ApplicationAssetsPath = 'resources/shapes/'
 
+ApplicationGLFW3 = False
+
 LogDebugWindow = True
 
 class ShapeTypes(Enum):

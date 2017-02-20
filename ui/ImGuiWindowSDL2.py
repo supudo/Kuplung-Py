@@ -8,15 +8,16 @@ __author__ = 'supudo'
 __version__ = "1.0.0"
 
 import OpenGL.GL as gl
-import glfw
+from sdl2 import *
 import imgui
-from imgui.impl import GlfwImpl
+from imgui.impl import SDL2Impl
+from ctypes import byref
 
 from consumption import Consumption
 from parsers.ParserManager import ParserManager
 from objects.ObjectsManager import ObjectsManager
 from rendering.RenderingManager import RenderingManager
-from objects.ControlsManager import ControlsManager
+from objects.ControlsManagerSDL2 import ControlsManagerSDL2
 from settings import Settings
 from meshes.scene.ModelFace import ModelFace
 from ui.components.Log import Log
@@ -24,7 +25,7 @@ from ui.dialogs.DialogControlsModels import DialogControlsModels
 from ui.dialogs.DialogControlsGUI import DialogControlsGUI
 
 
-class ImGuiWindow():
+class ImGuiWindowSDL2():
 
     # app
     managerParser = None
@@ -58,65 +59,85 @@ class ImGuiWindow():
         self.init_imgui_impl()
         self.init_sub_windows()
         self.init_components()
-        self.init_glfw_handlers()
+        self.init_manager_controls()
         self.init_rendering_manager()
         self.imgui_style = imgui.GuiStyle()
         self.init_objects_manager()
 
         self.printGLStrings()
 
-        while not glfw.window_should_close(self.window):
-            glfw.poll_events()
+        running = True
+        event = SDL_Event()
+        while running:
+            while SDL_PollEvent(byref(event)) != 0:
+                if event.type == SDL_QUIT:
+                    running = False
+                    break
+                self.imgui_context.process_event(event)
+                self.managerControls.process_event(event)
 
-            self.handle_controls_events()
+            self.imgui_context.new_frame()
 
-            w_width, w_height = glfw.get_window_size(self.window)
-            Settings.AppWindowWidth, Settings.AppWindowHeight = w_width, w_height
-            width, height = glfw.get_framebuffer_size(self.window)
-            Settings.AppFramebufferWidth, Settings.AppFramebufferHeight = width, height
-            gl.glViewport(0, 0, int(w_width / 2), int(w_height))
+            gl.glViewport(0, 0, int(Settings.AppWindowWidth / 2), int(Settings.AppWindowHeight))
             gl.glClearColor(Settings.guiClearColor[0],
                             Settings.guiClearColor[1],
                             Settings.guiClearColor[2],
                             Settings.guiClearColor[3])
             gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT | gl.GL_STENCIL_BUFFER_BIT)
 
-            self.imgui_context.new_frame()
             self.render_screen()
             imgui.render()
 
-            glfw.swap_buffers(self.window)
+            SDL_GL_SwapWindow(self.window)
 
-        glfw.terminate()
+        self.imgui_context.shutdown()
+        SDL_GL_DeleteContext(self.gl_context)
+        SDL_DestroyWindow(self.window)
+        SDL_Quit()
 
     def init_gl(self):
-        if not glfw.init():
-            Settings.log_error("[ImGuiWindow] Could not initialize OpenGL context!")
-            exit(1)
-        glfw.window_hint(glfw.DOUBLEBUFFER, 1)
-        glfw.window_hint(glfw.DEPTH_BITS, 24)
-        glfw.window_hint(glfw.STENCIL_BITS, 8)
-        glfw.window_hint(glfw.SAMPLES, 16)
-        glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 4)
-        glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 1)
-        glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
-        glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, gl.GL_TRUE)
+        if SDL_Init(SDL_INIT_EVERYTHING) < 0:
+            Settings.log_error("[ImGuiWindow] Could not initialize SDL2!")
+            return False
+
+        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1)
+        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24)
+        SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8)
+        SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1)
+        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1)
+        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16)
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG)
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4)
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1)
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE)
+
+        SDL_SetHint(SDL_HINT_MAC_CTRL_CLICK_EMULATE_RIGHT_CLICK, b"1")
+        SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, b"1")
 
     def init_window(self):
-        self.window = glfw.create_window(
+        self.window = SDL_CreateWindow(
+            Settings.AppMainWindowTitle.encode('utf-8'),
+            SDL_WINDOWPOS_CENTERED,
+            SDL_WINDOWPOS_CENTERED,
             int(Settings.AppFramebufferWidth),
             int(Settings.AppFramebufferHeight),
-            Settings.AppMainWindowTitle,
-            None, None
-        )
-        glfw.make_context_current(self.window)
-        if not self.window:
-            glfw.terminate()
-            Settings.log_error("[ImGuiWindow] Could not initialize Window!")
-            exit(1)
+            SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE)
 
-    def init_glfw_handlers(self):
-        self.managerControls = ControlsManager()
+        if self.window is None:
+            Settings.log_error("[ImGuiWindow] Could not initialize Window!! SDL Error: " + SDL_GetError())
+            return False
+
+        self.gl_context = SDL_GL_CreateContext(self.window)
+        if self.gl_context is None:
+            Settings.log_error("Error: Cannot create OpenGL Context! SDL Error: " + SDL_GetError())
+            return False
+
+        SDL_GL_MakeCurrent(self.window, self.gl_context)
+        if SDL_GL_SetSwapInterval(1) < 0:
+            Settings.log_error("Warning: Unable to set VSync! SDL Error: " + SDL_GetError())
+
+    def init_manager_controls(self):
+        self.managerControls = ControlsManagerSDL2()
         self.managerControls.init_handlers(self.window)
         Settings.do_log("Control events initialized.")
 
@@ -131,7 +152,7 @@ class ImGuiWindow():
         Settings.do_log("GUI components initialized.")
 
     def init_imgui_impl(self):
-        self.imgui_context = GlfwImpl(self.window)
+        self.imgui_context = SDL2Impl(self.window)
         self.imgui_context.enable()
         self.app_is_running = True
         Settings.do_log("PyImGui initialized.")

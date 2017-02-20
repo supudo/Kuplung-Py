@@ -11,7 +11,7 @@ import glfw
 from settings import Settings
 
 
-class ControlsManager():
+class ControlsManagerGLFW():
     def __init__(self):
         self.gameIsRunning = True
         self.keyPressed_ESC = False
@@ -37,13 +37,14 @@ class ControlsManager():
         self.mouse_rel_y = 0
         self.mouse_relative_pos = [0, 0]
 
+    def process_event(self, event):
+        pass
 
     def init_handlers(self, glfw_window):
         glfw.set_scroll_callback(glfw_window, self.glfw_on_mouse_scroll_callback)
         glfw.set_mouse_button_callback(glfw_window, self.glfw_mouse_button_callback)
         glfw.set_cursor_pos_callback(glfw_window, self.glfw_mouse_cursor_pos_callback)
         glfw.set_key_callback(glfw_window, self.glfw_key_callback)
-
 
     def glfw_key_callback(self, window, key, scancode, action, mods):
         self.keyPressed_ESC = False
@@ -91,7 +92,6 @@ class ControlsManager():
                 self.mouseGoUp = False
                 self.mouseGoDown = False
 
-
     def glfw_mouse_cursor_pos_callback(self, window, pos_x, pos_y):
         self.mousePosition['x'] = pos_x
         self.mousePosition['y'] = pos_y
@@ -121,7 +121,6 @@ class ControlsManager():
             self.mouseGoUp = False
             self.mouseGoDown = False
 
-
     def reset_mouse_motion(self):
         self.mouse_rel_x = 0
         self.mouse_rel_y = 0
@@ -130,16 +129,13 @@ class ControlsManager():
         self.mouseGoUp = False
         self.mouseGoDown = False
 
-
     def glfw_on_mouse_scroll_callback(self, window, x_offset, y_offset):
         self.reset_mouse_scroll()
         self.mouseWheel['x'] = x_offset
         self.mouseWheel['y'] = y_offset
 
-
     def reset_mouse_scroll(self):
         self.mouseWheel = {'x': 0, 'y': 0}
-
 
     def glfw_mouse_button_callback(self, window, button, action, mods):
         if action == glfw.PRESS:
