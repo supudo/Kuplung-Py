@@ -92,7 +92,7 @@ class ImGuiWindowSDL2():
 
             SDL_GL_SwapWindow(self.window)
 
-        self.imgui_context.shutdown()
+        # self.imgui_context.shutdown()
         SDL_GL_DeleteContext(self.gl_context)
         SDL_DestroyWindow(self.window)
         SDL_Quit()
