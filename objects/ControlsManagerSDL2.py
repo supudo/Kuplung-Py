@@ -35,18 +35,6 @@ class ControlsManagerSDL2():
         self.xrel = 0
         self.yrel = 0
 
-
-    def init_handlers(self, sdl2_window):
-        pass
-
-
-    def reset_mouse_motion(self):
-        pass
-
-
-    def reset_mouse_scroll(self):
-        pass
-
     def process_event(self, event):
         if event.type == SDL_QUIT:
             self.gameIsRunning = False
@@ -154,3 +142,14 @@ class ControlsManagerSDL2():
                 self.mouseGoUp = True
             elif event.motion.yrel > 0:
                 self.mouseGoDown = True
+
+    def reset_mouse_scroll(self):
+        self.mouseWheel = {'x': 0, 'y': 0}
+
+    def reset_mouse_motion(self):
+        self.mouse_rel_x = 0
+        self.mouse_rel_y = 0
+        self.mouseGoLeft = False
+        self.mouseGoRight = False
+        self.mouseGoUp = False
+        self.mouseGoDown = False
