@@ -78,6 +78,8 @@ class ImGuiWindowSDL2():
 
             self.imgui_context.new_frame()
 
+            self.handle_controls_events()
+
             gl.glViewport(0, 0, int(Settings.AppWindowWidth / 2), int(Settings.AppWindowHeight))
             gl.glClearColor(Settings.guiClearColor[0],
                             Settings.guiClearColor[1],
@@ -138,7 +140,6 @@ class ImGuiWindowSDL2():
 
     def init_manager_controls(self):
         self.managerControls = ControlsManagerSDL2()
-        self.managerControls.init_handlers(self.window)
         Settings.do_log("Control events initialized.")
 
     def init_sub_windows(self):
@@ -181,23 +182,19 @@ class ImGuiWindowSDL2():
             self.managerControls.reset_mouse_scroll()
 
             if self.managerControls.mouseButton_MIDDLE:
-                # if self.managerControls.mouseGoUp or self.managerControls.mouseGoDown:
-                #     self.managerObjects.camera.rotateX['point'] += self.managerControls.mouse_rel_y
-                if self.managerControls.mouseGoDown:
-                    self.managerObjects.camera.rotateX['point'] -= 2
                 if self.managerControls.mouseGoUp:
-                    self.managerObjects.camera.rotateX['point'] += 2
+                    self.managerObjects.camera.rotateX['point'] += self.managerControls.yrel
+                if self.managerControls.mouseGoDown:
+                    self.managerObjects.camera.rotateX['point'] += self.managerControls.yrel
                 if self.managerObjects.camera.rotateX['point'] > 360:
                     self.managerObjects.camera.rotateX['point'] = .0
                 if self.managerObjects.camera.rotateX['point'] < .0:
                     self.managerObjects.camera.rotateX['point'] = 360
 
-                # if self.managerControls.mouseGoLeft or self.managerControls.mouseGoRight:
-                #     self.managerObjects.camera.rotateY['point'] += self.managerControls.mouse_rel_x
                 if self.managerControls.mouseGoLeft:
-                    self.managerObjects.camera.rotateY['point'] += 2
+                    self.managerObjects.camera.rotateY['point'] += self.managerControls.xrel
                 if self.managerControls.mouseGoRight:
-                    self.managerObjects.camera.rotateY['point'] -= 2
+                    self.managerObjects.camera.rotateY['point'] += self.managerControls.xrel
                 if self.managerObjects.camera.rotateY['point'] > 360:
                     self.managerObjects.camera.rotateY['point'] = .0
                 if self.managerObjects.camera.rotateY['point'] < .0:
