@@ -32,9 +32,6 @@ class RenderingManager:
     def __init__(self):
         self.model_faces = []
         self.shader_program = None
-        self.simple_shading = False
-
-        self.gl_mvp_matrix = -1
 
         self.glFS_showShadows = -1
         self.glFS_ShadowPass = -1
@@ -80,72 +77,30 @@ class RenderingManager:
         self.mfLights_Spot = []
 
     def initShaderProgram(self):
-        if self.simple_shading:
-            file_vs = open('resources/shaders/simple_model_face.vert', 'r',
-                           encoding='utf-8')
-            vs_str = str(file_vs.read())
-            file_fs = open('resources/shaders/simple_model_face.frag', 'r',
-                           encoding='utf-8')
-            fs_str = str(file_fs.read())
-
-            self.shader_program = glCreateProgram()
-
-            shader_compilation = True
-            shader_compilation &= GLUtils.compileAndAttachShader(
-                self.shader_program, GL_VERTEX_SHADER, vs_str)
-            shader_compilation &= GLUtils.compileAndAttachShader(
-                self.shader_program, GL_FRAGMENT_SHADER, fs_str)
-
-            if not shader_compilation:
-                Settings.log_error(
-                    "[RenderingManager] Shader compilation failed!"
-                )
-                return False
-
-            glLinkProgram(self.shader_program)
-            if glGetProgramiv(self.shader_program, GL_LINK_STATUS) != GL_TRUE:
-                Settings.do_log(
-                    "[RenderingManager] Shader linking failed! " +
-                    str(glGetProgramInfoLog(self.shader_program))
-                )
-                return False
-
-            self.gl_mvp_matrix = GLUtils.glGetUniform(
-                self.shader_program, "vs_MVPMatrix")
-
-            return True
-
         # vertex shader
-        file_vs = open('resources/shaders/model_face.vert', 'r',
-                       encoding='utf-8')
+        file_vs = open('resources/shaders/model_face.vert', 'r', encoding='utf-8')
         vs_str = str(file_vs.read())
 
         # tessellation control shader
-        file_tcs = open('resources/shaders/model_face.tcs',
-                        'r', encoding='utf-8')
+        file_tcs = open('resources/shaders/model_face.tcs', 'r', encoding='utf-8')
         tcs_str = str(file_tcs.read())
 
         # tessellation evaluation shader
-        file_tes = open('resources/shaders/model_face.tes',
-                        'r', encoding='utf-8')
+        file_tes = open('resources/shaders/model_face.tes', 'r', encoding='utf-8')
         tes_str = str(file_tes.read())
 
         # geometry shader
-        file_geom = open('resources/shaders/model_face.geom',
-                         'r', encoding='utf-8')
+        file_geom = open('resources/shaders/model_face.geom', 'r', encoding='utf-8')
         geom_str = str(file_geom.read())
 
         # fragment shader
         fs_str = ''
-        fs_components = ["vars", "effects", "lights",
-                         "mapping", "shadow_mapping", "misc"]
+        fs_components = ["vars", "effects", "lights", "mapping", "shadow_mapping", "misc"]
         for comp in fs_components:
-            file_fs = open('resources/shaders/model_face_' + comp + '.frag',
-                           'r', encoding='utf-8')
+            file_fs = open('resources/shaders/model_face_' + comp + '.frag', 'r', encoding='utf-8')
             fs_str += str(file_fs.read())
 
-        file_fs = open('resources/shaders/model_face.frag', 'r',
-                       encoding='utf-8')
+        file_fs = open('resources/shaders/model_face.frag', 'r', encoding='utf-8')
         fs_str += str(file_fs.read())
 
         self.shader_program = glCreateProgram()
@@ -156,6 +111,12 @@ class RenderingManager:
         shader_compilation &= GLUtils.compileShader(self.shader_program, GL_TESS_EVALUATION_SHADER, tes_str)
         shader_compilation &= GLUtils.compileShader(self.shader_program, GL_GEOMETRY_SHADER, geom_str)
         shader_compilation &= GLUtils.compileShader(self.shader_program, GL_FRAGMENT_SHADER, fs_str)
+
+        file_vs.close()
+        file_tcs.close()
+        file_tes.close()
+        file_geom.close()
+        file_fs.close()
 
         if not shader_compilation:
             Settings.log_error("[RenderingManager] Shader compilation failed!")
@@ -168,8 +129,6 @@ class RenderingManager:
             return False
 
         glPatchParameteri(GL_PATCH_VERTICES, 3)
-
-        self.gl_mvp_matrix = GLUtils.glGetUniform(self.shader_program, "vs_MVPMatrix")
 
         self.glFS_showShadows = GLUtils.glGetUniform(self.shader_program, "fs_showShadows")
         self.glFS_ShadowPass = GLUtils.glGetUniform(self.shader_program, "fs_shadowPass")
@@ -329,22 +288,6 @@ class RenderingManager:
     def render_models(self, managerObjects, selectedModel):
         glUseProgram(self.shader_program)
 
-        if self.simple_shading:
-            for model in self.model_faces:
-                matrixModel = Matrix4x4(1.0)
-                matrixModel *= managerObjects.grid.matrixGrid
-                matrixModel = MathOps.matrix_scale(matrixModel, (model.scaleX['point'], model.scaleY['point'], model.scaleZ['point']))
-                matrixModel = MathOps.matrix_translate(matrixModel, (model.positionX['point'], model.positionY['point'], model.positionZ['point']))
-                matrixModel = MathOps.matrix_translate(matrixModel, Vector4(.0))
-                matrixModel = MathOps.matrix_rotate(matrixModel, model.rotateX['point'], Vector3(1, 0, 0))
-                matrixModel = MathOps.matrix_rotate(matrixModel, model.rotateY['point'], Vector3(0, 1, 0))
-                matrixModel = MathOps.matrix_rotate(matrixModel, model.rotateZ['point'], Vector3(0, 0, 1))
-                matrixModel = MathOps.matrix_translate(matrixModel, Vector4(.0))
-                model.matrixModel = self.matrixProjection * self.matrixCamera * matrixModel
-                glUniformMatrix4fv(self.gl_mvp_matrix, 1, GL_FALSE, MathOps.matrix_to_gl(model.matrixModel))
-                model.render()
-            return
-
         selectedModelID = -1
         for model in self.model_faces:
 
@@ -372,8 +315,7 @@ class RenderingManager:
 
             mvpMatrix = self.matrixProjection * self.matrixCamera * matrixModel
 
-            glUniformMatrix4fv(self.gl_mvp_matrix, 1, GL_FALSE, MathOps.matrix_to_gl(mvpMatrix))
-            glUniformMatrix4fv(self.glVS_MVPMatrix, 1, GL_FALSE, MathOps.matrix_to_gl(matrixModel))
+            glUniformMatrix4fv(self.glVS_MVPMatrix, 1, GL_FALSE, MathOps.matrix_to_gl(mvpMatrix))
 
             matrixModelView = self.matrixCamera * matrixModel
             glUniformMatrix4fv(self.glFS_MMatrix, 1, GL_FALSE, MathOps.matrix_to_gl(matrixModelView))
