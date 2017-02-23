@@ -250,11 +250,21 @@ def perspective(fovy, aspect, zNear, zFar):
     tanHalfFovy = math.tan((rad / 2))
 
     result = Matrix4x4(0.0)
-    result[0][0] = 1. / (aspect * tanHalfFovy)
-    result[1][1] = 1. / tanHalfFovy
-    result[2][2] = -(zFar + zNear) / (zFar - zNear)
+    if tanHalfFovy != 0 and aspect != 0:
+        result[0][0] = 1. / (aspect * tanHalfFovy)
+    else:
+        result[0][0] = 0.0
+    if tanHalfFovy != 0:
+        result[1][1] = 1. / tanHalfFovy
+    else:
+        result[1][1] = 0.0
+    if zFar == 0.0 or zNear == 0.0:
+        result[2][2] = 0.0
+        result[3][2] = 0.0
+    else:
+        result[2][2] = -(zFar + zNear) / (zFar - zNear)
+        result[3][2] = -(2. * zFar * zNear) / (zFar - zNear)
     result[2][3] = -1.
-    result[3][2] = -(2. * zFar * zNear) / (zFar - zNear)
     return result
 
 #endregion

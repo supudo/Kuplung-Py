@@ -71,6 +71,7 @@ ModelFileParser = ModelFileParserTypes.ModelFileParser_Assimp
 # -------------------------------------------------------------------
 # Scene Info
 # -------------------------------------------------------------------
+
 SceneCountObjects= 0
 SceneCountVertices = 0
 SceneCountIndices = 0
@@ -80,6 +81,7 @@ SceneCountFaces = 0
 # -------------------------------------------------------------------
 # OpenGL specific
 # -------------------------------------------------------------------
+
 guiClearColor = [70.0 / 255.0, 70.0 / 255.0, 70.0 / 255.0, 255.0 / 255.0]
 Setting_Wireframe = False
 
@@ -94,18 +96,18 @@ Setting_ModelViewSkin = ViewModelSkin.ViewModelSkin_Rendered
 
 Setting_Rendering_Depth = False
 
-# Setting_FOV = 45.0
-# Setting_RatioWidth = 4.0
-# Setting_RatioHeight = 3.0
-# Setting_PlaneClose = 0.1
-# Setting_PlaneFar = 100.0
-
 Setting_ZScroll = 999
 Setting_GridSize = 30
+Setting_showPickRays = False
+Setting_showPickRaysSingle = True
+Setting_mRayOriginX = .0
+Setting_mRayOriginY = .0
+Setting_mRayOriginZ = .0
 
 # -------------------------------------------------------------------
 # Logging
 # -------------------------------------------------------------------
+
 logger = logging.getLogger('KuplungApp')
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
@@ -127,5 +129,6 @@ def do_log(*args):
 # -------------------------------------------------------------------
 # OS
 # -------------------------------------------------------------------
+
 def is_osx():
     return (platform.system().lower().find("darwin") > -1)

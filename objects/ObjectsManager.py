@@ -7,6 +7,8 @@ supudo.net
 __author__ = 'supudo'
 __version__ = "1.0.0"
 
+import glfw
+from OpenGL.GL import *
 from settings import Settings
 from meshes.helpers.Camera import Camera
 from meshes.helpers.AxisHelpers import AxisHelpers
@@ -15,7 +17,6 @@ from meshes.helpers.CameraModel import CameraModel
 from meshes.helpers.Light import Light
 from meshes.helpers.WorldGrid import WorldGrid
 from parsers.OBJ.AssimpObj import AssimpObj
-from OpenGL.GL import *
 from maths import MathOps
 from maths.types.Vector3 import Vector3
 from maths.types.Matrix4x4 import Matrix4x4
@@ -42,6 +43,18 @@ class ObjectsManager():
         self.axis_helpers_z_minus = AxisHelpers()
         self.axis_helpers_z_plus = AxisHelpers()
 
+        self.Setting_FOV = 45.0
+        self.Setting_RatioWidth = 4.0
+        self.Setting_RatioHeight = 3.0
+        self.Setting_PlaneClose = 1.0
+        self.Setting_PlaneFar = 1000.0
+        self.Setting_GridSize = 30
+        self.Setting_GridUnitSize = 1
+        self.Setting_FixedGridWorld = True
+        self.Setting_ShowAxisHelpers = True
+        self.Settings_ShowZAxis = True
+        self.Setting_FixedGridWorld = True
+        self.Setting_Rendering_Depth = False
         self.Setting_UIAmbientLight = Vector3(0.2)
         self.Setting_GammaCoeficient = 1.0
         self.viewModelSkin = Settings.ViewModelSkin.ViewModelSkin_Rendered
@@ -58,7 +71,6 @@ class ObjectsManager():
         self.SolidLight_Diffuse_ColorPicker = False
         self.SolidLight_Specular_ColorPicker = False
         self.Setting_LightingPass_DrawMode = 0
-
 
     def render(self, window):
         glEnable(GL_DEPTH_TEST)
@@ -101,6 +113,19 @@ class ObjectsManager():
         for light in self.lightSources:
             light.render(self.matrixProjection, self.camera.matrixCamera)
 
+    def reset_properties_system(self):
+        self.reset_settings()
+
+        if self.camera is not None:
+            self.camera.init_properties()
+        if self.camera_model is not None:
+            self.camera_model.init_properties()
+        if self.grid is not None:
+            self.grid.init_properties()
+        if self.axis_system is not None:
+            self.axis_system.init_properties()
+        for i in range(len(self.lightSources)):
+            self.lightSources[i].init_properties()
 
     def reset_settings(self):
         self.Setting_FOV = 45.0
@@ -130,37 +155,31 @@ class ObjectsManager():
         self.SolidLight_Specular_ColorPicker = False
         self.Setting_LightingPass_DrawMode = 0
 
-
     def init_manager(self):
         self.init_camera()
-        self.init_cameraModel()
+        self.init_camera_model()
         self.init_grid()
         self.init_axis_system()
         self.init_axis_helpers()
 
-
     def init_camera(self):
         self.camera.init_properties()
 
-
-    def init_cameraModel(self):
+    def init_camera_model(self):
         self.camera_model.init_properties()
         self.camera_model.init_shader_program()
         self.camera_model.set_model(self.systemModels["camera"])
         self.camera_model.init_buffers()
-
 
     def init_grid(self):
         self.grid.init_properties()
         self.grid.init_shader_program()
         self.grid.init_buffers(self.Setting_GridSize, self.Setting_GridUnitSize)
 
-
     def init_axis_system(self):
         success = self.axis_system.init_shader_program()
         if success:
             self.axis_system.init_buffers()
-
 
     def init_axis_helpers(self):
         self.axis_helpers_x_plus.set_model(self.systemModels["axis_x_plus"])
@@ -186,7 +205,6 @@ class ObjectsManager():
         self.axis_helpers_z_plus.set_model(self.systemModels["axis_z_plus"])
         self.axis_helpers_z_plus.init_shader_program()
         self.axis_helpers_z_plus.init_buffers()
-
 
     def load_system_models(self):
         self.parser = AssimpObj()
@@ -221,7 +239,6 @@ class ObjectsManager():
         self.parser.parse_file('resources/axis_helpers/', 'z_minus.obj')
         self.systemModels["axis_z_minus"] = self.parser.mesh_models[0]
 
-
     def add_light(self, lightType, title='', description=''):
         l = Light()
         l.type = lightType
@@ -247,7 +264,6 @@ class ObjectsManager():
         l.init_shader_program()
         l.init_buffers()
         self.lightSources.append(l)
-
 
     def clear_all_lights(self):
         self.lightSources.clear()
