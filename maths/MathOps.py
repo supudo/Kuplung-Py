@@ -270,17 +270,31 @@ def perspective(fovy, aspect, zNear, zFar):
 #endregion
 
 def print_matrix4(mtx):
+    print('Matrix 4:')
     print_vec4(mtx[0])
     print_vec4(mtx[1])
     print_vec4(mtx[2])
     print_vec4(mtx[3])
-    print("========")
+    print('----------------')
 
 def print_matrix3(mtx):
+    print('Matrix 3:')
     print_vec3(mtx[0])
     print_vec3(mtx[1])
     print_vec3(mtx[2])
-    print("========")
+    print('----------------')
+
+def print_matrix4_list(lst):
+    print('Matrix List 4:')
+    for i in range(4):
+        print("x = " + str(lst[i][0]) + ", y = " + str(lst[i][1]) + ", z = " + str(lst[i][2]) + ", w = " + str(lst[i][3]))
+    print('----------------')
+
+def print_matrix3_list(lst):
+    print('Matrix List 3:')
+    for i in range(3):
+        print("x = " + str(lst[i][0]) + ", y = " + str(lst[i][1]) + ", z = " + str(lst[i][2]))
+    print('----------------')
 
 def print_vec4(vec):
     if not vec is None:
