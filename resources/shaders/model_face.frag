@@ -110,10 +110,6 @@ void main(void) {
                 else
                     processedColorRefraction = processedColorRefraction * processedColor_Diffuse.rgb;
 
-                // TODO: fix?
-    //            if (material.has_texture_specular)
-    //                processedColorRefraction *= processedColor_Specular.rgb;
-
                 // final color
                 if (fs_celShading) // cel-shading
                     fragColor = celShadingColor();

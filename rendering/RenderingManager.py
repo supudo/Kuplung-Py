@@ -431,82 +431,81 @@ class RenderingManager:
             lightsCount_Spot = 0
             for i in range(len(model.lightSources)):
                 light = model.lightSources[i]
-                if light.type == Settings.LightSourceTypes.LightSourceType_Directional:
-                    if lightsCount_Directional < self.GLSL_LightSourceNumber_Directional:
-                        f = self.mfLights_Directional[lightsCount_Directional]
-                        glUniform1i(f.gl_InUse, 1)
+                if light.type == Settings.LightSourceTypes.LightSourceType_Directional and \
+                                lightsCount_Directional < self.GLSL_LightSourceNumber_Directional:
+                    f = self.mfLights_Directional[lightsCount_Directional]
+                    glUniform1i(f.gl_InUse, 1)
 
-                        # light
-                        glUniform3f(f.gl_Direction, light.positionX['point'], light.positionY['point'], light.positionZ['point'])
+                    # light
+                    glUniform3f(f.gl_Direction, light.positionX['point'], light.positionY['point'], light.positionZ['point'])
 
-                        # color
-                        glUniform3f(f.gl_Ambient, light.ambient.color.r, light.ambient.color.g, light.ambient.color.b)
-                        glUniform3f(f.gl_Diffuse, light.diffuse.color.r, light.diffuse.color.g, light.diffuse.color.b)
-                        glUniform3f(f.gl_Specular, light.specular.color.r, light.specular.color.g, light.specular.color.b)
+                    # color
+                    glUniform3f(f.gl_Ambient, light.ambient.color.r, light.ambient.color.g, light.ambient.color.b)
+                    glUniform3f(f.gl_Diffuse, light.diffuse.color.r, light.diffuse.color.g, light.diffuse.color.b)
+                    glUniform3f(f.gl_Specular, light.specular.color.r, light.specular.color.g, light.specular.color.b)
 
-                        # light factors
-                        glUniform1f(f.gl_StrengthAmbient, light.ambient.strength)
-                        glUniform1f(f.gl_StrengthDiffuse, light.diffuse.strength)
-                        glUniform1f(f.gl_StrengthSpecular, light.specular.strength)
+                    # light factors
+                    glUniform1f(f.gl_StrengthAmbient, light.ambient.strength)
+                    glUniform1f(f.gl_StrengthDiffuse, light.diffuse.strength)
+                    glUniform1f(f.gl_StrengthSpecular, light.specular.strength)
 
-                        lightsCount_Directional += 1
-                if light.type == Settings.LightSourceTypes.LightSourceType_Point:
-                    if lightsCount_Point < self.GLSL_LightSourceNumber_Point:
-                        f = self.mfLights_Point[lightsCount_Point]
-                        glUniform1i(f.gl_InUse, 1)
+                    lightsCount_Directional += 1
+                if light.type == Settings.LightSourceTypes.LightSourceType_Point and\
+                    lightsCount_Point < self.GLSL_LightSourceNumber_Point:
+                    f = self.mfLights_Point[lightsCount_Point]
+                    glUniform1i(f.gl_InUse, 1)
 
-                        # light
-                        glUniform3f(f.gl_Position, light.matrixModel[3].x, light.matrixModel[3].y, light.matrixModel[3].z)
+                    # light
+                    glUniform3f(f.gl_Position, light.matrixModel[3].x, light.matrixModel[3].y, light.matrixModel[3].z)
 
-                        # factors﻿
-                        glUniform1f(f.gl_Constant, light.lConstant['point'])
-                        glUniform1f(f.gl_Linear, light.lLinear['point'])
-                        glUniform1f(f.gl_Quadratic, light.lQuadratic['point'])
+                    # factors﻿
+                    glUniform1f(f.gl_Constant, light.lConstant['point'])
+                    glUniform1f(f.gl_Linear, light.lLinear['point'])
+                    glUniform1f(f.gl_Quadratic, light.lQuadratic['point'])
 
-                        # color
-                        glUniform3f(f.gl_Ambient, light.ambient.color.r, light.ambient.color.g, light.ambient.color.b)
-                        glUniform3f(f.gl_Diffuse, light.diffuse.color.r, light.diffuse.color.g, light.diffuse.color.b)
-                        glUniform3f(f.gl_Specular, light.specular.color.r, light.specular.color.g, light.specular.color.b)
+                    # color
+                    glUniform3f(f.gl_Ambient, light.ambient.color.r, light.ambient.color.g, light.ambient.color.b)
+                    glUniform3f(f.gl_Diffuse, light.diffuse.color.r, light.diffuse.color.g, light.diffuse.color.b)
+                    glUniform3f(f.gl_Specular, light.specular.color.r, light.specular.color.g, light.specular.color.b)
 
-                        # light factors
-                        glUniform1f(f.gl_StrengthAmbient, light.ambient.strength)
-                        glUniform1f(f.gl_StrengthDiffuse, light.diffuse.strength)
-                        glUniform1f(f.gl_StrengthSpecular, light.specular.strength)
+                    # light factors
+                    glUniform1f(f.gl_StrengthAmbient, light.ambient.strength)
+                    glUniform1f(f.gl_StrengthDiffuse, light.diffuse.strength)
+                    glUniform1f(f.gl_StrengthSpecular, light.specular.strength)
 
-                        lightsCount_Point += 1
-                if light.type == Settings.LightSourceTypes.LightSourceType_Spot:
-                    if lightsCount_Spot < self.GLSL_LightSourceNumber_Spot:
-                        f = self.mfLights_Spot[lightsCount_Spot]
-                        glUniform1i(f.gl_InUse, 1)
+                    lightsCount_Point += 1
+                if light.type == Settings.LightSourceTypes.LightSourceType_Spot and\
+                    lightsCount_Spot < self.GLSL_LightSourceNumber_Spot:
+                    f = self.mfLights_Spot[lightsCount_Spot]
+                    glUniform1i(f.gl_InUse, 1)
 
-                        # light
-                        glUniform3f(f.gl_Direction, light.positionX['point'], light.positionY['point'], light.positionZ['point'])
-                        glUniform3f(f.gl_Position, light.matrixModel[3].x, light.matrixModel[3].y, light.matrixModel[3].z)
+                    # light
+                    glUniform3f(f.gl_Direction, light.positionX['point'], light.positionY['point'], light.positionZ['point'])
+                    glUniform3f(f.gl_Position, light.matrixModel[3].x, light.matrixModel[3].y, light.matrixModel[3].z)
 
-                        # cutoff
-                        glUniform1f(f.gl_CutOff, cos(radians(light.lCutOff['point'])))
-                        glUniform1f(f.gl_OuterCutOff, cos(radians(light.lOuterCutOff['point'])))
+                    # cutoff
+                    glUniform1f(f.gl_CutOff, cos(radians(light.lCutOff['point'])))
+                    glUniform1f(f.gl_OuterCutOff, cos(radians(light.lOuterCutOff['point'])))
 
-                        # factors﻿
-                        glUniform1f(f.gl_Constant, light.lConstant['point'])
-                        glUniform1f(f.gl_Linear, light.lLinear['point'])
-                        glUniform1f(f.gl_Quadratic, light.lQuadratic['point'])
+                    # factors﻿
+                    glUniform1f(f.gl_Constant, light.lConstant['point'])
+                    glUniform1f(f.gl_Linear, light.lLinear['point'])
+                    glUniform1f(f.gl_Quadratic, light.lQuadratic['point'])
 
-                        # color
-                        glUniform3f(f.gl_Ambient, light.ambient.color.r, light.ambient.color.g, light.ambient.color.b)
-                        glUniform3f(f.gl_Diffuse, light.diffuse.color.r, light.diffuse.color.g, light.diffuse.color.b)
-                        glUniform3f(f.gl_Specular, light.specular.color.r, light.specular.color.g, light.specular.color.b)
+                    # color
+                    glUniform3f(f.gl_Ambient, light.ambient.color.r, light.ambient.color.g, light.ambient.color.b)
+                    glUniform3f(f.gl_Diffuse, light.diffuse.color.r, light.diffuse.color.g, light.diffuse.color.b)
+                    glUniform3f(f.gl_Specular, light.specular.color.r, light.specular.color.g, light.specular.color.b)
 
-                        # light factors
-                        glUniform1f(f.gl_StrengthAmbient, light.ambient.strength)
-                        glUniform1f(f.gl_StrengthDiffuse, light.diffuse.strength)
-                        glUniform1f(f.gl_StrengthSpecular, light.specular.strength)
+                    # light factors
+                    glUniform1f(f.gl_StrengthAmbient, light.ambient.strength)
+                    glUniform1f(f.gl_StrengthDiffuse, light.diffuse.strength)
+                    glUniform1f(f.gl_StrengthSpecular, light.specular.strength)
 
-                        lightsCount_Spot += 1
+                    lightsCount_Spot += 1
 
 
-            for i in range(lightsCount_Directional,
-                           self.GLSL_LightSourceNumber_Directional):
+            for i in range(lightsCount_Directional, self.GLSL_LightSourceNumber_Directional):
                 glUniform1i(self.mfLights_Directional[i].gl_InUse, 0)
 
             for i in range(lightsCount_Point, self.GLSL_LightSourceNumber_Point):
