@@ -504,7 +504,6 @@ class RenderingManager:
 
                     lightsCount_Spot += 1
 
-
             for i in range(lightsCount_Directional, self.GLSL_LightSourceNumber_Directional):
                 glUniform1i(self.mfLights_Directional[i].gl_InUse, 0)
 
@@ -515,14 +514,10 @@ class RenderingManager:
                 glUniform1i(self.mfLights_Spot[i].gl_InUse, 0)
 
             # material
-            glUniform1f(self.glMaterial_Refraction,
-                        model.Setting_MaterialRefraction['point'])
-            glUniform1f(self.glMaterial_SpecularExp,
-                        model.Setting_MaterialSpecularExp['point'])
-            glUniform1i(self.glMaterial_IlluminationModel,
-                        int(model.materialIlluminationModel))
-            glUniform1f(self.glMaterial_HeightScale,
-                        model.displacementHeightScale['point'])
+            glUniform1f(self.glMaterial_Refraction, model.Setting_MaterialRefraction['point'])
+            glUniform1f(self.glMaterial_SpecularExp, model.Setting_MaterialSpecularExp['point'])
+            glUniform1i(self.glMaterial_IlluminationModel, int(model.materialIlluminationModel))
+            glUniform1f(self.glMaterial_HeightScale, model.displacementHeightScale['point'])
             glUniform3f(self.glMaterial_Ambient,
                         model.materialAmbient.color.r,
                         model.materialAmbient.color.g,
