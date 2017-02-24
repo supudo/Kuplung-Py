@@ -19,6 +19,7 @@ from meshes.helpers.WorldGrid import WorldGrid
 from parsers.OBJ.AssimpObj import AssimpObj
 from maths import MathOps
 from maths.types.Vector3 import Vector3
+from maths.types.Vector4 import Vector4
 from maths.types.Matrix4x4 import Matrix4x4
 
 
@@ -58,6 +59,8 @@ class ObjectsManager():
         self.Setting_UIAmbientLight = Vector3(0.2)
         self.Setting_GammaCoeficient = 1.0
         self.viewModelSkin = Settings.ViewModelSkin.ViewModelSkin_Rendered
+        self.Setting_OutlineColor = Vector4(1, 0, 0, 0)
+        self.Setting_OutlineColorPickerOpen = False
 
         self.SolidLight_Direction = Vector3(0.0, 1.0, 0.0)
         self.SolidLight_MaterialColor = Vector3(0.7)
@@ -71,6 +74,21 @@ class ObjectsManager():
         self.SolidLight_Diffuse_ColorPicker = False
         self.SolidLight_Specular_ColorPicker = False
         self.Setting_LightingPass_DrawMode = 0
+
+        self.Setting_OutlineThickness = 1.0
+        self.Setting_VertexSphere_Visible = False
+        self.Setting_VertexSphere_IsSphere = True
+        self.Setting_VertexSphere_ShowWireframes = True
+        self.Setting_VertexSphere_Segments = 8
+        self.Setting_VertexSphere_Radius = 0.5
+        self.Setting_VertexSphere_Color = Vector4(1.0)
+        self.Setting_VertexSphere_ColorPickerOpen = False
+        self.Setting_Rendering_Depth = False
+        self.Setting_DebugShadowTexture = False
+        self.Setting_DeferredAmbientStrength = 0.1
+        self.Setting_DeferredTestMode = False
+        self.Setting_DeferredTestLights = False
+        self.Setting_DeferredTestLightsNumber = 32
 
     def render(self, window):
         glEnable(GL_DEPTH_TEST)
@@ -144,6 +162,8 @@ class ObjectsManager():
         self.Setting_GammaCoeficient = 1.0
         self.SolidLight_Direction = Vector3(0.0, 1.0, 0.0)
         self.SolidLight_MaterialColor = Vector3(0.7)
+        self.Setting_OutlineColorPickerOpen = False
+        self.Setting_OutlineColor = Vector4(1, 0, 0, 0)
         self.SolidLight_Ambient = Vector3(1.0)
         self.SolidLight_Diffuse = Vector3(1.0)
         self.SolidLight_Specular = Vector3(1.0)
@@ -154,6 +174,20 @@ class ObjectsManager():
         self.SolidLight_Diffuse_ColorPicker = False
         self.SolidLight_Specular_ColorPicker = False
         self.Setting_LightingPass_DrawMode = 0
+        self.Setting_OutlineThickness = 1.0
+        self.Setting_VertexSphere_Visible = False
+        self.Setting_VertexSphere_IsSphere = True
+        self.Setting_VertexSphere_ShowWireframes = True
+        self.Setting_VertexSphere_Segments = 8
+        self.Setting_VertexSphere_Radius = 0.5
+        self.Setting_VertexSphere_Color = Vector4(1.0)
+        self.Setting_VertexSphere_ColorPickerOpen = False
+        self.Setting_Rendering_Depth = False
+        self.Setting_DebugShadowTexture = False
+        self.Setting_DeferredAmbientStrength = 0.1
+        self.Setting_DeferredTestMode = False
+        self.Setting_DeferredTestLights = False
+        self.Setting_DeferredTestLightsNumber = 32
 
     def init_manager(self):
         self.init_camera()

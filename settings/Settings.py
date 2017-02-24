@@ -100,9 +100,34 @@ Setting_ZScroll = 999
 Setting_GridSize = 30
 Setting_showPickRays = False
 Setting_showPickRaysSingle = True
+
+Setting_mRayDraw = False
 Setting_mRayOriginX = .0
 Setting_mRayOriginY = .0
 Setting_mRayOriginZ = .0
+Setting_mRayAnimate = False
+Setting_mRayDirectionX = .0
+Setting_mRayDirectionY = .0
+Setting_mRayDirectionZ = .0
+
+Setting_BoundingBoxShow = True
+Setting_BoundingBoxPadding = 1.0
+Setting_BoundingBoxRefresh = False
+
+class GeometryEditMode(Enum):
+    GeometryEditMode_Vertex = [0, 'Vertex']
+    GeometryEditMode_Line = [1, 'Line']
+    GeometryEditMode_Face = [2, 'Face']
+
+Setting_GeometryEditMode = GeometryEditMode.GeometryEditMode_Vertex
+
+class InAppRendererType(Enum):
+    InAppRendererType_Simple = 0
+    InAppRendererType_Forward = 1
+    InAppRendererType_ForwardShadowMapping = 2
+    InAppRendererType_Deferred = 3
+
+Setting_RendererType = InAppRendererType.InAppRendererType_Deferred
 
 # -------------------------------------------------------------------
 # Logging
