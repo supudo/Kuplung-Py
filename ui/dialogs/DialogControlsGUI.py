@@ -40,7 +40,9 @@ class DialogControlsGUI():
         self.height_top_panel = 170.0
         self.ui_helper = UIHelpers
 
-    def render(self, is_opened, managerObjects):
+    def render(self, is_opened, managerObjects, is_frame):
+        self.is_frame = is_frame
+
         imgui.set_next_window_size(300, 600, imgui.FIRST_USE_EVER)
         imgui.set_next_window_position((300 * 2) + 200 , 28, imgui.FIRST_USE_EVER)
 

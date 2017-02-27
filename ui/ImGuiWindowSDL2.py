@@ -337,10 +337,10 @@ class ImGuiWindowSDL2():
 
     def render_controls(self):
         if self.show_controls_models:
-            self.show_controls_models = self.controlsModels.render(self, self.show_controls_models)
+            self.show_controls_models = self.controlsModels.render(self, self.show_controls_models, self.managerObjects, self.renderingManager.model_faces, True)
 
         if self.show_controls_gui:
-            self.show_controls_gui = self.controlsGUI.render(self.show_controls_gui, self.managerObjects)
+            self.show_controls_gui = self.controlsGUI.render(self.show_controls_gui, self.managerObjects, True)
 
     def add_shape(self, shapeType):
         models = self.managerParser.parse_file('resources/shapes/', shapeType.value[0] + '.obj')
