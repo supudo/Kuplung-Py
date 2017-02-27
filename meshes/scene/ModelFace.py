@@ -22,7 +22,6 @@ from gl_utils.objects.MaterialColor import MaterialColor
 
 class ModelFace:
 
-
     def __init__(self):
         self.positionX = {'animate': False, 'point': .0}
         self.positionY = {'animate': False, 'point': .0}
@@ -111,7 +110,6 @@ class ModelFace:
         self.so_outlineColor = Vector4(1.0, 0.0, 0.0, 1.0)
         self.solidLightSkin_MaterialColor = Vector3(0, 0, 0)
 
-
     def initModelProperties(self, model):
         self.mesh_model = model
 
@@ -189,7 +187,6 @@ class ModelFace:
         self.so_outlineColor = Vector4(1.0, 0.0, 0.0, 1.0)
         self.solidLightSkin_MaterialColor = Vector3(0, 0, 0)
 
-
     def initBuffers(self):
         self.glVAO = glGenVertexArrays(1)
         glBindVertexArray(self.glVAO)
@@ -264,7 +261,6 @@ class ModelFace:
             glVertexAttribPointer(4, 3, GL_FLOAT, False, 0, None)
             glEnableVertexAttribArray(4)
 
-
         glBindVertexArray(0)
         glBindBuffer(GL_ARRAY_BUFFER, 0)
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
@@ -276,7 +272,6 @@ class ModelFace:
                          vboTangents,
                          vboBitangents]
                         )
-
 
     def loadTexture(self, texture, type):
         if texture is not None:
@@ -299,11 +294,11 @@ class ModelFace:
                         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, t_width, t_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture_image_data)
                     elif texture_image.mode == "RGB":
                         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, t_width, t_height, 0, GL_RGB, GL_UNSIGNED_BYTE, texture_image_data)
+                    texture_image.close()
                     return vbo_tex
                 else:
                     Settings.do_log("[ModelFace] - Can't load " + type + " texture image! File doesn't exist!")
         return None
-
 
     def render(self, use_tessellation):
         if self.glVAO > 0:

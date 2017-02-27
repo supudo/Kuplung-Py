@@ -21,7 +21,6 @@ from maths.types.Matrix4x4 import Matrix4x4
 
 class Light():
 
-
     def __init__(self):
         self.gl_mvp_matrix = -1
         self.gl_fs_useColor = -1
@@ -70,8 +69,7 @@ class Light():
 
         self.matrixModel = Matrix4x4(1.0)
 
-
-    def init_properties(self):
+    def init_properties(self, lightType):
         self.mesh_model = None
         self.title = ''
         self.description = ''
@@ -79,7 +77,7 @@ class Light():
         self.showLampDirection = False
         self.showInWire = False
         self.turnOff_Position = False
-        self.type = Settings.LightSourceTypes.LightSourceType_Directional
+        self.type = lightType
 
         self.positionX = {'animate': False, 'point': .0}
         self.positionY = {'animate': False, 'point': 5.0}
@@ -128,10 +126,8 @@ class Light():
 
         self.matrixModel = Matrix4x4(1.0)
 
-
     def set_model(self, mesh_model):
         self.mesh_model = mesh_model
-
 
     def init_shader_program(self):
         file_vs = open('resources/shaders/light.vert', 'r', encoding='utf-8')
@@ -160,7 +156,6 @@ class Light():
         self.gl_u_sampler = GLUtils.glGetUniform(self.shader_program, "u_sampler")
 
         return True
-
 
     def init_buffers(self):
         self.glVAO = glGenVertexArrays(1)
@@ -203,7 +198,6 @@ class Light():
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
         glDeleteBuffers(3, [vboVertices, vboNormals, vboIndices])
 
-
     def loadTexture(self, texture, type):
         if texture is not None:
             if not texture.image_url == '':
@@ -229,7 +223,6 @@ class Light():
                 else:
                     Settings.do_log("[Light] - Can't load " + type + " texture image! File doesn't exist!")
         return None
-
 
     def render(self, matrixProjection, matrixCamera):
         if self.glVAO > 0 and self.showLampObject:

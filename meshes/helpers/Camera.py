@@ -31,7 +31,6 @@ class Camera():
         self.rotateCenterZ = {'animate': False, 'point': 0}
         self.cameraPosition = Vector3()
 
-
     def init_properties(self):
         self.View_Eye = Vector3(.0, .0, 10.0)
         self.view_Center = Vector3(.0, .0, .0)
@@ -51,7 +50,6 @@ class Camera():
         self.rotateCenterZ["point"] = 0.0
 
         self.matrixCamera = numpy.array(numpy.ones((4, 4)), dtype=numpy.float32)
-
 
     def render(self):
         self.matrixCamera = MathOps.lookAt(self.View_Eye, self.View_Center, self.View_Up)

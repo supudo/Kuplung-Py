@@ -47,7 +47,7 @@ class CameraModel():
         self.colorB = {'animate': False, 'point': .61}
 
         self.showCameraObject = True
-        self.showInWire = True
+        self.showInWire = False
 
         self.matrixModel = Matrix4x4(1.)
 
@@ -75,7 +75,7 @@ class CameraModel():
         self.colorB = {'animate': False, 'point': .61}
 
         self.showCameraObject = True
-        self.showInWire = True
+        self.showInWire = False
 
         self.matrixModel = Matrix4x4(1.)
 
@@ -175,7 +175,11 @@ class CameraModel():
             glUniform3f(self.gl_fs_innerLightDirection, self.innerLightDirectionX['point'], self.innerLightDirectionY['point'], self.innerLightDirectionZ['point'])
 
             glBindVertexArray(self.glVAO)
+            if self.showInWire:
+                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
             glDrawElements(GL_TRIANGLES, self.mesh_model.countIndices, GL_UNSIGNED_INT, None)
+            if self.showInWire:
+                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
             glBindVertexArray(0)
 
             glUseProgram(0)

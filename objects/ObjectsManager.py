@@ -15,6 +15,7 @@ from meshes.helpers.AxisHelpers import AxisHelpers
 from meshes.helpers.AxisSystem import AxisSystem
 from meshes.helpers.CameraModel import CameraModel
 from meshes.helpers.Light import Light
+from meshes.helpers.Skybox import Skybox
 from meshes.helpers.WorldGrid import WorldGrid
 from parsers.OBJ.AssimpObj import AssimpObj
 from maths import MathOps
@@ -43,6 +44,7 @@ class ObjectsManager():
         self.axis_helpers_y_plus = AxisHelpers()
         self.axis_helpers_z_minus = AxisHelpers()
         self.axis_helpers_z_plus = AxisHelpers()
+        self.skybox = Skybox()
 
         self.Setting_FOV = 45.0
         self.Setting_RatioWidth = 4.0
@@ -64,6 +66,7 @@ class ObjectsManager():
 
         self.SolidLight_Direction = Vector3(0.0, 1.0, 0.0)
         self.SolidLight_MaterialColor = Vector3(0.7)
+        self.SolidLight_MaterialColor_ColorPicker = False
         self.SolidLight_Ambient = Vector3(1.0)
         self.SolidLight_Diffuse = Vector3(1.0)
         self.SolidLight_Specular = Vector3(1.0)
@@ -89,6 +92,9 @@ class ObjectsManager():
         self.Setting_DeferredTestMode = False
         self.Setting_DeferredTestLights = False
         self.Setting_DeferredTestLightsNumber = 32
+        self.Setting_Skybox = -1
+        self.Setting_ShowSpaceship = False
+        self.Setting_ShowTerrain = False
 
     def render(self, window):
         glEnable(GL_DEPTH_TEST)
@@ -131,6 +137,11 @@ class ObjectsManager():
         for light in self.lightSources:
             light.render(self.matrixProjection, self.camera.matrixCamera)
 
+        if self.Setting_Skybox != self.skybox.Setting_Skybox_Item:
+            self.skybox.init_buffers()
+            self.Setting_Skybox = self.skybox.Setting_Skybox_Item
+        self.skybox.render(self.camera.matrixCamera, self.Setting_PlaneClose, self.Setting_PlaneFar, self.Setting_FOV)
+
     def reset_properties_system(self):
         self.reset_settings()
 
@@ -162,6 +173,7 @@ class ObjectsManager():
         self.Setting_GammaCoeficient = 1.0
         self.SolidLight_Direction = Vector3(0.0, 1.0, 0.0)
         self.SolidLight_MaterialColor = Vector3(0.7)
+        self.SolidLight_MaterialColor_ColorPicker = False
         self.Setting_OutlineColorPickerOpen = False
         self.Setting_OutlineColor = Vector4(1, 0, 0, 0)
         self.SolidLight_Ambient = Vector3(1.0)
@@ -188,6 +200,10 @@ class ObjectsManager():
         self.Setting_DeferredTestMode = False
         self.Setting_DeferredTestLights = False
         self.Setting_DeferredTestLightsNumber = 32
+        self.Setting_Skybox = -1
+        self.Setting_ShowSpaceship = False
+        self.Setting_GenerateSpaceship = False
+        self.Setting_ShowTerrain = False
 
     def init_manager(self):
         self.init_camera()
@@ -195,6 +211,7 @@ class ObjectsManager():
         self.init_grid()
         self.init_axis_system()
         self.init_axis_helpers()
+        self.init_skybox()
 
     def init_camera(self):
         self.camera.init_properties()
@@ -214,6 +231,12 @@ class ObjectsManager():
         success = self.axis_system.init_shader_program()
         if success:
             self.axis_system.init_buffers()
+
+    def init_skybox(self):
+        self.skybox.init_properties(self.Setting_GridSize)
+        success = self.skybox.init_buffers()
+        if not success:
+            Settings.do_log('[ObjectsManager] Skybox cannot be initialized!')
 
     def init_axis_helpers(self):
         self.axis_helpers_x_plus.set_model(self.systemModels["axis_x_plus"])
@@ -276,7 +299,7 @@ class ObjectsManager():
     def add_light(self, lightType, title='', description=''):
         l = Light()
         l.type = lightType
-        l.init_properties()
+        l.init_properties(lightType)
         l.title = title
         l.description = description
         l.set_model(self.systemModels[lightType.value[1]])
@@ -284,17 +307,17 @@ class ObjectsManager():
             if title == '':
                 l.title = 'Directional ' + str(len(self.lightSources) + 1)
             if description == '':
-                l.title = 'Directional ' + str(len(self.lightSources) + 1)
+                l.description = 'Directional ' + str(len(self.lightSources) + 1)
         if lightType == Settings.LightSourceTypes.LightSourceType_Point:
             if title == '':
                 l.title = 'Point ' + str(len(self.lightSources) + 1)
             if description == '':
-                l.title = 'Point ' + str(len(self.lightSources) + 1)
+                l.description = 'Point ' + str(len(self.lightSources) + 1)
         if lightType == Settings.LightSourceTypes.LightSourceType_Spot:
             if title == '':
                 l.title = 'Spot ' + str(len(self.lightSources) + 1)
             if description == '':
-                l.title = 'Spot ' + str(len(self.lightSources) + 1)
+                l.description = 'Spot ' + str(len(self.lightSources) + 1)
         l.init_shader_program()
         l.init_buffers()
         self.lightSources.append(l)

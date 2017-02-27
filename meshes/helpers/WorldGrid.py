@@ -39,10 +39,17 @@ class WorldGrid():
         self.scaleZ = {'animate': False, 'point': 1.}
 
         self.act_as_mirror = False
+        self.showGrid = True
         self.transparency = 0.5
 
         self.matrixModel = Matrix4x4(1.)
 
+        self.mirror_translateX = 0.0
+        self.mirror_translateY = 5.0
+        self.mirror_translateZ = -5.0
+        self.mirror_rotateX = 90.0
+        self.mirror_rotateY = 0.0
+        self.mirror_rotateZ = 0.0
 
     def init_properties(self):
         self.positionX = {'animate': False, 'point': .0}
@@ -58,10 +65,10 @@ class WorldGrid():
         self.scaleZ = {'animate': False, 'point': 1.}
 
         self.act_as_mirror = False
+        self.showGrid = True
         self.transparency = 0.5
 
         self.matrixModel = Matrix4x4(1.)
-
 
     def init_shader_program(self):
         file_vs = open('resources/shaders/grid.vert', 'r', encoding='utf-8')
@@ -88,7 +95,6 @@ class WorldGrid():
         self.gl_a_actAsMirror = GLUtils.glGetUniform(self.shader_program, "a_actAsMirror")
 
         return True
-
 
     def init_buffers(self, grid_size, unit_size):
         self.glVAO = glGenVertexArrays(1)
@@ -193,9 +199,8 @@ class WorldGrid():
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
         glDeleteBuffers(3, [vboVertices, vboColors, vboIndices])
 
-
     def render(self, matrixProjection, matrixCamera, showZAxis):
-        if self.glVAO > 0:
+        if self.glVAO > 0 and self.showGrid:
             glUseProgram(self.shader_program)
 
             self.matrixModel = Matrix4x4(1.0)
