@@ -110,9 +110,10 @@ class ModelFace:
         self.so_outlineColor = Vector4(1.0, 0.0, 0.0, 1.0)
         self.solidLightSkin_MaterialColor = Vector3(0, 0, 0)
 
-    def initModelProperties(self, model):
+    def set_model(self, model):
         self.mesh_model = model
 
+    def initModelProperties(self):
         self.Setting_CelShading = False
         self.Setting_Wireframe = False
         self.Setting_Alpha = 1.0
@@ -235,7 +236,7 @@ class ModelFace:
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ArrayDatatype.arrayByteCount(data_indices), data_indices, GL_STATIC_DRAW)
 
         # bumps
-        if self.mesh_model.ModelMaterial.texture_normal.image_url != '' and\
+        if self.mesh_model.ModelMaterial.texture_normal.Image != '' and\
             self.mesh_model.countVertices > 0 and\
             self.mesh_model.countTextureCoordinates > 0 and\
             self.mesh_model.countNormals > 0:
@@ -275,8 +276,8 @@ class ModelFace:
 
     def loadTexture(self, texture, type):
         if texture is not None:
-            if not texture.image_url == '':
-                image_file = Settings.ApplicationAssetsPath + texture.image_url
+            if not texture.Image == '':
+                image_file = Settings.ApplicationAssetsPath + texture.Image
                 if os.path.exists(image_file):
                     texture_image = Image.open(image_file, 'r')
                     texture_image_data = numpy.array(list(texture_image.getdata()), numpy.uint8)

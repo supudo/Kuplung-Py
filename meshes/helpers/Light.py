@@ -200,8 +200,8 @@ class Light():
 
     def loadTexture(self, texture, type):
         if texture is not None:
-            if not texture.image_url == '':
-                image_file = Settings.ApplicationAssetsPath + texture.image_url
+            if not texture.Image == '':
+                image_file = Settings.ApplicationAssetsPath + texture.Image
                 if os.path.exists(image_file):
                     texture_image = Image.open(image_file, 'r')
                     texture_image_data = numpy.array(list(texture_image.getdata()), numpy.uint8)

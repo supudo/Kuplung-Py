@@ -9,6 +9,7 @@ __author__ = 'supudo'
 __version__ = "1.0.0"
 
 import scanf
+import os
 from gl_utils.objects.MeshModel import MeshModel
 from gl_utils.objects.Material import Material
 from gl_utils.objects.Material import MaterialTextureImage
@@ -20,7 +21,6 @@ class ParserObj2:
 
     def __init__(self):
         pass
-
 
     def parse_file(self, obj_folder, obj_filename):
         self.folder = obj_folder
@@ -246,7 +246,6 @@ class ParserObj2:
 
         return self.models
 
-
     def get_similar_vertex_index(self, packed, vertexToOutIndex):
         result = -1
         for idx in range(len(vertexToOutIndex)):
@@ -254,7 +253,6 @@ class ParserObj2:
             if m['vertices'] == packed['vertices'] and m['normals'] == packed['normals']:
                 result = idx
         return result
-
 
     def parse_material_file(self, folder, filename):
         self.materials = {}
@@ -302,9 +300,19 @@ class ParserObj2:
             elif values[0] == 'map_d':
                 current_material.texture_dissolve = self.load_texture(values[1:])
 
-
     def load_texture(self, values):
         mti = MaterialTextureImage()
-        mti.image_url = values[0]
+        mti.Image = ''
+        mti.UseTexture = False
+        mti.Height = 0
+        mti.Width = 0
+        if values.count('-') > 0:
+            # TODO: commands
+            pass
+        else:
+            mti.Image = ''.join(values)
+        if not os.path.exists(mti.Image):
+            mti.Image = self.folder + '/' + mti.Image
+        k = mti.Image.rfind('/')
+        mti.Filename = mti.Image[k + 1:]
         return mti
-

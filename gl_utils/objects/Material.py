@@ -4,15 +4,33 @@
 Kuplung - OpenGL Viewer, python port
 supudo.net
 """
+
+from enum import Enum
+
+
 __author__ = 'supudo'
 __version__ = "1.0.0"
 
+class MaterialTextureType(Enum):
+    MaterialTextureType_Undefined = 0
+    MaterialTextureType_Ambient = 1
+    MaterialTextureType_Diffuse = 2
+    MaterialTextureType_Dissolve = 3
+    MaterialTextureType_Bump = 4
+    MaterialTextureType_Specular = 5
+    MaterialTextureType_SpecularExp = 6
+    MaterialTextureType_Displacement = 7
 
 class MaterialTextureImage:
 
     def __init__(self):
-        self.image_url = ''
-        self.use_texture = False
+        self.Image = ''
+        self.Filename = ''
+        self.UseTexture = False
+        self.TextureType = MaterialTextureType.MaterialTextureType_Undefined
+        self.Height = 0
+        self.Width = 0
+        self.Commands = []
 
 class Material:
 

@@ -136,7 +136,7 @@ def compute_tangent_basis(vertices, uvs, normals):
     tangents = []
     bitangents = []
 
-    for i in range(len(vertices)):
+    for i in range(0, len(vertices), 3):
         # Shortcuts for vertices
         v0 = vertices[i + 0]
         v1 = vertices[i + 1]
@@ -147,7 +147,7 @@ def compute_tangent_basis(vertices, uvs, normals):
         uv1 = uvs[i + 1]
         uv2 = uvs[i + 2]
 
-        # Edges of the triangle: postion delta
+        # Edges of the triangle: position delta
         deltaPos1 = v1 - v0
         deltaPos2 = v2 - v0
 
@@ -155,12 +155,13 @@ def compute_tangent_basis(vertices, uvs, normals):
         deltaUV1 = uv1 - uv0
         deltaUV2 = uv2 - uv0
 
-        r = 1 / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x)
+        r_div = deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x
+        r = 1
+        if r_div != 0:
+            r = 1 / r_div
         tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y) * r
         bitangent = (deltaPos2 * deltaUV1.x - deltaPos1 * deltaUV2.x) * r
 
-        # Set the same tangent for all three vertices of the triangle.
-        # They will be merged later, in vboindexer.cpp
         tangents.append(tangent)
         tangents.append(tangent)
         tangents.append(tangent)

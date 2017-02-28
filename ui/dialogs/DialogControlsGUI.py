@@ -49,9 +49,9 @@ class DialogControlsGUI():
         _, is_opened = imgui.begin('GUI Controls', is_opened, imgui.WINDOW_SHOW_BORDERS)
 
         # reset defaults button
-        imgui.push_style_color(imgui.COLOR_BUTTON, .6, .1, .1, 1)
-        imgui.push_style_color(imgui.COLOR_BUTTON_HOVERED, .9, .1, .1, 1)
-        imgui.push_style_color(imgui.COLOR_BUTTON_ACTIVE, .8, .2, .2, 1)
+        imgui.push_style_color(imgui.COLOR_BUTTON, 153 / 255, 68 / 255, 61 / 255, 255 / 255)
+        imgui.push_style_color(imgui.COLOR_BUTTON_HOVERED, 178 / 255, 64 / 255, 53 / 255, 255 / 255)
+        imgui.push_style_color(imgui.COLOR_BUTTON_ACTIVE, 204 / 255, 54 / 255, 40 / 255, 255 / 255)
         if imgui.button('Reset values to default', -1, 0):
             managerObjects.reset_properties_system()
         imgui.pop_style_color(3)

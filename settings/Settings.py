@@ -29,8 +29,8 @@ ApplicationRootPath = ''
 ApplicationAssetsPath = 'resources/shapes/'
 
 ApplicationGLFW3 = False
-
 LogDebugWindow = True
+Settings_CurrentFolder = ''
 
 class ShapeTypes(Enum):
     ShapeType_None = ['', '', 0]

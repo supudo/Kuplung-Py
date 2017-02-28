@@ -7,6 +7,7 @@ supudo.net
 __author__ = 'supudo'
 __version__ = "1.0.0"
 
+import os
 import pyassimp
 import pyassimp.postprocess
 from gl_utils.objects.MeshModel import MeshModel
@@ -21,7 +22,6 @@ class AssimpObj:
     def __init__(self):
         pass
 
-
     def parse_file(self, obj_folder, obj_filename):
         self.folder = obj_folder
         self.file_obj = obj_folder + obj_filename
@@ -35,12 +35,10 @@ class AssimpObj:
         pyassimp.release(scene)
         return self.mesh_models
 
-
     def process_node(self, scene):
         for index, mesh in enumerate(scene.meshes):
             self.mesh_models.append(self.process_mesh(mesh, scene, mesh.name))
             self.index_model += 1
-
 
     def process_mesh(self, mesh, scene, model_title):
         entityModel = MeshModel()
@@ -93,22 +91,80 @@ class AssimpObj:
             entityMaterial.color_specular = Vector3(material.properties['specular'])
             entityMaterial.color_emission = Vector3(material.properties['emissive'])
 
-            entityMaterial.texture_ambient = self.load_texture()
-            entityMaterial.texture_diffuse = self.load_texture()
-            entityMaterial.texture_normal = self.load_texture()
-            entityMaterial.texture_displacement = self.load_texture()
-            entityMaterial.texture_specular = self.load_texture()
-            entityMaterial.texture_specular_exp = self.load_texture()
-            entityMaterial.texture_dissolve = self.load_texture()
+            textures = self.parse_textures(entityModel.MaterialTitle)
+
+            entityMaterial.texture_ambient = textures['ambient']
+            entityMaterial.texture_diffuse = textures['diffuse']
+            entityMaterial.texture_normal = textures['normal']
+            entityMaterial.texture_displacement = textures['displacement']
+            entityMaterial.texture_specular = textures['specular']
+            entityMaterial.texture_specular_exp = textures['specular_exp']
+            entityMaterial.texture_dissolve = textures['dissolve']
 
             entityModel.ModelMaterial = entityMaterial
 
         return entityModel
 
+    def parse_textures(self, materialTitle):
+        # PyAssimp does not yet support textures, so we roll our own ...
+        mtl_file = self.get_mtl_file()
+        textures = {
+            'ambient': MaterialTextureImage(),
+            'diffuse': MaterialTextureImage(),
+            'normal': MaterialTextureImage(),
+            'displacement': MaterialTextureImage(),
+            'specular': MaterialTextureImage(),
+            'specular_exp': MaterialTextureImage(),
+            'dissolve': MaterialTextureImage()
+        }
+        if mtl_file != '':
+            for line in open(self.folder + mtl_file, "r"):
+                if line.startswith('#'):
+                    continue
+                values = line.split()
+                if not values:
+                    continue
+                elif values[0] == 'map_Ka':
+                    textures['ambient'] = self.load_texture(''.join(values[1:]))
+                elif values[0] == 'map_Kd':
+                    textures['diffuse'] = self.load_texture(''.join(values[1:]))
+                elif values[0] == 'map_Bump':
+                    textures['normal'] = self.load_texture(''.join(values[1:]))
+                elif values[0] == 'disp':
+                    textures['displacement'] = self.load_texture(''.join(values[1:]))
+                elif values[0] == 'map_Ks':
+                    textures['specular'] = self.load_texture(''.join(values[1:]))
+                elif values[0] == 'map_Ns':
+                    textures['specular_exp'] = self.load_texture(''.join(values[1:]))
+                elif values[0] == 'map_d':
+                    textures['dissolve'] = self.load_texture(''.join(values[1:]))
+        return textures
 
-    def load_texture(self):
-        # PyAssimp does not yet support textures ...
+    def load_texture(self, line):
         mti = MaterialTextureImage()
-        mti.image_url = ''
+        mti.Image = ''
+        mti.UseTexture = False
+        mti.Height = 0
+        mti.Width = 0
+        if line.count('-') > 0:
+            # TODO: commands
+            pass
+        else:
+            mti.Image = line
+        if not os.path.exists(mti.Image):
+            mti.Image = self.folder + '/' + mti.Image
+        k = mti.Image.rfind('/')
+        mti.Filename = mti.Image[k + 1:]
         return mti
+
+    def get_mtl_file(self):
+        # quick and dirty parser, presumable mtl definition is not too far
+        # down the file, so it should be quick
+        file_obj = open(self.file_obj, 'r')
+        for line in file_obj:
+            values = line.split()
+            if not values or values[0] == '#':
+                continue
+            elif values[0] == 'mtllib':
+                return values[1]
 

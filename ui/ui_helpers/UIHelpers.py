@@ -114,9 +114,9 @@ def animate_value_async(delay, is_frame, animated_flag,
 def draw_tabs(tabs_labels, tabs_icons, value_init):
     selected_item = value_init
 
-    imgui.push_style_color(imgui.COLOR_BUTTON, 153 / 255.0, 77 / 255.0, 61 / 255.0, 255 / 255.0)
-    imgui.push_style_color(imgui.COLOR_BUTTON_HOVERED, 153 / 255.0, 99 / 255.0, 99 / 255.0, 255 / 255.0)
-    imgui.push_style_color(imgui.COLOR_BUTTON_ACTIVE, 153 / 255.0, 109 / 255.0, 109 / 255.0, 255 / 255.0)
+    imgui.push_style_color(imgui.COLOR_BUTTON, 153 / 255, 68 / 255, 61 / 255, 255 / 255)
+    imgui.push_style_color(imgui.COLOR_BUTTON_HOVERED, 178 / 255, 64 / 255, 53 / 255, 255 / 255)
+    imgui.push_style_color(imgui.COLOR_BUTTON_ACTIVE, 204 / 255, 54 / 255, 40 / 255, 255 / 255)
     imgui.push_style_var(imgui.STYLE_ITEM_SPACING, (10.0, 10.0))
     imgui.push_style_var(imgui.STYLE_FRAME_ROUNDING, 2.0)
     imgui.set_window_font_scale(2.0)

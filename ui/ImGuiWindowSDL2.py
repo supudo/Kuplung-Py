@@ -161,8 +161,19 @@ class ImGuiWindowSDL2():
 
     def render_screen(self):
         self.render_main_menu()
-        self.render_ui_content()
-        self.render_scene()
+
+        self.managerObjects.render(self.window)
+
+        if self.show_controls_models:
+            self.show_controls_models, self.renderingManager.model_faces = self.controlsModels.render(self, self.show_controls_models, self.managerObjects, self.renderingManager.model_faces, True)
+
+        if self.show_controls_gui:
+            self.show_controls_gui = self.controlsGUI.render(self.show_controls_gui, self.managerObjects, True)
+
+        self.renderingManager.render(
+            self.managerObjects,
+            self.sceneSelectedModelObject
+        )
 
     def handle_controls_events(self):
         if not imgui.is_mouse_hovering_any_window():
@@ -335,33 +346,17 @@ class ImGuiWindowSDL2():
         if self.new_scene_clear:
             self.gui_clear_scene()
 
-    def render_controls(self):
-        if self.show_controls_models:
-            self.show_controls_models = self.controlsModels.render(self, self.show_controls_models, self.managerObjects, self.renderingManager.model_faces, True)
-
-        if self.show_controls_gui:
-            self.show_controls_gui = self.controlsGUI.render(self.show_controls_gui, self.managerObjects, True)
-
     def add_shape(self, shapeType):
         models = self.managerParser.parse_file('resources/shapes/', shapeType.value[0] + '.obj')
         for i in range(len(models)):
             model_face = ModelFace()
-            model_face.initModelProperties(models[i])
+            model_face.set_model(models[i])
+            model_face.initModelProperties()
             model_face.initBuffers()
             self.renderingManager.model_faces.append(model_face)
 
     def add_light(self, lightType):
         self.managerObjects.add_light(lightType)
-
-    def render_ui_content(self):
-        self.managerObjects.render(self.window)
-        self.render_controls()
-
-    def render_scene(self):
-        self.renderingManager.render(
-            self.managerObjects,
-            self.sceneSelectedModelObject
-        )
 
     def get_app_consumption(self):
         consumption_str = Consumption.memory()
