@@ -230,12 +230,7 @@ class Light():
             self.matrixModel = Matrix4x4(1.0)
 
             # scale
-            self.matrixModel = MathOps.matrix_scale(
-                self.matrixModel,
-                (self.scaleX['point'],
-                 self.scaleY['point'],
-                 self.scaleZ['point'])
-            )
+            self.matrixModel = MathOps.matrix_scale(self.matrixModel, (self.scaleX['point'], self.scaleY['point'], self.scaleZ['point']))
 
             # rotate
             self.matrixModel = MathOps.matrix_translate(self.matrixModel, Vector4(.0))
@@ -245,12 +240,7 @@ class Light():
             self.matrixModel = MathOps.matrix_translate(self.matrixModel, Vector4(.0))
 
             if not self.turnOff_Position:
-                self.matrixModel = MathOps.matrix_translate(
-                    self.matrixModel,
-                    (self.positionX['point'],
-                     self.positionY['point'],
-                     self.positionZ['point'])
-                )
+                self.matrixModel = MathOps.matrix_translate(self.matrixModel, (self.positionX['point'], self.positionY['point'], self.positionZ['point']))
 
             # rotate center
             self.matrixModel = MathOps.matrix_translate(self.matrixModel, Vector4(.0))

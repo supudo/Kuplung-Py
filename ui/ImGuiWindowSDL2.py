@@ -168,7 +168,7 @@ class ImGuiWindowSDL2():
             self.show_controls_models, self.renderingManager.model_faces = self.controlsModels.render(self, self.show_controls_models, self.managerObjects, self.renderingManager.model_faces, True)
 
         if self.show_controls_gui:
-            self.show_controls_gui = self.controlsGUI.render(self.show_controls_gui, self.managerObjects, True)
+            self.show_controls_gui, self.managerObjects = self.controlsGUI.render(self.show_controls_gui, self.managerObjects, True)
 
         self.renderingManager.render(
             self.managerObjects,

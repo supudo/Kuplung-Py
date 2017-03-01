@@ -40,7 +40,7 @@ class DialogControlsGUI():
         self.height_top_panel = 170.0
         self.ui_helper = UIHelpers
 
-    def render(self, is_opened, managerObjects, is_frame):
+    def render(self, is_opened, mo, is_frame):
         self.is_frame = is_frame
 
         imgui.set_next_window_size(300, 600, imgui.FIRST_USE_EVER)
@@ -53,7 +53,11 @@ class DialogControlsGUI():
         imgui.push_style_color(imgui.COLOR_BUTTON_HOVERED, 178 / 255, 64 / 255, 53 / 255, 255 / 255)
         imgui.push_style_color(imgui.COLOR_BUTTON_ACTIVE, 204 / 255, 54 / 255, 40 / 255, 255 / 255)
         if imgui.button('Reset values to default', -1, 0):
-            managerObjects.reset_properties_system()
+            mo.reset_properties_system()
+            if self.selectedObjectLight > -1:
+                self.lightRotateX = mo.lightSources[self.selectedObjectLight].rotateX['point']
+                self.lightRotateY = mo.lightSources[self.selectedObjectLight].rotateY['point']
+                self.lightRotateZ = mo.lightSources[self.selectedObjectLight].rotateZ['point']
         imgui.pop_style_color(3)
 
         # GUI items listbox
@@ -66,7 +70,7 @@ class DialogControlsGUI():
                  'Grid', 'Scene Lights', 'Skybox', 'Lights', 'Artefacts']
         for i in range(len(items)):
             if i == 6:
-                if len(managerObjects.lightSources) == 0:
+                if len(mo.lightSources) == 0:
                     imgui.indent()
                     imgui.selectable(items[i], False, 0, 0, 18.0)
                     imgui.unindent()
@@ -76,9 +80,9 @@ class DialogControlsGUI():
                     #TODO: add icon
                     opened = imgui.tree_node('Lights')
                     if opened:
-                        for j in range(len(managerObjects.lightSources)):
+                        for j in range(len(mo.lightSources)):
                             imgui.bullet()
-                            light_name = managerObjects.lightSources[j].title
+                            light_name = mo.lightSources[j].title
                             _, light_sel = imgui.selectable(light_name, True if self.selectedObjectLight == j else False, 0, 0, 18.0)
                             if light_sel:
                                 self.selectedObjectLight = j
@@ -120,33 +124,44 @@ class DialogControlsGUI():
         # GUI items
         imgui.begin_child("﻿Properties Pane".encode('utf-8'), 0.0, 0.0, False)
         if self.selectedObject == 0:
-            self.render_general_view_options(managerObjects)
-            self.render_general_editor_artefacts(managerObjects)
-            self.render_general_rays(managerObjects)
-            self.render_general_bounding_box(managerObjects)
-            self.render_general_edit_mode(managerObjects)
-            self.render_render_buffer(managerObjects)
+            mo = self.render_general_view_options(mo)
+            mo = self.render_general_editor_artefacts(mo)
+            mo = self.render_general_rays(mo)
+            mo = self.render_general_bounding_box(mo)
+            mo = self.render_general_edit_mode(mo)
+            mo = self.render_render_buffer(mo)
             if Settings.Setting_RendererType == Settings.InAppRendererType.InAppRendererType_Deferred:
-                self.render_defered_rendering_options(managerObjects)
+                mo = self.render_defered_rendering_options(mo)
         elif self.selectedObject == 1:
-            self.render_camera(managerObjects)
+            mo = self.render_camera(mo)
         elif self.selectedObject == 2:
-            self.render_camera_model(managerObjects)
+            mo = self.render_camera_model(mo)
         elif self.selectedObject == 3:
-            self.render_grid(managerObjects)
+            mo = self.render_grid(mo)
         elif self.selectedObject == 4:
-            self.render_scene_lights(managerObjects)
+            mo = self.render_scene_lights(mo)
         elif self.selectedObject == 5:
-            self.render_skybox(managerObjects)
+            mo = self.render_skybox(mo)
         elif self.selectedObject == 6:
-            self.render_lights(managerObjects)
+            mo = self.render_lights(mo)
         elif self.selectedObject == 7:
-            self.render_artefacts(managerObjects)
+            mo = self.render_artefacts(mo)
         imgui.end_child()
 
         imgui.end()
 
-        return is_opened
+        if len(mo.lightSources) > 0 and self.selectedObjectLight > -1 and len(mo.lightSources) > self.selectedObjectLight:
+            slp_x = mo.lightSources[self.selectedObjectLight].rotateX['point']
+            slp_y = mo.lightSources[self.selectedObjectLight].rotateY['point']
+            slp_z = mo.lightSources[self.selectedObjectLight].rotateZ['point']
+            if self.lightRotateX < slp_x or self.lightRotateX > slp_x or\
+                self.lightRotateY < slp_y or self.lightRotateY > slp_y or\
+                self.lightRotateZ < slp_z or self.lightRotateZ > slp_z:
+                mo.lightSources[self.selectedObjectLight].rotateX['point'] = self.lightRotateX
+                mo.lightSources[self.selectedObjectLight].rotateY['point'] = self.lightRotateY
+                mo.lightSources[self.selectedObjectLight].rotateZ['point'] = self.lightRotateZ
+
+        return is_opened, mo
 
     #region General
 
@@ -176,6 +191,7 @@ class DialogControlsGUI():
                 imgui.set_tooltip('Gamma Correction')
             _, mo.Setting_GammaCoeficient = imgui.slider_float('##109', mo.Setting_GammaCoeficient, 1.0, 4.0, "%.2f", 1.0)
             imgui.unindent()
+        return mo
 
     def render_general_editor_artefacts(self, mo):
         opened, _ = imgui.collapsing_header('Editor Artefacts')
@@ -184,6 +200,7 @@ class DialogControlsGUI():
             _, mo.Setting_ShowAxisHelpers = imgui.checkbox('Axis Helpers', mo.Setting_ShowAxisHelpers)
             _, mo.Settings_ShowZAxis = imgui.checkbox('Z Axis', mo.Settings_ShowZAxis)
             imgui.unindent()
+        return mo
 
     def render_general_rays(self, mo):
         opened, _ = imgui.collapsing_header('Rays')
@@ -216,6 +233,7 @@ class DialogControlsGUI():
                     Settings.Setting_mRayDraw = True
                 imgui.unindent()
             imgui.unindent()
+        return mo
 
     def render_general_bounding_box(self, mo):
         opened, _ = imgui.collapsing_header('Bounding Box')
@@ -229,6 +247,7 @@ class DialogControlsGUI():
                 mo.Setting_OutlineColor, mo.Setting_OutlineColorPickerOpen = self.ui_helper.add_color4('Color', mo.Setting_OutlineColor, mo.Setting_OutlineColorPickerOpen)
                 _, mo.Setting_OutlineThickness = self.ui_helper.add_slider('Thickness', 2, 1.01, 0.0, 2.0, False, None, mo.Setting_OutlineThickness, True, self.is_frame)
             imgui.unindent()
+        return mo
 
     def render_general_edit_mode(self, mo):
         opened, _ = imgui.collapsing_header('Edit Mode')
@@ -265,6 +284,7 @@ class DialogControlsGUI():
                 mo.Setting_VertexSphere_Color, mo.Setting_VertexSphere_ColorPickerOpen = self.ui_helper.add_color4('Color', mo.Setting_VertexSphere_Color, mo.Setting_VertexSphere_ColorPickerOpen)
 
             imgui.unindent()
+        return mo
 
     def render_render_buffer(self, mo):
         opened, _ = imgui.collapsing_header('Render Buffer')
@@ -276,6 +296,7 @@ class DialogControlsGUI():
             if imgui.button('Shadow Texture', -1, 0):
                 mo.Setting_DebugShadowTexture = not mo.Setting_DebugShadowTexture
             imgui.unindent()
+        return mo
 
     def render_defered_rendering_options(self, mo):
         opened, _ = imgui.collapsing_header('Deferred Rendering')
@@ -294,6 +315,7 @@ class DialogControlsGUI():
             imgui.text('Number of test lights')
             _, mo.Setting_DeferredTestLightsNumber = imgui.slider_int('##209', mo.Setting_DeferredTestLightsNumber, 0, 32)
             imgui.unindent()
+        return mo
 
     #endregion
 
@@ -301,9 +323,7 @@ class DialogControlsGUI():
         tab_labels = ['Look At', 'Rotate', 'Translate']
         tab_icons = ['ICON_MD_REMOVE_RED_EYE', 'ICON_MD_3D_ROTATION', 'ICON_MD_OPEN_WITH']
         self.selectedTabGUICamera = self.ui_helper.draw_tabs(tab_labels, tab_icons, self.selectedTabGUICamera)
-
         imgui.separator()
-
         if self.selectedTabGUICamera == 0:
             imgui.text_colored('Look-At Matrix', 1, 0, 0, 1)
             imgui.separator()
@@ -336,6 +356,7 @@ class DialogControlsGUI():
             mo.camera.positionX['animate'], mo.camera.positionX['point'] = self.ui_helper.add_controls_slider_same_line('X', 19, 0.05, -2 * mo.Setting_GridSize, 2 * mo.Setting_GridSize, True, mo.camera.positionX['animate'], mo.camera.positionX['point'], True, self.is_frame)
             mo.camera.positionY['animate'], mo.camera.positionY['point'] = self.ui_helper.add_controls_slider_same_line('Y', 20, 0.05, -2 * mo.Setting_GridSize, 2 * mo.Setting_GridSize, True, mo.camera.positionY['animate'], mo.camera.positionY['point'], True, self.is_frame)
             mo.camera.positionZ['animate'], mo.camera.positionZ['point'] = self.ui_helper.add_controls_slider_same_line('Z', 21, 0.05, -2 * mo.Setting_GridSize, 2 * mo.Setting_GridSize, True, mo.camera.positionZ['animate'], mo.camera.positionZ['point'], True, self.is_frame)
+        return mo
 
     def render_camera_model(self, mo):
         tab_labels = ['General', 'Position', 'Rotate']
@@ -372,6 +393,7 @@ class DialogControlsGUI():
             mo.camera_model.rotateCenterX['animate'], mo.camera_model.rotateCenterX['point'] = self.ui_helper.add_controls_slider_same_line('X', 10, 1.0, -180.0, 180.0, True, mo.camera_model.rotateCenterX['animate'], mo.camera_model.rotateCenterX['point'], True, self.is_frame)
             mo.camera_model.rotateCenterY['animate'], mo.camera_model.rotateCenterY['point'] = self.ui_helper.add_controls_slider_same_line('Y', 11, 1.0, -180.0, 180.0, True, mo.camera_model.rotateCenterY['animate'], mo.camera_model.rotateCenterY['point'], True, self.is_frame)
             mo.camera_model.rotateCenterZ['animate'], mo.camera_model.rotateCenterZ['point'] = self.ui_helper.add_controls_slider_same_line('Z', 12, 1.0, -180.0, 180.0, True, mo.camera_model.rotateCenterZ['animate'], mo.camera_model.rotateCenterZ['point'], True, self.is_frame)
+        return mo
 
     def render_grid(self, mo):
         tab_labels = ['General', 'Scale', 'Rotate', 'Translate']
@@ -419,6 +441,7 @@ class DialogControlsGUI():
             mo.grid.positionX['animate'], mo.grid.positionX['point'] = self.ui_helper.add_controls_slider_same_line('X', 7, 0.5, -1 * mo.Setting_GridSize, mo.Setting_GridSize, True, mo.grid.positionX['animate'], mo.grid.positionX['point'], True, self.is_frame)
             mo.grid.positionY['animate'], mo.grid.positionY['point'] = self.ui_helper.add_controls_slider_same_line('Y', 8, 0.5, -1 * mo.Setting_GridSize, mo.Setting_GridSize, True, mo.grid.positionY['animate'], mo.grid.positionY['point'], True, self.is_frame)
             mo.grid.positionZ['animate'], mo.grid.positionZ['point'] = self.ui_helper.add_controls_slider_same_line('Z', 9, 0.5, -1 * mo.Setting_GridSize, mo.Setting_GridSize, True, mo.grid.positionZ['animate'], mo.grid.positionZ['point'], True, self.is_frame)
+        return mo
 
     def render_scene_lights(self, mo):
         imgui.text_colored('Scene Ambient Light', 1, 0, 0, 1)
@@ -439,6 +462,7 @@ class DialogControlsGUI():
         _, mo.SolidLight_Direction.x = self.ui_helper.add_controls_slider_same_line('X', 7, 0, 0, 10, False, None, mo.SolidLight_Direction.x, True, self.is_frame)
         _, mo.SolidLight_Direction.y = self.ui_helper.add_controls_slider_same_line('Y', 8, 1, 0, 10, False, None, mo.SolidLight_Direction.y, True, self.is_frame)
         _, mo.SolidLight_Direction.z = self.ui_helper.add_controls_slider_same_line('Z', 9, 0, 0, 10, False, None, mo.SolidLight_Direction.z, True, self.is_frame)
+        return mo
 
     def render_skybox(self, mo):
         imgui.text_colored('Skybox', 1, 0, 0, 1)
@@ -446,6 +470,7 @@ class DialogControlsGUI():
         for item in enumerate(mo.skybox.skyboxItems):
             skybox_items.append(item[1][0])
         _, mo.skybox.Setting_Skybox_Item = imgui.combo("##987", mo.skybox.Setting_Skybox_Item, skybox_items)
+        return mo
 
     #region Artefacts
 
@@ -454,6 +479,7 @@ class DialogControlsGUI():
             self.render_artefacts_terrain(mo)
         elif self.selectedObjectArtefact == 1:
             self.render_artefacts_spaceship(mo)
+        return mo
 
     def render_artefacts_terrain(self, mo):
         imgui.text_colored('Terrain', 1, 0, 0, 1)
@@ -463,6 +489,7 @@ class DialogControlsGUI():
             if imgui.button('Generate Terrain', -1, 0):
                 self.generateNewTerrain = not self.generateNewTerrain
             # TODO: terrain settings
+        return mo
 
     def render_artefacts_spaceship(self, mo):
         imgui.text_colored('Spaceship Generator', 1, 0, 0, 1)
@@ -472,6 +499,7 @@ class DialogControlsGUI():
             if imgui.button('Generate Spaceship', -1, 0):
                 mo.Setting_GenerateSpaceship = True
             _, _ = imgui.checkbox('Wireframe', False)
+        return mo
 
     #endregion
 
@@ -490,7 +518,7 @@ class DialogControlsGUI():
             _, mo.lightSources[self.selectedObjectLight].showInWire = imgui.checkbox('Wireframe', mo.lightSources[self.selectedObjectLight].showInWire)
             _, self.lockCameraWithLight = imgui.checkbox('Lock with Camera', self.lockCameraWithLight)
             if imgui.button('View from Here', -1, 0):
-                self.lock_camera_once(mo)
+                mo = self.lock_camera_once(mo)
             imgui.separator()
             if imgui.button('Delete Light Source', -1, 0):
                 self.selectedObject = 0
@@ -507,9 +535,9 @@ class DialogControlsGUI():
             mo.lightSources[self.selectedObjectLight].rotateCenterY['animate'], mo.lightSources[self.selectedObjectLight].rotateCenterY['point'] = self.ui_helper.add_controls_slider_same_line('Y', 14, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].rotateCenterY['animate'], mo.lightSources[self.selectedObjectLight].rotateCenterY['point'], True, self.is_frame)
             mo.lightSources[self.selectedObjectLight].rotateCenterZ['animate'], mo.lightSources[self.selectedObjectLight].rotateCenterZ['point'] = self.ui_helper.add_controls_slider_same_line('Z', 15, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].rotateCenterZ['animate'], mo.lightSources[self.selectedObjectLight].rotateCenterZ['point'], True, self.is_frame)
             imgui.text_colored('Around World center', 1, 0, 0, 1)
-            mo.lightSources[self.selectedObjectLight].rotateX['animate'], mo.lightSources[self.selectedObjectLight].rotateX['point'] = self.ui_helper.add_controls_slider_same_line('X', 16, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].rotateX['animate'], mo.lightSources[self.selectedObjectLight].rotateX['point'], True, self.is_frame)
-            mo.lightSources[self.selectedObjectLight].rotateY['animate'], mo.lightSources[self.selectedObjectLight].rotateY['point'] = self.ui_helper.add_controls_slider_same_line('Y', 17, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].rotateY['animate'], mo.lightSources[self.selectedObjectLight].rotateY['point'], True, self.is_frame)
-            mo.lightSources[self.selectedObjectLight].rotateZ['animate'], mo.lightSources[self.selectedObjectLight].rotateZ['point'] = self.ui_helper.add_controls_slider_same_line('Z', 18, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].rotateZ['animate'], mo.lightSources[self.selectedObjectLight].rotateZ['point'], True, self.is_frame)
+            mo.lightSources[self.selectedObjectLight].rotateX['animate'], self.lightRotateX = self.ui_helper.add_controls_slider_same_line('X', 16, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].rotateX['animate'], self.lightRotateX, True, self.is_frame)
+            mo.lightSources[self.selectedObjectLight].rotateY['animate'], self.lightRotateY = self.ui_helper.add_controls_slider_same_line('Y', 17, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].rotateY['animate'], self.lightRotateY, True, self.is_frame)
+            mo.lightSources[self.selectedObjectLight].rotateZ['animate'], self.lightRotateZ = self.ui_helper.add_controls_slider_same_line('Z', 18, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].rotateZ['animate'], self.lightRotateZ, True, self.is_frame)
         elif self.selectedTabGUILight == 3:
             imgui.text_colored('Move object by Axis', 1, 0, 0, 1)
             mo.lightSources[self.selectedObjectLight].positionX['animate'], mo.lightSources[self.selectedObjectLight].positionX['point'] = self.ui_helper.add_controls_slider_same_line('X', 19, 0.5, -1 * mo.Setting_GridSize, mo.Setting_GridSize, True, mo.lightSources[self.selectedObjectLight].positionX['animate'], mo.lightSources[self.selectedObjectLight].positionX['point'], True, self.is_frame)
@@ -532,6 +560,7 @@ class DialogControlsGUI():
                 imgui.separator()
                 mo.lightSources[self.selectedObjectLight].lCutOff['animate'], mo.lightSources[self.selectedObjectLight].lCutOff['point'] = self.ui_helper.add_slider('Cutoff', 26, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].lCutOff['animate'], mo.lightSources[self.selectedObjectLight].lCutOff['point'], True, self.is_frame)
                 mo.lightSources[self.selectedObjectLight].lOuterCutOff['animate'], mo.lightSources[self.selectedObjectLight].lOuterCutOff['point'] = self.ui_helper.add_slider('Outer Cutoff', 28, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].lOuterCutOff['animate'], mo.lightSources[self.selectedObjectLight].lOuterCutOff['point'], True, self.is_frame)
+        return mo
 
     def lock_camera_once(self, mo):
         self.lockCameraWithLight = True
@@ -548,4 +577,5 @@ class DialogControlsGUI():
             mo.camera.rotateZ['point'] = mo.lightSources[self.selectedObjectLight].rotateZ['point']
             mo.camera.cameraPosition = mo.lightSources[self.selectedObjectLight].matrixModel[3]
             mo.camera.matrixCamera = mo.lightSources[self.selectedObjectLight].matrixModel
+        return mo
 
