@@ -277,15 +277,15 @@ class RenderingManager:
         GLUtils.printProgramLog(self.shader_program)
         return True
 
-    def render(self, managerObjects, selectedModel):
-        self.matrixProjection = managerObjects.matrixProjection
-        self.matrixCamera = managerObjects.camera.matrixCamera
-        self.vecCameraPosition = managerObjects.camera.cameraPosition
-        self.uiAmbientLight = managerObjects.Setting_UIAmbientLight
-        self.lightingPass_DrawMode = managerObjects.Setting_LightingPass_DrawMode
-        self.render_models(managerObjects, selectedModel)
+    def render(self, mo, selectedModel):
+        self.matrixProjection = mo.matrixProjection
+        self.matrixCamera = mo.camera.matrixCamera
+        self.vecCameraPosition = mo.camera.cameraPosition
+        self.uiAmbientLight = mo.Setting_UIAmbientLight
+        self.lightingPass_DrawMode = mo.Setting_LightingPass_DrawMode
+        self.render_models(mo, selectedModel)
 
-    def render_models(self, managerObjects, selectedModel):
+    def render_models(self, mo, selectedModel):
         glUseProgram(self.shader_program)
 
         selectedModelID = -1
@@ -296,7 +296,7 @@ class RenderingManager:
 
             matrixModel = Matrix4x4(1.0)
             # grid
-            matrixModel *= managerObjects.grid.matrixModel
+            matrixModel *= mo.grid.matrixModel
             # scale
             matrixModel = MathOps.matrix_scale( matrixModel, (model.scaleX['point'], model.scaleY['point'], model.scaleZ['point']))
             # translate
@@ -310,8 +310,8 @@ class RenderingManager:
             # world
             model.matrixModel = self.matrixProjection * self.matrixCamera * matrixModel
 
-            model.Setting_ModelViewSkin = managerObjects.viewModelSkin
-            model.lightSources = managerObjects.lightSources
+            model.Setting_ModelViewSkin = mo.viewModelSkin
+            model.lightSources = mo.lightSources
 
             mvpMatrix = self.matrixProjection * self.matrixCamera * matrixModel
 
@@ -332,8 +332,7 @@ class RenderingManager:
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
                 glEnable(GL_BLEND)
                 if model.mesh_model.ModelMaterial.transparency < 1.0:
-                    glUniform1f(self.glFS_AlphaBlending,
-                                model.mesh_model.ModelMaterial.transparency)
+                    glUniform1f(self.glFS_AlphaBlending, model.mesh_model.ModelMaterial.transparency)
                 else:
                     glUniform1f(self.glFS_AlphaBlending, model.Setting_Alpha)
             else:
@@ -345,16 +344,16 @@ class RenderingManager:
 
             # depth color
             pc = 1.0
-            if managerObjects.Setting_PlaneClose >= 1.0:
-                pc = managerObjects.Setting_PlaneClose
+            if mo.Setting_PlaneClose >= 1.0:
+                pc = mo.Setting_PlaneClose
             glUniform1f(self.glFS_planeClose, pc)
-            glUniform1f(self.glFS_planeFar, managerObjects.Setting_PlaneFar / 100.0)
-            glUniform1i(self.glFS_showDepthColor, int(managerObjects.Setting_Rendering_Depth))
+            glUniform1f(self.glFS_planeFar, mo.Setting_PlaneFar / 100.0)
+            glUniform1i(self.glFS_showDepthColor, int(mo.Setting_Rendering_Depth))
             glUniform1i(self.glFS_ShadowPass, 0)
 
             # tessellation
             glUniform1i(self.glTCS_UseCullFace, int(model.Setting_UseCullFace))
-            glUniform1i(self.glTCS_UseTessellation, int(model.Setting_UseTessellation))
+            glUniform1i(self.glTCS_UseTessellation, model.Setting_UseTessellation)
             glUniform1i(self.glTCS_TessellationSubdivision, int(model.Setting_TessellationSubdivision))
 
             # cel - shading
@@ -363,9 +362,9 @@ class RenderingManager:
             # camera position
             glUniform3f(
                 self.glFS_CameraPosition,
-                managerObjects.camera.cameraPosition.x,
-                managerObjects.camera.cameraPosition.y,
-                managerObjects.camera.cameraPosition.z
+                mo.camera.cameraPosition.x,
+                mo.camera.cameraPosition.y,
+                mo.camera.cameraPosition.z
             )
 
             # screen size
@@ -383,9 +382,9 @@ class RenderingManager:
             # ambient color for editor
             glUniform3f(
                 self.glFS_UIAmbient,
-                managerObjects.Setting_UIAmbientLight.r,
-                managerObjects.Setting_UIAmbientLight.g,
-                managerObjects.Setting_UIAmbientLight.b
+                mo.Setting_UIAmbientLight.r,
+                mo.Setting_UIAmbientLight.g,
+                mo.Setting_UIAmbientLight.b
             )
 
             # geometry shader displacement
@@ -397,12 +396,10 @@ class RenderingManager:
             )
 
             # mapping
-            glUniform1i(self.glMaterial_ParallaxMapping,
-                        int(model.Setting_ParallaxMapping))
+            glUniform1i(self.glMaterial_ParallaxMapping, int(model.Setting_ParallaxMapping))
 
             # gamma correction
-            glUniform1f(self.glFS_GammaCoeficient,
-                        managerObjects.Setting_GammaCoeficient)
+            glUniform1f(self.glFS_GammaCoeficient, mo.Setting_GammaCoeficient)
 
             # render skin
             glUniform1i(self.gl_ModelViewSkin,
@@ -418,13 +415,13 @@ class RenderingManager:
             glUniform1i(self.glFS_showShadows, 0)
 
             glUniform1i(self.solidLight.gl_InUse, 1)
-            glUniform3f(self.solidLight.gl_Direction, managerObjects.SolidLight_Direction.x, managerObjects.SolidLight_Direction.y, managerObjects.SolidLight_Direction.z)
-            glUniform3f(self.solidLight.gl_Ambient, managerObjects.SolidLight_Ambient.r, managerObjects.SolidLight_Ambient.g, managerObjects.SolidLight_Ambient.b)
-            glUniform3f(self.solidLight.gl_Diffuse, managerObjects.SolidLight_Diffuse.r, managerObjects.SolidLight_Diffuse.g, managerObjects.SolidLight_Diffuse.b)
-            glUniform3f(self.solidLight.gl_Specular, managerObjects.SolidLight_Specular.r, managerObjects.SolidLight_Specular.g, managerObjects.SolidLight_Specular.b)
-            glUniform1f(self.solidLight.gl_StrengthAmbient, managerObjects.SolidLight_Ambient_Strength)
-            glUniform1f(self.solidLight.gl_StrengthDiffuse, managerObjects.SolidLight_Diffuse_Strength)
-            glUniform1f(self.solidLight.gl_StrengthSpecular, managerObjects.SolidLight_Specular_Strength)
+            glUniform3f(self.solidLight.gl_Direction, mo.SolidLight_Direction.x, mo.SolidLight_Direction.y, mo.SolidLight_Direction.z)
+            glUniform3f(self.solidLight.gl_Ambient, mo.SolidLight_Ambient.r, mo.SolidLight_Ambient.g, mo.SolidLight_Ambient.b)
+            glUniform3f(self.solidLight.gl_Diffuse, mo.SolidLight_Diffuse.r, mo.SolidLight_Diffuse.g, mo.SolidLight_Diffuse.b)
+            glUniform3f(self.solidLight.gl_Specular, mo.SolidLight_Specular.r, mo.SolidLight_Specular.g, mo.SolidLight_Specular.b)
+            glUniform1f(self.solidLight.gl_StrengthAmbient, mo.SolidLight_Ambient_Strength)
+            glUniform1f(self.solidLight.gl_StrengthDiffuse, mo.SolidLight_Diffuse_Strength)
+            glUniform1f(self.solidLight.gl_StrengthSpecular, mo.SolidLight_Specular_Strength)
 
             lightsCount_Directional = 0
             lightsCount_Point = 0
@@ -608,29 +605,20 @@ class RenderingManager:
             # effects - gaussian blur
             glUniform1i(self.glEffect_GB_Mode, model.Effect_GBlur_Mode - 1)
             glUniform1f(self.glEffect_GB_W, model.Effect_GBlur_Width['point'])
-            glUniform1f(self.glEffect_GB_Radius,
-                        model.Effect_GBlur_Radius['point'])
+            glUniform1f(self.glEffect_GB_Radius, model.Effect_GBlur_Radius['point'])
 
             # effects - bloom
             # TODO: Bloom effect
-            glUniform1i(self.glEffect_Bloom_doBloom,
-                        model.Effect_Bloom_doBloom)
-            glUniform1f(self.glEffect_Bloom_WeightA,
-                        model.Effect_Bloom_WeightA)
-            glUniform1f(self.glEffect_Bloom_WeightB,
-                        model.Effect_Bloom_WeightB)
-            glUniform1f(self.glEffect_Bloom_WeightC,
-                        model.Effect_Bloom_WeightC)
-            glUniform1f(self.glEffect_Bloom_WeightD,
-                        model.Effect_Bloom_WeightD)
-            glUniform1f(self.glEffect_Bloom_Vignette,
-                        model.Effect_Bloom_Vignette)
-            glUniform1f(self.glEffect_Bloom_VignetteAtt,
-                        model.Effect_Bloom_VignetteAtt)
+            glUniform1i(self.glEffect_Bloom_doBloom, model.Effect_Bloom_doBloom)
+            glUniform1f(self.glEffect_Bloom_WeightA, model.Effect_Bloom_WeightA)
+            glUniform1f(self.glEffect_Bloom_WeightB, model.Effect_Bloom_WeightB)
+            glUniform1f(self.glEffect_Bloom_WeightC, model.Effect_Bloom_WeightC)
+            glUniform1f(self.glEffect_Bloom_WeightD, model.Effect_Bloom_WeightD)
+            glUniform1f(self.glEffect_Bloom_Vignette, model.Effect_Bloom_Vignette)
+            glUniform1f(self.glEffect_Bloom_VignetteAtt, model.Effect_Bloom_VignetteAtt)
 
             # effects - tone mapping
-            glUniform1i(self.glEffect_ToneMapping_ACESFilmRec2020,
-                        int(model.Effect_ToneMapping_ACESFilmRec2020))
+            glUniform1i(self.glEffect_ToneMapping_ACESFilmRec2020, int(model.Effect_ToneMapping_ACESFilmRec2020))
 
             # border
             glUniform1f(self.glVS_IsBorder, 0.0)

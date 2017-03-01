@@ -159,10 +159,10 @@ class ModelFace:
         self.materialIlluminationModel = self.mesh_model.ModelMaterial.illumination_mode
         self.Setting_ParallaxMapping = False
 
-        self.materialAmbient = MaterialColor(False, False, 1.0, Vector3(1.0))
-        self.materialDiffuse = MaterialColor(False, False, 1.0, Vector3(1.0))
-        self.materialSpecular = MaterialColor(False, False, 1.0, Vector3(1.0))
-        self.materialEmission = MaterialColor(False, False, 1.0, Vector3(1.0))
+        self.materialAmbient = MaterialColor(False, False, 1.0, self.mesh_model.ModelMaterial.color_ambient)
+        self.materialDiffuse = MaterialColor(False, False, 1.0, self.mesh_model.ModelMaterial.color_diffuse)
+        self.materialSpecular = MaterialColor(False, False, 1.0, self.mesh_model.ModelMaterial.color_specular)
+        self.materialEmission = MaterialColor(False, False, 1.0, self.mesh_model.ModelMaterial.color_emission)
         self.displacementHeightScale = {'animate': False, 'point': .0}
 
         self.Effect_GBlur_Mode = -1

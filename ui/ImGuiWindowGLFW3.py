@@ -328,6 +328,7 @@ class ImGuiWindowGLFW3():
         models = self.managerParser.parse_file('resources/shapes/', shapeType.value[0] + '.obj')
         for i in range(len(models)):
             model_face = ModelFace()
+            model_face.set_model(models[i])
             model_face.initModelProperties(models[i])
             model_face.initBuffers()
             self.renderingManager.model_faces.append(model_face)
