@@ -143,7 +143,7 @@ class AssimpObj:
     def load_texture(self, line):
         mti = MaterialTextureImage()
         mti.Image = ''
-        mti.UseTexture = False
+        mti.UseTexture = True
         mti.Height = 0
         mti.Width = 0
         if line.count('-') > 0:

@@ -70,7 +70,6 @@ class Light():
         self.matrixModel = Matrix4x4(1.0)
 
     def init_properties(self, lightType):
-        self.mesh_model = None
         self.title = ''
         self.description = ''
         self.showLampObject = True

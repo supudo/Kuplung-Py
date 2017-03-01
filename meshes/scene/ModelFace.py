@@ -87,6 +87,7 @@ class ModelFace:
         self.Setting_ModelViewSkin = Settings.ViewModelSkin.ViewModelSkin_Wireframe
         self.Setting_MaterialRefraction = {'animate': False, 'point': .0}
         self.Setting_MaterialSpecularExp = {'animate': False, 'point': .0}
+        self.Setting_ScaleAllParts = True
 
         self.Effect_GBlur_Mode = -1
         self.Effect_GBlur_Radius = {'animate': False, 'point': .0}
@@ -153,6 +154,7 @@ class ModelFace:
         self.Setting_LightStrengthSpecular = 1.0
         self.Setting_TessellationSubdivision = 1
         self.Setting_LightingPass_DrawMode = 1
+        self.Setting_ScaleAllParts = True
 
         self.materialIlluminationModel = self.mesh_model.ModelMaterial.illumination_mode
         self.Setting_ParallaxMapping = False
@@ -277,7 +279,9 @@ class ModelFace:
     def loadTexture(self, texture, type):
         if texture is not None:
             if not texture.Image == '':
-                image_file = Settings.ApplicationAssetsPath + texture.Image
+                image_file = texture.Image
+                if not os.path.exists(image_file):
+                    image_file = Settings.ApplicationAssetsPath + image_file
                 if os.path.exists(image_file):
                     texture_image = Image.open(image_file, 'r')
                     texture_image_data = numpy.array(list(texture_image.getdata()), numpy.uint8)

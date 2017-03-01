@@ -31,6 +31,20 @@ def add_slider(title, idx, step, min, limit, show_animate=True,
     _, values = imgui.slider_float(s_id, animated_value, min, limit, "%.03f", 1.0)
     return animated_flag, values
 
+def add_slider_control(title, idx, min, limit, value=0.0):
+    if title != '':
+        imgui.text(title)
+    s_id = '##10' + str(idx)
+    _, values = imgui.slider_float(s_id, value, min, limit, "%.03f", 1.0)
+    return values
+
+def add_int_slider_control(title, idx, min, limit, value=0):
+    if title != '':
+        imgui.text(title)
+    s_id = '##10' + str(idx)
+    _, values = imgui.slider_int(s_id, value, min, limit, "%.f")
+    return values
+
 def add_color3(title, color, animate):
     ce_id = '##101' + title
     imgui.text_colored(title, color.r, color.g, color.b, 255.0)
@@ -111,15 +125,15 @@ def animate_value_async(delay, is_frame, animated_flag,
             time.sleep(delay)
 
 
-def draw_tabs(tabs_labels, tabs_icons, value_init):
+def draw_tabs(tabs_labels, tabs_icons, value_init, style_padding=10.0, font_scale=2.0):
     selected_item = value_init
 
     imgui.push_style_color(imgui.COLOR_BUTTON, 153 / 255, 68 / 255, 61 / 255, 255 / 255)
     imgui.push_style_color(imgui.COLOR_BUTTON_HOVERED, 178 / 255, 64 / 255, 53 / 255, 255 / 255)
     imgui.push_style_color(imgui.COLOR_BUTTON_ACTIVE, 204 / 255, 54 / 255, 40 / 255, 255 / 255)
-    imgui.push_style_var(imgui.STYLE_ITEM_SPACING, (10.0, 10.0))
+    imgui.push_style_var(imgui.STYLE_ITEM_SPACING, (style_padding, style_padding))
     imgui.push_style_var(imgui.STYLE_FRAME_ROUNDING, 2.0)
-    imgui.set_window_font_scale(2.0)
+    imgui.set_window_font_scale(font_scale)
 
     for i in range(len(tabs_labels)):
         clicked = imgui.button(' ' + tabs_labels[i][0] + ' ')

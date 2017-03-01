@@ -331,9 +331,9 @@ class RenderingManager:
                 glDisable(GL_DEPTH_TEST)
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
                 glEnable(GL_BLEND)
-                if model.meshModel.ModelMaterial.transparency < 1.0:
+                if model.mesh_model.ModelMaterial.transparency < 1.0:
                     glUniform1f(self.glFS_AlphaBlending,
-                                model.meshModel.ModelMaterial.transparency)
+                                model.mesh_model.ModelMaterial.transparency)
                 else:
                     glUniform1f(self.glFS_AlphaBlending, model.Setting_Alpha)
             else:
@@ -537,7 +537,7 @@ class RenderingManager:
 
             # textures - ambient
             if model.vbo_tex_ambient is not None and\
-                model.mesh_model.ModelMaterial.texture_ambient.use_texture:
+                model.mesh_model.ModelMaterial.texture_ambient.UseTexture:
                 glUniform1i(self.glMaterial_HasTextureAmbient, 1)
                 glUniform1i(self.glMaterial_SamplerAmbient, 0)
                 glActiveTexture(GL_TEXTURE0)
@@ -547,9 +547,9 @@ class RenderingManager:
 
             # textures - diffuse
             if model.vbo_tex_diffuse is not None and\
-                model.mesh_model.ModelMaterial.texture_diffuse.use_texture:
+                model.mesh_model.ModelMaterial.texture_diffuse.UseTexture:
                 glUniform1i(self.glMaterial_HasTextureDiffuse, 1)
-                glUniform1i(self.glMaterial_SamplerDiffuse, 0)
+                glUniform1i(self.glMaterial_SamplerDiffuse, 1)
                 glActiveTexture(GL_TEXTURE1)
                 glBindTexture(GL_TEXTURE_2D, model.vbo_tex_diffuse)
             else:
@@ -557,9 +557,9 @@ class RenderingManager:
 
             # textures - specular
             if model.vbo_tex_specular is not None and\
-                model.mesh_model.ModelMaterial.texture_specular.use_texture:
+                model.mesh_model.ModelMaterial.texture_specular.UseTexture:
                 glUniform1i(self.glMaterial_HasTextureSpecular, 1)
-                glUniform1i(self.glMaterial_SamplerSpecular, 0)
+                glUniform1i(self.glMaterial_SamplerSpecular, 2)
                 glActiveTexture(GL_TEXTURE2)
                 glBindTexture(GL_TEXTURE_2D, model.vbo_tex_specular)
             else:
@@ -567,9 +567,9 @@ class RenderingManager:
 
             # textures - specular exp
             if model.vbo_tex_specular_exp is not None and\
-                model.mesh_model.ModelMaterial.texture_specular_exp.use_texture:
+                model.mesh_model.ModelMaterial.texture_specular_exp.UseTexture:
                 glUniform1i(self.glMaterial_HasTextureSpecularExp, 1)
-                glUniform1i(self.glMaterial_SamplerSpecularExp, 0)
+                glUniform1i(self.glMaterial_SamplerSpecularExp, 3)
                 glActiveTexture(GL_TEXTURE3)
                 glBindTexture(GL_TEXTURE_2D, model.vbo_tex_specular_exp)
             else:
@@ -577,9 +577,9 @@ class RenderingManager:
 
             # textures - dissolve
             if model.vbo_tex_dissolve is not None and\
-                    model.mesh_model.ModelMaterial.texture_dissolve.use_texture:
+                    model.mesh_model.ModelMaterial.texture_dissolve.UseTexture:
                 glUniform1i(self.glMaterial_HasTextureDissolve, 1)
-                glUniform1i(self.glMaterial_SamplerDissolve, 0)
+                glUniform1i(self.glMaterial_SamplerDissolve, 4)
                 glActiveTexture(GL_TEXTURE4)
                 glBindTexture(GL_TEXTURE_2D, model.vbo_tex_dissolve)
             else:
@@ -587,9 +587,9 @@ class RenderingManager:
 
             # textures - normal
             if model.vbo_tex_normal is not None and\
-                    model.mesh_model.ModelMaterial.texture_normal.use_texture:
+                    model.mesh_model.ModelMaterial.texture_normal.UseTexture:
                 glUniform1i(self.glMaterial_HasTextureBump, 1)
-                glUniform1i(self.glMaterial_SamplerBump, 0)
+                glUniform1i(self.glMaterial_SamplerBump, 5)
                 glActiveTexture(GL_TEXTURE5)
                 glBindTexture(GL_TEXTURE_2D, model.vbo_tex_normal)
             else:
@@ -597,9 +597,9 @@ class RenderingManager:
 
             # textures - displacement
             if model.vbo_tex_displacement is not None and\
-                model.mesh_model.ModelMaterial.texture_displacement.use_texture:
+                model.mesh_model.ModelMaterial.texture_displacement.UseTexture:
                 glUniform1i(self.glMaterial_HasTextureDisplacement, 1)
-                glUniform1i(self.glMaterial_SamplerDisplacement, 0)
+                glUniform1i(self.glMaterial_SamplerDisplacement, 6)
                 glActiveTexture(GL_TEXTURE6)
                 glBindTexture(GL_TEXTURE_2D, model.vbo_tex_displacement)
             else:

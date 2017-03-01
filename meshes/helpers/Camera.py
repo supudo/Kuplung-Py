@@ -49,7 +49,7 @@ class Camera():
         self.rotateCenterY["point"] = 0.0
         self.rotateCenterZ["point"] = 0.0
 
-        self.matrixCamera = numpy.array(numpy.ones((4, 4)), dtype=numpy.float32)
+        self.matrixCamera = MathOps.lookAt(self.View_Eye, self.View_Center, self.View_Up)
 
     def render(self):
         self.matrixCamera = MathOps.lookAt(self.View_Eye, self.View_Center, self.View_Up)

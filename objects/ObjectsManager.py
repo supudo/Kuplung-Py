@@ -154,7 +154,7 @@ class ObjectsManager():
         if self.axis_system is not None:
             self.axis_system.init_properties()
         for i in range(len(self.lightSources)):
-            self.lightSources[i].init_properties()
+            self.lightSources[i].init_properties(self.lightSources[i].type)
 
     def reset_settings(self):
         self.Setting_FOV = 45.0
