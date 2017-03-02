@@ -346,14 +346,21 @@ class ImGuiWindowSDL2():
         if self.new_scene_clear:
             self.gui_clear_scene()
 
-    def add_shape(self, shapeType):
-        models = self.managerParser.parse_file('resources/shapes/', shapeType.value[0] + '.obj')
+    def process_imported_file(self, folder, imported_file):
+        models = self.managerParser.parse_file(folder, imported_file)
         for i in range(len(models)):
             model_face = ModelFace()
+            model_face.init_own(models[i])
+            model_face.init_bounding_box()
+            model_face.init_vertex_sphere()
             model_face.set_model(models[i])
             model_face.initModelProperties()
-            model_face.initBuffers()
             self.renderingManager.model_faces.append(model_face)
+        if len(self.renderingManager.model_faces) > 0:
+            self.controlsModels.selectedTabPanel = 0
+
+    def add_shape(self, shapeType):
+        self.process_imported_file('resources/shapes/', shapeType.value[0] + '.obj')
 
     def add_light(self, lightType):
         self.managerObjects.add_light(lightType)

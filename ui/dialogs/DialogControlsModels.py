@@ -433,7 +433,7 @@ class DialogControlsModels():
             imgui.text(title + ': ' + tex_image)
         else:
             btnLabel = 'Add Texture ' + title
-            if imgui.button(btnLabel):
+            if imgui.button(btnLabel, -1, 0):
                 # TODO: show UV editor
                 pass
 

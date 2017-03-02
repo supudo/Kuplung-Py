@@ -28,14 +28,9 @@ class Light():
         self.gl_u_sampler = -1
         self.vbo_texture_diffuse = -1
 
-        self.mesh_model = None
-        self.title = ''
-        self.description = ''
         self.showLampObject = True
         self.showLampDirection = False
         self.showInWire = False
-        self.turnOff_Position = False
-        self.type = Settings.LightSourceTypes.LightSourceType_Directional
 
         self.positionX = {'animate': False, 'point': .0}
         self.positionY = {'animate': False, 'point': .0}
@@ -66,17 +61,26 @@ class Light():
         self.lConstant = {'animate': False, 'point': .0}
         self.lLinear = {'animate': False, 'point': .0}
         self.lQuadratic = {'animate': False, 'point': .0}
+        self.turnOff_Position = False
+
+        self.mesh_model = None
+        self.title = ''
+        self.description = ''
+        self.type = Settings.LightSourceTypes.LightSourceType_Directional
 
         self.matrixModel = Matrix4x4(1.0)
 
+    def set_model(self, mesh_model):
+        self.mesh_model = mesh_model
+
     def init_properties(self, lightType):
+        self.type = lightType
         self.title = ''
         self.description = ''
         self.showLampObject = True
         self.showLampDirection = False
         self.showInWire = False
         self.turnOff_Position = False
-        self.type = lightType
 
         self.positionX = {'animate': False, 'point': .0}
         self.positionY = {'animate': False, 'point': 5.0}
@@ -120,13 +124,10 @@ class Light():
             self.lLinear = {'animate': False, 'point': 0.09}
             self.lQuadratic = {'animate': False, 'point': 0.032}
             self.specular = MaterialColor(False, False, .0, Vector3(1.0))
-            self.lCutOff = {'animate': False, 'point': -12.5}
+            self.lCutOff = {'animate': False, 'point': 12.5}
             self.lOuterCutOff = {'animate': False, 'point': 15.0}
 
         self.matrixModel = Matrix4x4(1.0)
-
-    def set_model(self, mesh_model):
-        self.mesh_model = mesh_model
 
     def init_shader_program(self):
         file_vs = open('resources/shaders/light.vert', 'r', encoding='utf-8')

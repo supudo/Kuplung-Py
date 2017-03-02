@@ -288,11 +288,12 @@ class RenderingManager:
     def render_models(self, mo, selectedModel):
         glUseProgram(self.shader_program)
 
+        modelCounter = 0
         selectedModelID = -1
         for model in self.model_faces:
 
             if model.so_selectedYn:
-                so_selectedYn = selectedModelID
+                selectedModelID = modelCounter
 
             matrixModel = Matrix4x4(1.0)
             # grid
@@ -307,18 +308,24 @@ class RenderingManager:
             matrixModel = MathOps.matrix_rotate(matrixModel, model.rotateY['point'], Vector3(0, 1, 0))
             matrixModel = MathOps.matrix_rotate(matrixModel, model.rotateZ['point'], Vector3(0, 0, 1))
             matrixModel = MathOps.matrix_translate(matrixModel, Vector4(.0))
-            # world
-            model.matrixModel = self.matrixProjection * self.matrixCamera * matrixModel
 
+            model.matrixGrid = mo.grid.matrixModel
+            model.matrixProjection = mo.matrixProjection
+            model.matrixCamera = mo.camera.matrixCamera
+            model.matrixModel = matrixModel
             model.Setting_ModelViewSkin = mo.viewModelSkin
             model.lightSources = mo.lightSources
+            model.so_outlineColor = mo.Setting_OutlineColor
+            model.so_outlineThickness = mo.Setting_OutlineThickness
+            model.so_selectedYn = selectedModel == modelCounter
 
             mvpMatrix = self.matrixProjection * self.matrixCamera * matrixModel
 
             glUniformMatrix4fv(self.glVS_MVPMatrix, 1, GL_FALSE, MathOps.matrix_to_gl(mvpMatrix))
+            glUniformMatrix4fv(self.glFS_MMatrix, 1, GL_FALSE, MathOps.matrix_to_gl(matrixModel))
 
             matrixModelView = self.matrixCamera * matrixModel
-            glUniformMatrix4fv(self.glFS_MMatrix, 1, GL_FALSE, MathOps.matrix_to_gl(matrixModelView))
+            glUniformMatrix4fv(self.glFS_MVMatrix, 1, GL_FALSE, MathOps.matrix_to_gl(matrixModelView))
 
             matrixNormal = MathOps.matrix_inverse_transpose(self.matrixCamera * matrixModel)
             matrixNormal = MathOps.to_matrix3(matrixNormal)
@@ -447,7 +454,7 @@ class RenderingManager:
                     glUniform1f(f.gl_StrengthSpecular, light.specular.strength)
 
                     lightsCount_Directional += 1
-                if light.type == Settings.LightSourceTypes.LightSourceType_Point and\
+                elif light.type == Settings.LightSourceTypes.LightSourceType_Point and\
                     lightsCount_Point < self.GLSL_LightSourceNumber_Point:
                     f = self.mfLights_Point[lightsCount_Point]
                     glUniform1i(f.gl_InUse, 1)
@@ -471,7 +478,7 @@ class RenderingManager:
                     glUniform1f(f.gl_StrengthSpecular, light.specular.strength)
 
                     lightsCount_Point += 1
-                if light.type == Settings.LightSourceTypes.LightSourceType_Spot and\
+                elif light.type == Settings.LightSourceTypes.LightSourceType_Spot and\
                     lightsCount_Spot < self.GLSL_LightSourceNumber_Spot:
                     f = self.mfLights_Spot[lightsCount_Spot]
                     glUniform1i(f.gl_InUse, 1)
@@ -625,5 +632,7 @@ class RenderingManager:
 
             # render VAO
             model.render(True)
+
+            modelCounter += 1
 
         glUseProgram(0)

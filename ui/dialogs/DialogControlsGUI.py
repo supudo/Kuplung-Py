@@ -450,13 +450,17 @@ class DialogControlsGUI():
         _, mo.Setting_UIAmbientLight.b = self.ui_helper.add_controls_slider_same_line('Z', 3, 0.001, 0, 1, False, None, mo.Setting_UIAmbientLight.b, True, self.is_frame)
         imgui.separator()
         imgui.text_colored('Solid Skin Light', 1, 0, 0, 1)
+
         mo.SolidLight_Ambient, mo.SolidLight_Ambient_ColorPicker = self.ui_helper.add_color3('Ambient', mo.SolidLight_Ambient, mo.SolidLight_Ambient_ColorPicker)
         _, mo.SolidLight_Ambient_Strength = self.ui_helper.add_slider('Intensity', 4, 0.01, 0.0, 1.0, False, None, mo.SolidLight_Ambient_Strength, True, self.is_frame)
+
         mo.SolidLight_Diffuse, mo.SolidLight_Diffuse_ColorPicker = self.ui_helper.add_color3('Diffuse', mo.SolidLight_Diffuse, mo.SolidLight_Diffuse_ColorPicker)
         _, mo.SolidLight_Diffuse_Strength = self.ui_helper.add_slider('Intensity', 5, 0.01, 0.0, 1.0, False, None, mo.SolidLight_Diffuse_Strength, True, self.is_frame)
+
         mo.SolidLight_Specular, mo.SolidLight_Specular_ColorPicker = self.ui_helper.add_color3('Specular', mo.SolidLight_Specular, mo.SolidLight_Specular_ColorPicker)
         _, mo.SolidLight_Specular_Strength = self.ui_helper.add_slider('Intensity', 6, 0.01, 0.0, 1.0, False, None, mo.SolidLight_Specular_Strength, True, self.is_frame)
-        mo.SolidLight_MaterialColor, mo.SolidLight_MaterialColor_ColorPicke = self.ui_helper.add_color3('Material Color', mo.SolidLight_MaterialColor, mo.SolidLight_MaterialColor_ColorPicker)
+
+        mo.SolidLight_MaterialColor, mo.SolidLight_MaterialColor_ColorPicker = self.ui_helper.add_color3('Material Color', mo.SolidLight_MaterialColor, mo.SolidLight_MaterialColor_ColorPicker)
         imgui.separator()
         imgui.text('Direction')
         _, mo.SolidLight_Direction.x = self.ui_helper.add_controls_slider_same_line('X', 7, 0, 0, 10, False, None, mo.SolidLight_Direction.x, True, self.is_frame)
@@ -547,19 +551,21 @@ class DialogControlsGUI():
             imgui.text_colored('Light Colors', 1, 0, 0, 1)
             mo.lightSources[self.selectedObjectLight].ambient.color, mo.lightSources[self.selectedObjectLight].ambient.colorPickerOpen = self.ui_helper.add_color3('Ambient Color', mo.lightSources[self.selectedObjectLight].ambient.color, mo.lightSources[self.selectedObjectLight].ambient.colorPickerOpen)
             mo.lightSources[self.selectedObjectLight].ambient.animate, mo.lightSources[self.selectedObjectLight].ambient.strength = self.ui_helper.add_slider('Ambient Intensity', 22, 0.01, 0.0, 1.0, True, mo.lightSources[self.selectedObjectLight].ambient.animate, mo.lightSources[self.selectedObjectLight].ambient.strength, True, self.is_frame)
+
             mo.lightSources[self.selectedObjectLight].diffuse.color, mo.lightSources[self.selectedObjectLight].diffuse.colorPickerOpen = self.ui_helper.add_color3('Diffuse Color', mo.lightSources[self.selectedObjectLight].diffuse.color, mo.lightSources[self.selectedObjectLight].diffuse.colorPickerOpen)
-            mo.lightSources[self.selectedObjectLight].diffuse.animate, mo.lightSources[self.selectedObjectLight].diffuse.strength = self.ui_helper.add_slider('Diffuse Intensity', 22, 0.01, 0.0, 1.0, True, mo.lightSources[self.selectedObjectLight].diffuse.animate, mo.lightSources[self.selectedObjectLight].diffuse.strength, True, self.is_frame)
+            mo.lightSources[self.selectedObjectLight].diffuse.animate, mo.lightSources[self.selectedObjectLight].diffuse.strength = self.ui_helper.add_slider('Diffuse Intensity', 23, 0.01, 0.0, 1.0, True, mo.lightSources[self.selectedObjectLight].diffuse.animate, mo.lightSources[self.selectedObjectLight].diffuse.strength, True, self.is_frame)
+
             mo.lightSources[self.selectedObjectLight].specular.color, mo.lightSources[self.selectedObjectLight].specular.colorPickerOpen = self.ui_helper.add_color3('Specular Color', mo.lightSources[self.selectedObjectLight].specular.color, mo.lightSources[self.selectedObjectLight].specular.colorPickerOpen)
-            mo.lightSources[self.selectedObjectLight].specular.animate, mo.lightSources[self.selectedObjectLight].specular.strength = self.ui_helper.add_slider('Specular Intensity', 22, 0.01, 0.0, 1.0, True, mo.lightSources[self.selectedObjectLight].specular.animate, mo.lightSources[self.selectedObjectLight].specular.strength, True, self.is_frame)
+            mo.lightSources[self.selectedObjectLight].specular.animate, mo.lightSources[self.selectedObjectLight].specular.strength = self.ui_helper.add_slider('Specular Intensity', 24, 0.01, 0.0, 1.0, True, mo.lightSources[self.selectedObjectLight].specular.animate, mo.lightSources[self.selectedObjectLight].specular.strength, True, self.is_frame)
             imgui.separator()
             if mo.lightSources[self.selectedObjectLight].type != Settings.LightSourceTypes.LightSourceType_Directional:
-                mo.lightSources[self.selectedObjectLight].lConstant['animate'], mo.lightSources[self.selectedObjectLight].lConstant['point'] = self.ui_helper.add_slider('Constant', 23, 0.01, 0.0, 1.0, True, mo.lightSources[self.selectedObjectLight].lConstant['animate'], mo.lightSources[self.selectedObjectLight].lConstant['point'], True, self.is_frame)
-                mo.lightSources[self.selectedObjectLight].lLinear['animate'], mo.lightSources[self.selectedObjectLight].lLinear['point'] = self.ui_helper.add_slider('Literal', 24, 0.01, 0.0, 1.0, True, mo.lightSources[self.selectedObjectLight].lLinear['animate'], mo.lightSources[self.selectedObjectLight].lLinear['point'], True, self.is_frame)
-                mo.lightSources[self.selectedObjectLight].lQuadratic['animate'], mo.lightSources[self.selectedObjectLight].lQuadratic['point'] = self.ui_helper.add_slider('Quadratic', 25, 0.01, 0.0, 1.0, True, mo.lightSources[self.selectedObjectLight].lQuadratic['animate'], mo.lightSources[self.selectedObjectLight].lQuadratic['point'], True, self.is_frame)
+                mo.lightSources[self.selectedObjectLight].lConstant['animate'], mo.lightSources[self.selectedObjectLight].lConstant['point'] = self.ui_helper.add_slider('Constant', 25, 0.01, 0.0, 1.0, True, mo.lightSources[self.selectedObjectLight].lConstant['animate'], mo.lightSources[self.selectedObjectLight].lConstant['point'], True, self.is_frame)
+                mo.lightSources[self.selectedObjectLight].lLinear['animate'], mo.lightSources[self.selectedObjectLight].lLinear['point'] = self.ui_helper.add_slider('Literal', 26, 0.01, 0.0, 1.0, True, mo.lightSources[self.selectedObjectLight].lLinear['animate'], mo.lightSources[self.selectedObjectLight].lLinear['point'], True, self.is_frame)
+                mo.lightSources[self.selectedObjectLight].lQuadratic['animate'], mo.lightSources[self.selectedObjectLight].lQuadratic['point'] = self.ui_helper.add_slider('Quadratic', 27, 0.01, 0.0, 1.0, True, mo.lightSources[self.selectedObjectLight].lQuadratic['animate'], mo.lightSources[self.selectedObjectLight].lQuadratic['point'], True, self.is_frame)
             if mo.lightSources[self.selectedObjectLight].type == Settings.LightSourceTypes.LightSourceType_Spot:
                 imgui.separator()
-                mo.lightSources[self.selectedObjectLight].lCutOff['animate'], mo.lightSources[self.selectedObjectLight].lCutOff['point'] = self.ui_helper.add_slider('Cutoff', 26, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].lCutOff['animate'], mo.lightSources[self.selectedObjectLight].lCutOff['point'], True, self.is_frame)
-                mo.lightSources[self.selectedObjectLight].lOuterCutOff['animate'], mo.lightSources[self.selectedObjectLight].lOuterCutOff['point'] = self.ui_helper.add_slider('Outer Cutoff', 28, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].lOuterCutOff['animate'], mo.lightSources[self.selectedObjectLight].lOuterCutOff['point'], True, self.is_frame)
+                mo.lightSources[self.selectedObjectLight].lCutOff['animate'], mo.lightSources[self.selectedObjectLight].lCutOff['point'] = self.ui_helper.add_slider('Cutoff', 28, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].lCutOff['animate'], mo.lightSources[self.selectedObjectLight].lCutOff['point'], True, self.is_frame)
+                mo.lightSources[self.selectedObjectLight].lOuterCutOff['animate'], mo.lightSources[self.selectedObjectLight].lOuterCutOff['point'] = self.ui_helper.add_slider('Outer Cutoff', 29, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].lOuterCutOff['animate'], mo.lightSources[self.selectedObjectLight].lOuterCutOff['point'], True, self.is_frame)
         return mo
 
     def lock_camera_once(self, mo):
