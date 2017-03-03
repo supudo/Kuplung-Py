@@ -38,6 +38,7 @@ class ImGuiWindowSDL2():
     visual_artefacts_visible = True
     app_is_running = False
     new_scene_clear = False
+    is_loading_open = False
 
     # Main menu
     show_save_image = False
@@ -57,6 +58,7 @@ class ImGuiWindowSDL2():
         self.init_gl()
         self.init_window()
         self.init_imgui_impl()
+        self.show_loading()
         self.init_sub_windows()
         self.init_components()
         self.init_manager_controls()
@@ -65,6 +67,7 @@ class ImGuiWindowSDL2():
         self.init_objects_manager()
 
         self.printGLStrings()
+        self.hide_loading()
 
         running = True
         event = SDL_Event()
@@ -342,6 +345,13 @@ class ImGuiWindowSDL2():
         if self.show_log_window:
             self.dialog_log_window()
 
+        if self.is_loading_open:
+            imgui.open_popup('Kuplung Loading')
+        loading_opened, _ = imgui.begin_popup_modal('Kuplung Loading', False, imgui.WINDOW_ALWAYS_AUTO_RESIZE | imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_TITLE_BAR)
+        if loading_opened:
+            imgui.text('Loading...')
+            imgui.end_popup()
+
         # actions
         if self.new_scene_clear:
             self.gui_clear_scene()
@@ -358,8 +368,10 @@ class ImGuiWindowSDL2():
             self.renderingManager.model_faces.append(model_face)
         if len(self.renderingManager.model_faces) > 0:
             self.controlsModels.selectedTabPanel = 0
+        self.hide_loading()
 
     def add_shape(self, shapeType):
+        self.show_loading()
         self.process_imported_file('resources/shapes/', shapeType.value[0] + '.obj')
 
     def add_light(self, lightType):
@@ -453,3 +465,9 @@ class ImGuiWindowSDL2():
         self.renderingManager.model_faces.clear()
         self.managerObjects.lightSources.clear()
         self.new_scene_clear = False
+
+    def show_loading(self):
+        self.is_loading_open = True
+
+    def hide_loading(self):
+        self.is_loading_open = False
