@@ -7,6 +7,7 @@ supudo.net
 __author__ = 'supudo'
 __version__ = "1.0.0"
 
+from os.path import expanduser
 from ctypes import byref
 
 import OpenGL.GL as gl
@@ -21,6 +22,7 @@ from objects.ObjectsManager import ObjectsManager
 from parsers.ParserManager import ParserManager
 from rendering.RenderingManager import RenderingManager
 from settings import Settings
+from ui.components.ImporterOBJ import ImporterOBJ
 from ui.components.Log import Log
 from ui.dialogs.DialogControlsGUI import DialogControlsGUI
 from ui.dialogs.DialogControlsModels import DialogControlsModels
@@ -50,12 +52,14 @@ class ImGuiWindowSDL2():
     show_about_kuplung = False
     show_scene_metrics = False
     show_log_window = True
+    show_importerobj_window = False
     show_controls_models = True
     show_controls_gui = True
 
     sceneSelectedModelObject = -1
 
     def show_main_window(self):
+        Settings.Settings_CurrentFolder = expanduser("~")
         self.init_gl()
         self.init_window()
         self.init_imgui_impl()
@@ -154,6 +158,7 @@ class ImGuiWindowSDL2():
     def init_components(self):
         self.component_log = Log()
         Settings.FuncDoLog = self.component_log.add_to_log
+        self.component_importerobj = ImporterOBJ()
         Settings.do_log("GUI components initialized.")
 
     def init_imgui_impl(self):
@@ -227,7 +232,7 @@ class ImGuiWindowSDL2():
                 imgui.menu_item("Save ...", '', False, True)
                 imgui.separator()
                 if imgui.begin_menu("Import", True):
-                    imgui.menu_item("Wavefront (.OBJ)", '', False, True)
+                    _, self.show_importerobj_window = imgui.menu_item("Wavefront (.OBJ)", '', self.show_importerobj_window, True)
                     imgui.end_menu()
                 if imgui.begin_menu("Import Recent", True):
                     imgui.menu_item("file 1...", '', False, True)
@@ -346,6 +351,9 @@ class ImGuiWindowSDL2():
         if self.show_log_window:
             self.dialog_log_window()
 
+        if self.show_importerobj_window:
+            self.dialog_importer_obj_window()
+
         if self.is_loading_open:
             imgui.open_popup('Kuplung Loading')
         loading_opened, _ = imgui.begin_popup_modal('Kuplung Loading', False, imgui.WINDOW_ALWAYS_AUTO_RESIZE | imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_TITLE_BAR)
@@ -461,6 +469,9 @@ class ImGuiWindowSDL2():
 
     def dialog_log_window(self):
         self.show_log_window = self.component_log.draw_window('Log Window', self.show_log_window)
+
+    def dialog_importer_obj_window(self):
+        self.show_importerobj_window = self.component_importerobj.draw_window('Import Wavefront OBJ File', self.show_importerobj_window)
 
     def gui_clear_scene(self):
         self.renderingManager.model_faces.clear()
