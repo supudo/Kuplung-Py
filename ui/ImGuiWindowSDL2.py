@@ -7,22 +7,23 @@ supudo.net
 __author__ = 'supudo'
 __version__ = "1.0.0"
 
-import OpenGL.GL as gl
-from sdl2 import *
-import imgui
-from imgui.impl import SDL2Impl
 from ctypes import byref
 
+import OpenGL.GL as gl
+import imgui
+from imgui.impl import SDL2Impl
+from sdl2 import *
+
 from consumption import Consumption
-from parsers.ParserManager import ParserManager
-from objects.ObjectsManager import ObjectsManager
-from rendering.RenderingManager import RenderingManager
-from objects.ControlsManagerSDL2 import ControlsManagerSDL2
-from settings import Settings
 from meshes.scene.ModelFace import ModelFace
+from objects.ControlsManagerSDL2 import ControlsManagerSDL2
+from objects.ObjectsManager import ObjectsManager
+from parsers.ParserManager import ParserManager
+from rendering.RenderingManager import RenderingManager
+from settings import Settings
 from ui.components.Log import Log
-from ui.dialogs.DialogControlsModels import DialogControlsModels
 from ui.dialogs.DialogControlsGUI import DialogControlsGUI
+from ui.dialogs.DialogControlsModels import DialogControlsModels
 
 
 class ImGuiWindowSDL2():

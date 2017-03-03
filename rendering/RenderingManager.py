@@ -5,9 +5,10 @@ Kuplung - OpenGL Viewer, python port
 supudo.net
 """
 
-from OpenGL.GL import *
 from math import cos, radians
-from settings import Settings
+
+from OpenGL.GL import *
+
 from gl_utils import GLUtils
 from gl_utils.objects.ModelFace_LightSource_Directional import (
     ModelFace_LightSource_Directional
@@ -18,11 +19,11 @@ from gl_utils.objects.ModelFace_LightSource_Point import (
 from gl_utils.objects.ModelFace_LightSource_Spot import (
     ModelFace_LightSource_Spot
 )
+from maths import MathOps
 from maths.types.Matrix4x4 import Matrix4x4
 from maths.types.Vector3 import Vector3
 from maths.types.Vector4 import Vector4
-from maths import MathOps
-
+from settings import Settings
 
 __author__ = 'supudo'
 __version__ = "1.0.0"
