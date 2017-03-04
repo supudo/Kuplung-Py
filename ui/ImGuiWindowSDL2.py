@@ -378,6 +378,7 @@ class ImGuiWindowSDL2():
         if len(self.renderingManager.model_faces) > 0:
             self.controlsModels.selectedTabPanel = 0
         self.hide_loading()
+        self.show_importerobj_window = False
 
     def add_shape(self, shapeType):
         self.show_loading()
@@ -471,7 +472,7 @@ class ImGuiWindowSDL2():
         self.show_log_window = self.component_log.draw_window('Log Window', self.show_log_window)
 
     def dialog_importer_obj_window(self):
-        self.show_importerobj_window = self.component_importerobj.draw_window('Import Wavefront OBJ File', self.show_importerobj_window)
+        self.show_importerobj_window = self.component_importerobj.draw_window('Import Wavefront OBJ File', self.show_importerobj_window, self.process_imported_file)
 
     def gui_clear_scene(self):
         self.renderingManager.model_faces.clear()
