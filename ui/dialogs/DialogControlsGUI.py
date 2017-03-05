@@ -119,6 +119,7 @@ class DialogControlsGUI():
         imgui.pop_style_color(1)
         imgui.pop_style_var(1)
 
+        # resizer
         imgui_io = imgui.get_io()
         imgui_io.mouse_draw_cursor = True
         imgui.push_style_color(imgui.COLOR_BUTTON, 89 / 255.0, 91 / 255.0, 94 / 255.0, 1.0)
