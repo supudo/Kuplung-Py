@@ -119,10 +119,22 @@ class DialogControlsGUI():
         imgui.pop_style_color(1)
         imgui.pop_style_var(1)
 
-        imgui.separator()
+        imgui_io = imgui.get_io()
+        imgui_io.mouse_draw_cursor = True
+        imgui.push_style_color(imgui.COLOR_BUTTON, 89 / 255.0, 91 / 255.0, 94 / 255.0, 1.0)
+        imgui.push_style_color(imgui.COLOR_BUTTON_HOVERED, 119 / 255.0, 122 / 255.0, 124 / 255.0, 1.0)
+        imgui.push_style_color(imgui.COLOR_BORDER, 0, 0, 0, 1)
+        imgui.button("###splitterGUI", -1, 8.0)
+        imgui.pop_style_color(3)
+        if imgui.is_item_active():
+            self.height_top_panel += imgui.get_mouse_drag_delta().y
+        if imgui.is_item_hovered():
+            imgui.set_mouse_cursor(imgui.MOUSE_CURSOR_RESIZE_NS)
+        else:
+            imgui_io.mouse_draw_cursor = False
 
         # GUI items
-        imgui.begin_child("﻿Properties Pane".encode('utf-8'), 0.0, 0.0, False)
+        imgui.begin_child("Properties Pane".encode('utf-8'), 0.0, 0.0, False)
         if self.selectedObject == 0:
             mo = self.render_general_view_options(mo)
             mo = self.render_general_editor_artefacts(mo)
