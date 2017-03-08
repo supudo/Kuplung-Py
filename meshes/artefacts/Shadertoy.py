@@ -276,7 +276,7 @@ void main() {
                     glUniform3f(self.iChannelResolution[0], self.iChannelResolution3[0], self.iChannelResolution3[1], 0.0)
                     tc += 1
             except (GLError):
-                Settings.do_log("[Shadertoy-ERROR] - Error while binding the textures!")
+                pass
 
             glUniform2f(self.vs_ScreenResolution, self.textureWidth, self.textureHeight)
             glUniform3f(self.iResolution, self.textureWidth, self.textureHeight, 0)
