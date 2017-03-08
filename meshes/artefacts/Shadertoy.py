@@ -243,63 +243,66 @@ void main() {
         if self.glVAO > 0:
             imgui_io = imgui.get_io()
 
-            glUseProgram(self.shader_program)
-
-            # glEnable(GL_TEXTURE_2D)
-            # glActiveTexture(GL_TEXTURE2)
-            glUniform1i(self.vs_InFBO, 1)
-
             try:
-                tc = 0
-                if self.iChannel0_Image != '' and self.iChannel0 is not None:
-                    glActiveTexture(GL_TEXTURE0 + tc)
-                    glBindTexture(GL_TEXTURE_2D, self.iChannel0)
-                    glUniform1i(self.iChannel0, tc)
-                    glUniform3f(self.iChannelResolution[0], self.iChannelResolution0[0], self.iChannelResolution0[1], 0.0)
-                    tc += 1
-                if self.iChannel1_Image != '' and self.iChannel1 is not None:
-                    glActiveTexture(GL_TEXTURE0 + tc)
-                    glBindTexture(GL_TEXTURE_2D, self.iChannel1)
-                    glUniform1i(self.iChannel1, tc)
-                    glUniform3f(self.iChannelResolution[0], self.iChannelResolution1[0], self.iChannelResolution2[1], 0.0)
-                    tc += 1
-                if self.iChannel2_Image != '' and self.iChannel2 is not None:
-                    glActiveTexture(GL_TEXTURE0 + tc)
-                    glBindTexture(GL_TEXTURE_2D, self.iChannel2)
-                    glUniform1i(self.iChannel2, tc)
-                    glUniform3f(self.iChannelResolution[0], self.iChannelResolution2[0], self.iChannelResolution3[1], 0.0)
-                    tc += 1
-                if self.iChannel3_Image != '' and self.iChannel3 is not None:
-                    glActiveTexture(GL_TEXTURE0 + tc)
-                    glBindTexture(GL_TEXTURE_2D, self.iChannel3)
-                    glUniform1i(self.iChannel3, tc)
-                    glUniform3f(self.iChannelResolution[0], self.iChannelResolution3[0], self.iChannelResolution3[1], 0.0)
-                    tc += 1
+                glUseProgram(self.shader_program)
+
+                # glEnable(GL_TEXTURE_2D)
+                # glActiveTexture(GL_TEXTURE2)
+                glUniform1i(self.vs_InFBO, 1)
+
+                try:
+                    tc = 0
+                    if self.iChannel0_Image != '' and self.iChannel0 is not None:
+                        glActiveTexture(GL_TEXTURE0 + tc)
+                        glBindTexture(GL_TEXTURE_2D, self.iChannel0)
+                        glUniform1i(self.iChannel0, tc)
+                        glUniform3f(self.iChannelResolution[0], self.iChannelResolution0[0], self.iChannelResolution0[1], 0.0)
+                        tc += 1
+                    if self.iChannel1_Image != '' and self.iChannel1 is not None:
+                        glActiveTexture(GL_TEXTURE0 + tc)
+                        glBindTexture(GL_TEXTURE_2D, self.iChannel1)
+                        glUniform1i(self.iChannel1, tc)
+                        glUniform3f(self.iChannelResolution[0], self.iChannelResolution1[0], self.iChannelResolution2[1], 0.0)
+                        tc += 1
+                    if self.iChannel2_Image != '' and self.iChannel2 is not None:
+                        glActiveTexture(GL_TEXTURE0 + tc)
+                        glBindTexture(GL_TEXTURE_2D, self.iChannel2)
+                        glUniform1i(self.iChannel2, tc)
+                        glUniform3f(self.iChannelResolution[0], self.iChannelResolution2[0], self.iChannelResolution3[1], 0.0)
+                        tc += 1
+                    if self.iChannel3_Image != '' and self.iChannel3 is not None:
+                        glActiveTexture(GL_TEXTURE0 + tc)
+                        glBindTexture(GL_TEXTURE_2D, self.iChannel3)
+                        glUniform1i(self.iChannel3, tc)
+                        glUniform3f(self.iChannelResolution[0], self.iChannelResolution3[0], self.iChannelResolution3[1], 0.0)
+                        tc += 1
+                except (GLError):
+                    pass
+
+                glUniform2f(self.vs_ScreenResolution, self.textureWidth, self.textureHeight)
+                glUniform3f(self.iResolution, self.textureWidth, self.textureHeight, 0)
+                glUniform1f(self.iGlobalTime, seconds)
+                glUniform4f(self.iMouse, float(mouse_x), float(mouse_y), 0.0, 0.0)
+
+                glUniform1f(self.iChannelTime[0], seconds)
+                glUniform1f(self.iChannelTime[1], seconds)
+                glUniform1f(self.iChannelTime[2], seconds)
+                glUniform1f(self.iChannelTime[3], seconds)
+                glUniform1f(self.iTimeDelta, imgui_io.delta_time)
+
+                now = datetime.datetime.now()
+                glUniform4f(self.iDate, now.year, now.month, now.day, now.second)
+
+                glUniform1f(self.iFrameRate, imgui_io.framerate)
+                glUniform1f(self.iFrame, 0.0)
+
+                glBindVertexArray(self.glVAO)
+                glDrawArrays(GL_TRIANGLES, 0, 6)
+                glBindVertexArray(0)
+
+                glUseProgram(0)
             except (GLError):
                 pass
-
-            glUniform2f(self.vs_ScreenResolution, self.textureWidth, self.textureHeight)
-            glUniform3f(self.iResolution, self.textureWidth, self.textureHeight, 0)
-            glUniform1f(self.iGlobalTime, seconds)
-            glUniform4f(self.iMouse, float(mouse_x), float(mouse_y), 0.0, 0.0)
-
-            glUniform1f(self.iChannelTime[0], seconds)
-            glUniform1f(self.iChannelTime[1], seconds)
-            glUniform1f(self.iChannelTime[2], seconds)
-            glUniform1f(self.iChannelTime[3], seconds)
-            glUniform1f(self.iTimeDelta, imgui_io.delta_time)
-
-            now = datetime.datetime.now()
-            glUniform4f(self.iDate, now.year, now.month, now.day, now.second)
-
-            glUniform1f(self.iFrameRate, imgui_io.framerate)
-            glUniform1f(self.iFrame, 0.0)
-
-            glBindVertexArray(self.glVAO)
-            glDrawArrays(GL_TRIANGLES, 0, 6)
-            glBindVertexArray(0)
-
-            glUseProgram(0)
 
     def initFBO(self, windowWidth, windowHeight, vboTexture):
         self.textureWidth = windowWidth
