@@ -10,3 +10,4 @@ PyOpenGL>=3.1.0
 PySDL2>=0.9.5
 scanf>=1.4
 sip>=4.19
+psutil>=5.2.0

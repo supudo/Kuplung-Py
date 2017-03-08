@@ -15,7 +15,7 @@ import imgui
 from imgui.impl import SDL2Impl
 from sdl2 import *
 
-from consumption import Consumption
+from consumption.Consumption import Consumption
 from meshes.scene.ModelFace import ModelFace
 from objects.ControlsManagerSDL2 import ControlsManagerSDL2
 from objects.ObjectsManager import ObjectsManager
@@ -40,6 +40,7 @@ class ImGuiWindowSDL2():
     controlsShadertoy = None
     controlsSVS = None
     controlsOptions = None
+    utilConsumption = None
 
     # dialogs
     gui_controls_visible = True
@@ -89,6 +90,7 @@ class ImGuiWindowSDL2():
             while SDL_PollEvent(byref(event)) != 0:
                 if event.type == SDL_QUIT:
                     running = False
+                    self.utilConsumption.stop_pooling()
                     break
                 self.imgui_context.process_event(event)
                 self.managerControls.process_event(event)
@@ -134,6 +136,9 @@ class ImGuiWindowSDL2():
         SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, b"1")
 
     def init_window(self):
+        self.utilConsumption = Consumption()
+        self.utilConsumption.start_pooling()
+
         self.window = SDL_CreateWindow(
             Settings.AppMainWindowTitle.encode('utf-8'),
             SDL_WINDOWPOS_CENTERED,
@@ -263,6 +268,8 @@ class ImGuiWindowSDL2():
                 imgui.separator()
                 clicked_quit, selected_quit = imgui.menu_item("Quit", 'Cmd+Q', False, True)
                 if clicked_quit:
+                    self.utilConsumption.stop_pooling()
+                    self.app_is_running = False
                     exit(1)
                 imgui.end_menu()
 
@@ -416,7 +423,7 @@ class ImGuiWindowSDL2():
         self.managerObjects.add_light(lightType)
 
     def get_app_consumption(self):
-        consumption_str = Consumption.memory()
+        consumption_str = self.utilConsumption.get_consumption()
         return " --> {0} FPS | {1} objs, {2} verts, {3} indices ({4} tris, {5} faces) | {6}".format(
             ("%.1f" % imgui.get_io().framerate),
             Settings.SceneCountObjects,
