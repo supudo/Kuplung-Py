@@ -28,6 +28,8 @@ AppWindowHeight = 900
 ApplicationRootPath = ''
 ApplicationAssetsPath = 'resources/shapes/'
 
+ApplicationStartTime = 0
+
 ApplicationGLFW3 = False
 LogDebugWindow = True
 Settings_CurrentFolder = ''

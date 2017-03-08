@@ -51,9 +51,7 @@ class CameraModel():
 
         self.matrixModel = Matrix4x4(1.)
 
-
     def init_properties(self):
-
         self.positionX = {'animate': False, 'point': -6.}
         self.positionY = {'animate': False, 'point': -2.}
         self.positionZ = {'animate': False, 'point': 3.}
@@ -79,10 +77,8 @@ class CameraModel():
 
         self.matrixModel = Matrix4x4(1.)
 
-
     def set_model(self, mesh_model):
         self.mesh_model = mesh_model
-
 
     def init_shader_program(self):
         file_vs = open('resources/shaders/camera.vert', 'r', encoding='utf-8')
@@ -110,7 +106,6 @@ class CameraModel():
         self.gl_fs_innerLightDirection = GLUtils.glGetUniform(self.shader_program, "fs_innerLightDirection")
 
         return True
-
 
     def init_buffers(self):
         self.glVAO = glGenVertexArrays(1)
@@ -142,7 +137,6 @@ class CameraModel():
         glBindBuffer(GL_ARRAY_BUFFER, 0)
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
         glDeleteBuffers(3, [vboVertices, vboNormals, vboIndices])
-
 
     def render(self, matrixProjection, matrixCamera, matrixGrid, fixedGridWorld):
         if self.glVAO > 0 and self.showCameraObject:

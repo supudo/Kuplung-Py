@@ -26,6 +26,8 @@ from ui.components.ImporterOBJ import ImporterOBJ
 from ui.components.Log import Log
 from ui.dialogs.DialogControlsGUI import DialogControlsGUI
 from ui.dialogs.DialogControlsModels import DialogControlsModels
+from ui.dialogs.DialogShadertoy import DialogShadertoy
+from ui.dialogs.DialogSVS import DialogSVS
 
 
 class ImGuiWindowSDL2():
@@ -34,6 +36,8 @@ class ImGuiWindowSDL2():
     managerParser = None
     controlsModels = None
     controlsGUI = None
+    controlsShadertoy = None
+    controlsSVS = None
 
     # dialogs
     gui_controls_visible = True
@@ -55,6 +59,8 @@ class ImGuiWindowSDL2():
     show_importerobj_window = False
     show_controls_models = True
     show_controls_gui = True
+    show_svs_window = False
+    show_shadertoy_window = False
 
     sceneSelectedModelObject = -1
 
@@ -139,34 +145,35 @@ class ImGuiWindowSDL2():
 
         self.gl_context = SDL_GL_CreateContext(self.window)
         if self.gl_context is None:
-            Settings.log_error("Error: Cannot create OpenGL Context! SDL Error: " + SDL_GetError())
+            Settings.log_error("[ImGuiWindow] Error: Cannot create OpenGL Context! SDL Error: " + SDL_GetError())
             return False
 
         SDL_GL_MakeCurrent(self.window, self.gl_context)
         if SDL_GL_SetSwapInterval(1) < 0:
-            Settings.log_error("Warning: Unable to set VSync! SDL Error: " + SDL_GetError())
+            Settings.log_error("[ImGuiWindow] Warning: Unable to set VSync! SDL Error: " + SDL_GetError())
 
     def init_manager_controls(self):
         self.managerControls = ControlsManagerSDL2()
-        Settings.do_log("Control events initialized.")
+        Settings.do_log("[ImGuiWindow] Control events initialized.")
 
     def init_sub_windows(self):
         self.controlsModels = DialogControlsModels()
         self.controlsGUI = DialogControlsGUI()
-        Settings.do_log("GUI sub windows initialized.")
+        self.controlsShadertoy = DialogShadertoy()
+        self.controlsSVS = DialogSVS()
+        Settings.do_log("[ImGuiWindow] GUI sub windows initialized.")
 
     def init_components(self):
         self.component_log = Log()
         Settings.FuncDoLog = self.component_log.add_to_log
         self.component_importerobj = ImporterOBJ()
-        Settings.do_log("GUI components initialized.")
+        Settings.do_log("[ImGuiWindow] GUI components initialized.")
 
     def init_imgui_impl(self):
         self.imgui_context = SDL2Impl(self.window)
         self.imgui_context.enable()
         self.app_is_running = True
-        Settings.do_log("PyImGui initialized.")
-
+        Settings.do_log("[ImGuiWindow] PyImGui initialized.")
 
     def render_screen(self):
         self.render_main_menu()
@@ -178,6 +185,12 @@ class ImGuiWindowSDL2():
 
         if self.show_controls_gui:
             self.show_controls_gui, self.managerObjects = self.controlsGUI.render(self.show_controls_gui, self.managerObjects, True)
+
+        if self.show_shadertoy_window:
+            self.show_shadertoy_window = self.controlsShadertoy.render(self.show_shadertoy_window)
+
+        if self.show_svs_window:
+            self.show_svs_window = self.controlsSVS.render(self.show_svs_window)
 
         self.renderingManager.render(
             self.managerObjects,
@@ -248,9 +261,15 @@ class ImGuiWindowSDL2():
 
             if imgui.begin_menu("Scene", True):
                 if imgui.begin_menu("Add Light", True):
-                    imgui.menu_item("Directional (Sun)", '', False, True)
-                    imgui.menu_item("Point (Light bulb)", '', False, True)
-                    imgui.menu_item("Spot (Flashlight)", '', False, True)
+                    clicked, _ = imgui.menu_item("Directional (Sun)", '', False, True)
+                    if clicked:
+                        self.add_light(Settings.LightSourceTypes.LightSourceType_Directional)
+                    clicked, _ = imgui.menu_item("Point (Light bulb)", '', False, True)
+                    if clicked:
+                        self.add_light(Settings.LightSourceTypes.LightSourceType_Point)
+                    clicked, _ = imgui.menu_item("Spot (Flashlight)", '', False, True)
+                    if clicked:
+                        self.add_light(Settings.LightSourceTypes.LightSourceType_Spot)
                     imgui.end_menu()
 
                 imgui.separator()
@@ -297,10 +316,9 @@ class ImGuiWindowSDL2():
                 _, self.show_log_window = imgui.menu_item("Show Log Window", '', self.show_log_window, True)
                 imgui.menu_item("Screenshot", '', False, True)
                 imgui.menu_item("Scene Statistics", '', False, True)
-                imgui.menu_item("Structured Volumetric Sampling", '', False, True)
-                imgui.menu_item("Shadertoy", '', False, True)
+                _, self.show_svs_window = imgui.menu_item("Structured Volumetric Sampling", '', self.show_svs_window, True)
+                _, self.show_shadertoy_window = imgui.menu_item("Shadertoy", '', self.show_shadertoy_window, True)
                 imgui.separator()
-                imgui.menu_item("Shadertoy", '', False, True)
                 imgui.menu_item("Options", '', False, True)
                 imgui.end_menu()
 
@@ -401,7 +419,7 @@ class ImGuiWindowSDL2():
     def init_rendering_manager(self):
         self.renderingManager = RenderingManager()
         self.renderingManager.initShaderProgram()
-        Settings.do_log("Rendering Manager initialized.")
+        Settings.do_log("[ImGuiWindow] Rendering Manager initialized.")
 
         self.managerParser = ParserManager()
         self.managerParser.init_parser()
@@ -410,16 +428,16 @@ class ImGuiWindowSDL2():
         self.managerObjects = ObjectsManager()
         self.managerObjects.load_system_models()
         self.managerObjects.init_manager()
-        Settings.do_log("Objects Manager initialized.")
+        Settings.do_log("[ImGuiWindow] Objects Manager initialized.")
 
     def printGLStrings(self):
-        Settings.do_log("OpenGL Vendor: " +
+        Settings.do_log("[ImGuiWindow] OpenGL Vendor: " +
                         str(gl.glGetString(gl.GL_VENDOR)))
-        Settings.do_log("OpenGL version: " +
+        Settings.do_log("[ImGuiWindow] OpenGL version: " +
                         str(gl.glGetString(gl.GL_VERSION)))
-        Settings.do_log("GLSL version: " +
+        Settings.do_log("[ImGuiWindow] GLSL version: " +
                         str(gl.glGetString(gl.GL_SHADING_LANGUAGE_VERSION)))
-        Settings.do_log("OpenGL Renderer: " +
+        Settings.do_log("[ImGuiWindow] OpenGL Renderer: " +
                         str(gl.glGetString(gl.GL_RENDERER)))
 
     def dialog_about_imgui(self):
