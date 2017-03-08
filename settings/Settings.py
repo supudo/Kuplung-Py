@@ -35,6 +35,10 @@ LogDebugWindow = True
 Settings_CurrentFolder = ''
 
 AppShowAllVisualArtefacts = True
+ShowLogWindow = True
+
+Consumption_Interval_Memory = 5
+Consumption_Interval_CPU = 5
 
 class ShapeTypes(Enum):
     ShapeType_None = ['', '', 0]

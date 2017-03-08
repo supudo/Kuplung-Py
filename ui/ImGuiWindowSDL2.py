@@ -28,6 +28,7 @@ from ui.dialogs.DialogControlsGUI import DialogControlsGUI
 from ui.dialogs.DialogControlsModels import DialogControlsModels
 from ui.dialogs.DialogShadertoy import DialogShadertoy
 from ui.dialogs.DialogSVS import DialogSVS
+from ui.dialogs.DialogOptions import DialogOptions
 
 
 class ImGuiWindowSDL2():
@@ -38,6 +39,7 @@ class ImGuiWindowSDL2():
     controlsGUI = None
     controlsShadertoy = None
     controlsSVS = None
+    controlsOptions = None
 
     # dialogs
     gui_controls_visible = True
@@ -55,13 +57,13 @@ class ImGuiWindowSDL2():
     show_about_pyimgui = False
     show_about_kuplung = False
     show_scene_metrics = False
-    show_log_window = True
     show_importerobj_window = False
     show_controls_models = True
     show_controls_gui = True
     show_svs_window = False
     show_shadertoy_window = False
     show_scene_stats = False
+    show_options = False
 
     sceneSelectedModelObject = -1
 
@@ -162,6 +164,7 @@ class ImGuiWindowSDL2():
         self.controlsGUI = DialogControlsGUI()
         self.controlsShadertoy = DialogShadertoy()
         self.controlsSVS = DialogSVS()
+        self.controlsOptions = DialogOptions()
         Settings.do_log("[ImGuiWindow] GUI sub windows initialized.")
 
     def init_components(self):
@@ -192,6 +195,9 @@ class ImGuiWindowSDL2():
 
         if self.show_svs_window:
             self.show_svs_window = self.controlsSVS.render(self.show_svs_window)
+
+        if self.show_options:
+            self.show_options = self.controlsOptions.render(self.show_options)
 
         self.renderingManager.render(
             self.managerObjects,
@@ -314,13 +320,13 @@ class ImGuiWindowSDL2():
                 _, self.show_controls_models = imgui.menu_item("Scene Controls", '', self.show_controls_models, True)
                 _, Settings.AppShowAllVisualArtefacts = imgui.menu_item(('Hide' if Settings.AppShowAllVisualArtefacts else 'Show') + " Visual Artefacts", '', Settings.AppShowAllVisualArtefacts, True)
                 imgui.separator()
-                _, self.show_log_window = imgui.menu_item("Show Log Window", '', self.show_log_window, True)
+                _, Settings.ShowLogWindow = imgui.menu_item("Show Log Window", '', Settings.ShowLogWindow, True)
                 imgui.menu_item("Screenshot", '', False, False)
                 _, self.show_scene_stats = imgui.menu_item("Scene Statistics", '', self.show_scene_stats, True)
                 _, self.show_svs_window = imgui.menu_item("Structured Volumetric Sampling", '', self.show_svs_window, True)
                 _, self.show_shadertoy_window = imgui.menu_item("Shadertoy", '', self.show_shadertoy_window, True)
                 imgui.separator()
-                imgui.menu_item("Options", '', False, False)
+                _, self.show_options = imgui.menu_item('Options', '', self.show_options, True)
                 imgui.end_menu()
 
             if imgui.begin_menu("Help", True):
@@ -370,7 +376,7 @@ class ImGuiWindowSDL2():
         if self.show_scene_stats:
             self.dialog_scene_stats()
 
-        if self.show_log_window:
+        if Settings.ShowLogWindow:
             self.dialog_log_window()
 
         if self.show_importerobj_window:
@@ -494,7 +500,7 @@ class ImGuiWindowSDL2():
         imgui.end()
 
     def dialog_log_window(self):
-        self.show_log_window = self.component_log.draw_window('Log Window', self.show_log_window)
+        Settings.ShowLogWindow = self.component_log.draw_window('Log Window', Settings.ShowLogWindow)
 
     def dialog_importer_obj_window(self):
         self.show_importerobj_window = self.component_importerobj.draw_window('Import Wavefront OBJ File', self.show_importerobj_window, self.process_imported_file)

@@ -14,12 +14,10 @@ from parsers.OBJ.AssimpObj import AssimpObj
 from settings import Settings
 
 class ParserManager:
-
     def __init__(self, parent=None):
         self.ParserMethod = 0
         self.parserObj = None
         Settings.do_log("[ParserManager] Parser Manager initialized.")
-
 
     def init_parser(self):
         if Settings.ModelFileParser == Settings.ModelFileParserTypes.ModelFileParser_Own1:
@@ -28,7 +26,6 @@ class ParserManager:
             self.parserObj = ParserObj2()
         elif Settings.ModelFileParser == Settings.ModelFileParserTypes.ModelFileParser_Assimp:
             self.parserObj = AssimpObj()
-
 
     def parse_file(self, f_folder, f_filename):
         if self.parserObj == None:
