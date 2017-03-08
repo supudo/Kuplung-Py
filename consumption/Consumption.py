@@ -44,12 +44,10 @@ class Consumption():
     def get_consumption_cpu(self):
         while self.pool_CPU:
             self.ConsumptionFormatted_CPU = str(self.proc.cpu_percent(interval=Settings.Consumption_Interval_CPU))
-            print(self.ConsumptionFormatted_CPU)
             time.sleep(Settings.Consumption_Interval_CPU)
 
     def get_consumption_memory(self):
         while self.pool_Memory:
             mem = self.proc.memory_full_info()
             self.ConsumptionFormatted_Memory = mem.rss / (1024.0 * 1024.0)
-            print(self.ConsumptionFormatted_Memory)
             time.sleep(Settings.Consumption_Interval_Memory)
