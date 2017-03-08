@@ -435,7 +435,7 @@ class ImGuiWindowSDL2():
 
     def init_rendering_manager(self):
         self.renderingManager = RenderingManager()
-        self.renderingManager.initShaderProgram()
+        self.renderingManager.init_systems()
         Settings.do_log("[ImGuiWindow] Rendering Manager initialized.")
 
         self.managerParser = ParserManager()

@@ -130,12 +130,11 @@ class GeometryEditMode(Enum):
 Setting_GeometryEditMode = GeometryEditMode.GeometryEditMode_Vertex
 
 class InAppRendererType(Enum):
-    InAppRendererType_Simple = 0
-    InAppRendererType_Forward = 1
-    InAppRendererType_ForwardShadowMapping = 2
-    InAppRendererType_Deferred = 3
+    InAppRendererType_Forward = 0
+    InAppRendererType_ForwardShadowMapping = 1
+    InAppRendererType_Deferred = 2
 
-Setting_RendererType = InAppRendererType.InAppRendererType_Deferred
+Setting_RendererType = InAppRendererType.InAppRendererType_Forward
 
 # -------------------------------------------------------------------
 # Logging

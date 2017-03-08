@@ -16,6 +16,7 @@ class DialogOptions():
     def __init__(self):
         self.ui_helper = UIHelpers
         self.parser_model = Settings.ModelFileParser.value
+        self.rendering_types = Settings.Setting_RendererType.value
 
     def render(self, is_opened):
         imgui.set_next_window_size(300, 600, imgui.FIRST_USE_EVER)
@@ -39,6 +40,10 @@ class DialogOptions():
         opened, _ = imgui.collapsing_header('Rendering')
         if opened:
             imgui.indent()
+            rendering_engines = ['Forward', 'Forward with Shadow Mapping', 'Deferred']
+            _, self.rendering_types = imgui.combo('Renderer', self.rendering_types, rendering_engines)
+            Settings.Setting_RendererType = self.rendering_types
+
             parser_items = ['Kuplung Obj Parser 1.0', 'Kuplung Obj Parser 2.0', 'Assimp']
             _, self.parser_model = imgui.combo('Model Parser', self.parser_model, parser_items)
             Settings.ModelFileParser = self.parser_model
