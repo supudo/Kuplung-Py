@@ -7,6 +7,7 @@ supudo.net
 __author__ = 'supudo'
 __version__ = "1.0.0"
 
+import copy
 import os
 import numpy
 import imgui
@@ -77,7 +78,7 @@ class DialogControlsModels():
 
         if self.selectedTabPanel == 0:
             if meshModelFaces is not None and len(meshModelFaces) > 0:
-                meshModelFaces = self.render_models(meshModelFaces, managerObjects)
+                meshModelFaces = self.render_models(meshModelFaces, managerObjects, delegate)
             else:
                 imgui.text_colored('No models in the current scene.', 255, 0, 0, 255)
         else:
@@ -105,7 +106,7 @@ class DialogControlsModels():
             if imgui.button(light.value[0], -1, 0):
                 delegate.add_light(light)
 
-    def render_models(self, mmfs, mo):
+    def render_models(self, mmfs, mo, delegate):
         # reset defaults button
         imgui.push_style_color(imgui.COLOR_BUTTON, .6, .1, .1, 1)
         imgui.push_style_color(imgui.COLOR_BUTTON_HOVERED, .9, .1, .1, 1)
@@ -129,7 +130,19 @@ class DialogControlsModels():
         _, self.selectedObject = imgui.listbox('', self.selectedObject, scene_items)
         imgui.pop_style_color(1)
         imgui.pop_style_var(2)
-        # TODO: context menu for actions
+        if self.selectedObject > -1 and imgui.begin_popup_context_item('Actions'):
+            _, clicked_rename = imgui.menu_item('Rename', None, None, False)
+            _, clicked_duplicate = imgui.menu_item('Duplicate')
+            if clicked_duplicate:
+                new_model = copy.deepcopy(mmfs[self.selectedObject])
+                mmfs.append(new_model)
+            if imgui.begin_menu('Delete'):
+                _, clicked_delete_ok = imgui.menu_item('OK')
+                if clicked_delete_ok:
+                    delegate.remove_model(self.selectedObject)
+                imgui.end_menu()
+            imgui.end_popup()
+
         imgui.pop_item_width()
 
         imgui.end_child()
@@ -208,13 +221,13 @@ class DialogControlsModels():
             if self.showTextureWindow_Diffuse:
                 self.showTextureWindow_Diffuse, self.showTexture_Diffuse, self.vboTextureDiffuse, self.textureDiffuse_Width, self.textureDiffuse_Height = self.show_texture_image(mmfs[self.selectedObject], MaterialTextureType.MaterialTextureType_Diffuse, 'Diffuse', self.showTextureWindow_Diffuse, self.showTexture_Diffuse, self.vboTextureDiffuse, self.textureDiffuse_Width, self.textureDiffuse_Height)
             if self.showTextureWindow_Dissolve:
-                self.showTextureWindow_Diffuse, self.showTexture_Diffuse, self.vboTextureDiffuse, self.textureDiffuse_Width, self.textureDiffuse_Height = self.show_texture_image(mmfs[self.selectedObject], MaterialTextureType.MaterialTextureType_Diffuse, 'Dissolve', self.showTextureWindow_Diffuse, self.showTexture_Diffuse, self.vboTextureDiffuse, self.textureDiffuse_Width, self.textureDiffuse_Height)
+                self.showTextureWindow_Dissolve, self.showTexture_Dissolve, self.vboTextureDissolve, self.textureDissolve_Width, self.textureDissolve_Height = self.show_texture_image(mmfs[self.selectedObject], MaterialTextureType.MaterialTextureType_Dissolve, 'Dissolve', self.showTextureWindow_Dissolve, self.showTexture_Dissolve, self.vboTextureDissolve, self.textureDissolve_Width, self.textureDissolve_Height)
             if self.showTextureWindow_Bump:
-                self.showTextureWindow_Diffuse, self.showTexture_Diffuse, self.vboTextureDiffuse, self.textureDiffuse_Width, self.textureDiffuse_Height = self.show_texture_image(mmfs[self.selectedObject], MaterialTextureType.MaterialTextureType_Diffuse, 'Normal', self.showTextureWindow_Diffuse, self.showTexture_Diffuse, self.vboTextureDiffuse, self.textureDiffuse_Width, self.textureDiffuse_Height)
+                self.showTextureWindow_Bump, self.showTexture_Bump, self.vboTextureBump, self.textureBump_Width, self.textureBump_Height = self.show_texture_image(mmfs[self.selectedObject], MaterialTextureType.MaterialTextureType_Bump, 'Normal', self.showTextureWindow_Bump, self.showTexture_Bump, self.vboTextureBump, self.textureBump_Width, self.textureBump_Height)
             if self.showTextureWindow_Displacement:
-                self.showTextureWindow_Diffuse, self.showTexture_Diffuse, self.vboTextureDiffuse, self.textureDiffuse_Width, self.textureDiffuse_Height = self.show_texture_image(mmfs[self.selectedObject], MaterialTextureType.MaterialTextureType_Diffuse, 'Displacement', self.showTextureWindow_Diffuse, self.showTexture_Diffuse, self.vboTextureDiffuse, self.textureDiffuse_Width, self.textureDiffuse_Height)
+                self.showTextureWindow_Displacement, self.showTexture_Displacement, self.vboTextureDisplacement, self.textureDisplacement_Width, self.textureDisplacement_Height = self.show_texture_image(mmfs[self.selectedObject], MaterialTextureType.MaterialTextureType_Displacement, 'Displacement', self.showTextureWindow_Displacement, self.showTexture_Displacement, self.vboTextureDisplacement, self.textureDisplacement_Width, self.textureDisplacement_Height)
             if self.showTextureWindow_Specular:
-                self.showTextureWindow_Diffuse, self.showTexture_Diffuse, self.vboTextureDiffuse, self.textureDiffuse_Width, self.textureDiffuse_Height = self.show_texture_image(mmfs[self.selectedObject], MaterialTextureType.MaterialTextureType_Diffuse, 'Specular', self.showTextureWindow_Diffuse, self.showTexture_Diffuse, self.vboTextureDiffuse, self.textureDiffuse_Width, self.textureDiffuse_Height)
+                self.showTextureWindow_Specular, self.showTexture_Specular, self.vboTextureSpecular, self.textureSpecular_Width, self.textureSpecular_Height = self.show_texture_image(mmfs[self.selectedObject], MaterialTextureType.MaterialTextureType_Specular, 'Specular', self.showTextureWindow_Specular, self.showTexture_Specular, self.vboTextureSpecular, self.textureSpecular_Width, self.textureSpecular_Height)
             if self.showTextureWindow_SpecularExp:
                 self.showTextureWindow_SpecularExp, self.showTexture_SpecularExp, self.vboTextureSpecularExp, self.textureSpecularExp_Width, self.textureSpecularExp_Height = self.show_texture_image(mmfs[self.selectedObject], MaterialTextureType.MaterialTextureType_SpecularExp, 'Specular Exp', self.showTextureWindow_SpecularExp, self.showTexture_SpecularExp, self.vboTextureSpecularExp, self.textureSpecularExp_Width, self.textureSpecularExp_Height)
 
@@ -415,6 +428,20 @@ class DialogControlsModels():
             _, useTexture = imgui.checkbox(chkLabel, useTexture)
             if imgui.is_item_hovered():
                 imgui.set_tooltip('Show/Hide ' + title + ' Texture')
+            if texType == MaterialTextureType.MaterialTextureType_Ambient:
+                meshModelFaces[self.selectedObject].mesh_model.ModelMaterial.texture_ambient.UseTexture = useTexture
+            elif texType == MaterialTextureType.MaterialTextureType_Diffuse:
+                meshModelFaces[self.selectedObject].mesh_model.ModelMaterial.texture_diffuse.UseTexture = useTexture
+            elif texType == MaterialTextureType.MaterialTextureType_Dissolve:
+                meshModelFaces[self.selectedObject].mesh_model.ModelMaterial.texture_dissolve.UseTexture = useTexture
+            elif texType == MaterialTextureType.MaterialTextureType_Bump:
+                meshModelFaces[self.selectedObject].mesh_model.ModelMaterial.texture_normal.UseTexture = useTexture
+            elif texType == MaterialTextureType.MaterialTextureType_Specular:
+                meshModelFaces[self.selectedObject].mesh_model.ModelMaterial.texture_specular.UseTexture = useTexture
+            elif texType == MaterialTextureType.MaterialTextureType_SpecularExp:
+                meshModelFaces[self.selectedObject].mesh_model.ModelMaterial.texture_specular_exp.UseTexture = useTexture
+            elif texType == MaterialTextureType.MaterialTextureType_Displacement:
+                meshModelFaces[self.selectedObject].mesh_model.ModelMaterial.texture_displacement.UseTexture = useTexture
             imgui.same_line()
             if imgui.button('X' + chkLabel):
                 loadTexture = False

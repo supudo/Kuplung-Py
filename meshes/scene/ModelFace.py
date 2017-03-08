@@ -362,7 +362,7 @@ class ModelFace:
 
     def render(self, use_tessellation):
         if self.glVAO > 0:
-            if Settings.Setting_Wireframe or Settings.Setting_ModelViewSkin == Settings.ViewModelSkin.ViewModelSkin_Wireframe:
+            if Settings.Setting_Wireframe or Settings.Setting_ModelViewSkin == Settings.ViewModelSkin.ViewModelSkin_Wireframe or self.Setting_Wireframe:
                 glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
             glBindVertexArray(self.glVAO)
             if use_tessellation:
@@ -370,5 +370,5 @@ class ModelFace:
             else:
                 glDrawElements(GL_TRIANGLES, self.mesh_model.countIndices, GL_UNSIGNED_INT, None)
             glBindVertexArray(0)
-            if Settings.Setting_Wireframe or Settings.Setting_ModelViewSkin == Settings.ViewModelSkin.ViewModelSkin_Wireframe:
+            if Settings.Setting_Wireframe or Settings.Setting_ModelViewSkin == Settings.ViewModelSkin.ViewModelSkin_Wireframe or self.Setting_Wireframe:
                 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)

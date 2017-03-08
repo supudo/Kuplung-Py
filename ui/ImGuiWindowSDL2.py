@@ -522,3 +522,8 @@ class ImGuiWindowSDL2():
 
     def hide_loading(self):
         self.is_loading_open = False
+
+    def remove_model(self, selectedModel):
+        self.renderingManager.model_faces.remove(self.renderingManager.model_faces[selectedModel])
+        self.sceneSelectedModelObject = -1
+        self.controlsModels.selectedObject = -1
