@@ -34,6 +34,8 @@ ApplicationGLFW3 = False
 LogDebugWindow = True
 Settings_CurrentFolder = ''
 
+AppShowAllVisualArtefacts = True
+
 class ShapeTypes(Enum):
     ShapeType_None = ['', '', 0]
 

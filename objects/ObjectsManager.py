@@ -111,36 +111,37 @@ class ObjectsManager():
 
         self.camera.render()
 
-        if Settings.ApplicationGLFW3:
-            win_width, win_height = glfw.get_framebuffer_size(window)
-        else:
-            win_width, win_height = Settings.AppWindowWidth, Settings.AppWindowHeight
-        self.axis_system.render(window, self.matrixProjection, self.camera.matrixCamera, win_width, win_height)
+        if Settings.AppShowAllVisualArtefacts:
+            if Settings.ApplicationGLFW3:
+                win_width, win_height = glfw.get_framebuffer_size(window)
+            else:
+                win_width, win_height = Settings.AppWindowWidth, Settings.AppWindowHeight
+            self.axis_system.render(window, self.matrixProjection, self.camera.matrixCamera, win_width, win_height)
 
-        if self.Setting_GridSize != self.grid.grid_size:
-            self.grid.grid_size = self.Setting_GridSize
-            self.grid.init_buffers(self.Setting_GridSize, 1)
-        self.grid.render(self.matrixProjection, self.camera.matrixCamera, self.Settings_ShowZAxis)
+            if self.Setting_GridSize != self.grid.grid_size:
+                self.grid.grid_size = self.Setting_GridSize
+                self.grid.init_buffers(self.Setting_GridSize, 1)
+            self.grid.render(self.matrixProjection, self.camera.matrixCamera, self.Settings_ShowZAxis)
 
-        if self.Setting_ShowAxisHelpers:
-            ahPosition = self.Setting_GridSize / 2
+            if self.Setting_ShowAxisHelpers:
+                ahPosition = self.Setting_GridSize / 2
 
-            self.axis_helpers_x_plus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(ahPosition, .0, .0))
-            self.axis_helpers_x_minus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(-ahPosition, .0, .0))
-            self.axis_helpers_y_minus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(.0, -ahPosition, .0))
-            self.axis_helpers_y_plus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(.0, ahPosition, .0))
-            self.axis_helpers_z_minus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(.0, .0, -ahPosition))
-            self.axis_helpers_z_plus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(.0, .0, ahPosition))
+                self.axis_helpers_x_plus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(ahPosition, .0, .0))
+                self.axis_helpers_x_minus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(-ahPosition, .0, .0))
+                self.axis_helpers_y_minus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(.0, -ahPosition, .0))
+                self.axis_helpers_y_plus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(.0, ahPosition, .0))
+                self.axis_helpers_z_minus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(.0, .0, -ahPosition))
+                self.axis_helpers_z_plus.render(self.matrixProjection, self.camera.matrixCamera, Vector3(.0, .0, ahPosition))
 
-        self.camera_model.render(self.matrixProjection, self.camera.matrixCamera, self.grid.matrixModel, self.Setting_FixedGridWorld)
+            self.camera_model.render(self.matrixProjection, self.camera.matrixCamera, self.grid.matrixModel, self.Setting_FixedGridWorld)
 
-        for light in self.lightSources:
-            light.render(self.matrixProjection, self.camera.matrixCamera)
+            for light in self.lightSources:
+                light.render(self.matrixProjection, self.camera.matrixCamera)
 
-        if self.Setting_Skybox != self.skybox.Setting_Skybox_Item:
-            self.skybox.init_buffers()
-            self.Setting_Skybox = self.skybox.Setting_Skybox_Item
-        self.skybox.render(self.camera.matrixCamera, self.Setting_PlaneClose, self.Setting_PlaneFar, self.Setting_FOV)
+            if self.Setting_Skybox != self.skybox.Setting_Skybox_Item:
+                self.skybox.init_buffers()
+                self.Setting_Skybox = self.skybox.Setting_Skybox_Item
+            self.skybox.render(self.camera.matrixCamera, self.Setting_PlaneClose, self.Setting_PlaneFar, self.Setting_FOV)
 
     def reset_properties_system(self):
         self.reset_settings()

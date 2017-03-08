@@ -61,6 +61,7 @@ class ImGuiWindowSDL2():
     show_controls_gui = True
     show_svs_window = False
     show_shadertoy_window = False
+    show_scene_stats = False
 
     sceneSelectedModelObject = -1
 
@@ -239,18 +240,18 @@ class ImGuiWindowSDL2():
         if imgui.begin_main_menu_bar():
             if imgui.begin_menu("File", True):
                 _, self.new_scene_clear = imgui.menu_item("New", '', False, True)
-                imgui.menu_item("Open ...", '', False, True)
-                if imgui.begin_menu("Open Recent", True):
+                imgui.menu_item("Open ...", '', False, False)
+                if imgui.begin_menu("Open Recent", False):
                     imgui.end_menu()
-                imgui.menu_item("Save ...", '', False, True)
+                imgui.menu_item("Save ...", '', False, False)
                 imgui.separator()
                 if imgui.begin_menu("Import", True):
                     _, self.show_importerobj_window = imgui.menu_item("Wavefront (.OBJ)", '', self.show_importerobj_window, True)
                     imgui.end_menu()
-                if imgui.begin_menu("Import Recent", True):
+                if imgui.begin_menu("Import Recent", False):
                     imgui.menu_item("file 1...", '', False, True)
                     imgui.end_menu()
-                if imgui.begin_menu("Export", True):
+                if imgui.begin_menu("Export", False):
                     imgui.menu_item("Wavefront (.OBJ)", '', False, True)
                     imgui.end_menu()
                 imgui.separator()
@@ -304,22 +305,22 @@ class ImGuiWindowSDL2():
                     imgui.end_menu()
 
                 imgui.separator()
-                opened_show_render_image, self.show_save_image = imgui.menu_item("Render Image", '', self.show_save_image, True)
-                opened_show_render_ui, self.show_render_ui = imgui.menu_item("Render UI", '', self.show_render_ui, True)
+                opened_show_render_image, self.show_save_image = imgui.menu_item("Render Image", '', self.show_save_image, False)
+                opened_show_render_ui, self.show_render_ui = imgui.menu_item("Render UI", '', self.show_render_ui, False)
                 imgui.end_menu()
 
             if imgui.begin_menu("View", True):
                 _, self.show_controls_gui = imgui.menu_item("GUI Controls", '', self.show_controls_gui, True)
                 _, self.show_controls_models = imgui.menu_item("Scene Controls", '', self.show_controls_models, True)
-                imgui.menu_item("Hide Visual Artefacts", '', False, True)
+                _, Settings.AppShowAllVisualArtefacts = imgui.menu_item(('Hide' if Settings.AppShowAllVisualArtefacts else 'Show') + " Visual Artefacts", '', Settings.AppShowAllVisualArtefacts, True)
                 imgui.separator()
                 _, self.show_log_window = imgui.menu_item("Show Log Window", '', self.show_log_window, True)
-                imgui.menu_item("Screenshot", '', False, True)
-                imgui.menu_item("Scene Statistics", '', False, True)
+                imgui.menu_item("Screenshot", '', False, False)
+                _, self.show_scene_stats = imgui.menu_item("Scene Statistics", '', self.show_scene_stats, True)
                 _, self.show_svs_window = imgui.menu_item("Structured Volumetric Sampling", '', self.show_svs_window, True)
                 _, self.show_shadertoy_window = imgui.menu_item("Shadertoy", '', self.show_shadertoy_window, True)
                 imgui.separator()
-                imgui.menu_item("Options", '', False, True)
+                imgui.menu_item("Options", '', False, False)
                 imgui.end_menu()
 
             if imgui.begin_menu("Help", True):
@@ -365,6 +366,9 @@ class ImGuiWindowSDL2():
 
         if self.show_scene_metrics:
             self.dialog_scene_metrics()
+
+        if self.show_scene_stats:
+            self.dialog_scene_stats()
 
         if self.show_log_window:
             self.dialog_log_window()
@@ -471,7 +475,10 @@ class ImGuiWindowSDL2():
         imgui.end()
 
     def dialog_scene_metrics(self):
-        _, self.show_scene_metrics = imgui.begin("Scene Metrics", self.show_scene_metrics, imgui.WINDOW_ALWAYS_AUTO_RESIZE | imgui.WINDOW_NO_TITLE_BAR)
+        self.show_scene_metrics = imgui.show_metrics_window(self.show_scene_metrics)
+
+    def dialog_scene_stats(self):
+        _, self.show_scene_stats = imgui.begin("Scene Metrics", self.show_scene_stats, imgui.WINDOW_ALWAYS_AUTO_RESIZE | imgui.WINDOW_NO_TITLE_BAR)
         imgui_io = imgui.get_io()
         imgui.text("OpenGL version: " + str(gl.glGetString(gl.GL_VERSION)))
         imgui.text("GLSL version: " + str(gl.glGetString(gl.GL_SHADING_LANGUAGE_VERSION)))
