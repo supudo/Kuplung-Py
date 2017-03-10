@@ -12,8 +12,11 @@ class RenderingShadowMapping():
     def __init__(self):
         pass
 
+    def init_renderer(self, mo):
+        pass
+
     def initShaderProgram(self):
         pass
 
     def render(self, mo, selectedModel):
-        pass
+        return mo

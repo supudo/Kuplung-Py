@@ -77,9 +77,9 @@ class ImGuiWindowSDL2():
         self.init_sub_windows()
         self.init_components()
         self.init_manager_controls()
+        self.init_objects_manager()
         self.init_rendering_manager()
         self.imgui_style = imgui.GuiStyle()
-        self.init_objects_manager()
 
         self.printGLStrings()
         self.hide_loading()
@@ -99,7 +99,7 @@ class ImGuiWindowSDL2():
 
             self.handle_controls_events()
 
-            gl.glViewport(0, 0, int(Settings.AppWindowWidth / 2), int(Settings.AppWindowHeight))
+            gl.glViewport(0, 0, int(Settings.AppWindowWidth), int(Settings.AppWindowHeight))
             gl.glClearColor(Settings.guiClearColor[0],
                             Settings.guiClearColor[1],
                             Settings.guiClearColor[2],
@@ -187,27 +187,18 @@ class ImGuiWindowSDL2():
     def render_screen(self):
         self.render_main_menu()
 
-        self.managerObjects.render(self.window)
-
-        if self.show_controls_models:
-            self.show_controls_models, self.renderingManager.model_faces = self.controlsModels.render(self, self.show_controls_models, self.managerObjects, self.renderingManager.model_faces, True)
-
-        if self.show_controls_gui:
-            self.show_controls_gui, self.managerObjects = self.controlsGUI.render(self.show_controls_gui, self.managerObjects, True)
-
-        if self.show_shadertoy_window:
-            self.show_shadertoy_window = self.controlsShadertoy.render(self.show_shadertoy_window)
-
-        if self.show_svs_window:
-            self.show_svs_window = self.controlsSVS.render(self.show_svs_window)
-
-        if self.show_options:
-            self.show_options = self.controlsOptions.render(self.show_options)
-
-        self.renderingManager.render(
-            self.managerObjects,
-            self.sceneSelectedModelObject
-        )
+        if Settings.Setting_RendererType == Settings.InAppRendererType.InAppRendererType_Deferred:
+            self.renderingManager.render(
+                self.managerObjects,
+                self.sceneSelectedModelObject
+            )
+            self.managerObjects.render(self.window)
+        else:
+            self.managerObjects = self.renderingManager.render(
+                self.managerObjects,
+                self.sceneSelectedModelObject
+            )
+            self.managerObjects.render(self.window)
 
     def handle_controls_events(self):
         if not imgui.is_mouse_hovering_any_window():
@@ -222,28 +213,28 @@ class ImGuiWindowSDL2():
                 if self.managerObjects.Setting_FOV < -180:
                     self.managerObjects.Setting_FOV = -180
             else:
-                self.managerObjects.camera.positionZ['point'] += self.managerControls.mouseWheel['y']
+                self.managerObjects.camera.positionZ.point += self.managerControls.mouseWheel['y']
 
             self.managerControls.reset_mouse_scroll()
 
             if self.managerControls.mouseButton_MIDDLE:
                 if self.managerControls.mouseGoUp:
-                    self.managerObjects.camera.rotateX['point'] += self.managerControls.yrel
+                    self.managerObjects.camera.rotateX.point += self.managerControls.yrel
                 if self.managerControls.mouseGoDown:
-                    self.managerObjects.camera.rotateX['point'] += self.managerControls.yrel
-                if self.managerObjects.camera.rotateX['point'] > 360:
-                    self.managerObjects.camera.rotateX['point'] = .0
-                if self.managerObjects.camera.rotateX['point'] < .0:
-                    self.managerObjects.camera.rotateX['point'] = 360
+                    self.managerObjects.camera.rotateX.point += self.managerControls.yrel
+                if self.managerObjects.camera.rotateX.point > 360:
+                    self.managerObjects.camera.rotateX.point = .0
+                if self.managerObjects.camera.rotateX.point < .0:
+                    self.managerObjects.camera.rotateX.point = 360
 
                 if self.managerControls.mouseGoLeft:
-                    self.managerObjects.camera.rotateY['point'] += self.managerControls.xrel
+                    self.managerObjects.camera.rotateY.point += self.managerControls.xrel
                 if self.managerControls.mouseGoRight:
-                    self.managerObjects.camera.rotateY['point'] += self.managerControls.xrel
-                if self.managerObjects.camera.rotateY['point'] > 360:
-                    self.managerObjects.camera.rotateY['point'] = .0
-                if self.managerObjects.camera.rotateY['point'] < .0:
-                    self.managerObjects.camera.rotateY['point'] = 360
+                    self.managerObjects.camera.rotateY.point += self.managerControls.xrel
+                if self.managerObjects.camera.rotateY.point > 360:
+                    self.managerObjects.camera.rotateY.point = .0
+                if self.managerObjects.camera.rotateY.point < .0:
+                    self.managerObjects.camera.rotateY.point = 360
 
             self.managerControls.reset_mouse_motion()
 
@@ -389,6 +380,21 @@ class ImGuiWindowSDL2():
         if self.show_importerobj_window:
             self.dialog_importer_obj_window()
 
+        if self.show_controls_models:
+            self.show_controls_models, self.renderingManager.model_faces = self.controlsModels.render(self, self.show_controls_models, self.managerObjects, self.renderingManager.model_faces, True)
+
+        if self.show_controls_gui:
+            self.show_controls_gui, self.managerObjects = self.controlsGUI.render(self.show_controls_gui, self.managerObjects, True)
+
+        if self.show_shadertoy_window:
+            self.show_shadertoy_window = self.controlsShadertoy.render(self.show_shadertoy_window)
+
+        if self.show_svs_window:
+            self.show_svs_window = self.controlsSVS.render(self.show_svs_window)
+
+        if self.show_options:
+            self.show_options = self.controlsOptions.render(self.show_options)
+
         if self.is_loading_open:
             imgui.open_popup('Kuplung Loading')
         loading_opened, _ = imgui.begin_popup_modal('Kuplung Loading', False, imgui.WINDOW_ALWAYS_AUTO_RESIZE | imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_TITLE_BAR)
@@ -435,7 +441,7 @@ class ImGuiWindowSDL2():
 
     def init_rendering_manager(self):
         self.renderingManager = RenderingManager()
-        self.renderingManager.init_systems()
+        self.renderingManager.init_systems(self.managerObjects)
         Settings.do_log("[ImGuiWindow] Rendering Manager initialized.")
 
         self.managerParser = ParserManager()
@@ -448,14 +454,10 @@ class ImGuiWindowSDL2():
         Settings.do_log("[ImGuiWindow] Objects Manager initialized.")
 
     def printGLStrings(self):
-        Settings.do_log("[ImGuiWindow] OpenGL Vendor: " +
-                        str(gl.glGetString(gl.GL_VENDOR)))
-        Settings.do_log("[ImGuiWindow] OpenGL version: " +
-                        str(gl.glGetString(gl.GL_VERSION)))
-        Settings.do_log("[ImGuiWindow] GLSL version: " +
-                        str(gl.glGetString(gl.GL_SHADING_LANGUAGE_VERSION)))
-        Settings.do_log("[ImGuiWindow] OpenGL Renderer: " +
-                        str(gl.glGetString(gl.GL_RENDERER)))
+        Settings.do_log("[ImGuiWindow] OpenGL Vendor: " + str(gl.glGetString(gl.GL_VENDOR)))
+        Settings.do_log("[ImGuiWindow] OpenGL version: " + str(gl.glGetString(gl.GL_VERSION)))
+        Settings.do_log("[ImGuiWindow] GLSL version: " + str(gl.glGetString(gl.GL_SHADING_LANGUAGE_VERSION)))
+        Settings.do_log("[ImGuiWindow] OpenGL Renderer: " + str(gl.glGetString(gl.GL_RENDERER)))
 
     def dialog_about_imgui(self):
         imgui.set_next_window_centered()

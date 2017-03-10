@@ -90,7 +90,8 @@ class ObjectsManager():
         self.Setting_DebugShadowTexture = False
         self.Setting_DeferredAmbientStrength = 0.1
         self.Setting_DeferredTestMode = False
-        self.Setting_DeferredTestLights = False
+        self.Setting_DeferredTestLights = True
+        self.Setting_DeferredRandomizeLightPositions = False
         self.Setting_DeferredTestLightsNumber = 32
         self.Setting_Skybox = -1
         self.Setting_ShowSpaceship = False
@@ -199,7 +200,8 @@ class ObjectsManager():
         self.Setting_DebugShadowTexture = False
         self.Setting_DeferredAmbientStrength = 0.1
         self.Setting_DeferredTestMode = False
-        self.Setting_DeferredTestLights = False
+        self.Setting_DeferredTestLights = True
+        self.Setting_DeferredRandomizeLightPositions = False
         self.Setting_DeferredTestLightsNumber = 32
         self.Setting_Skybox = -1
         self.Setting_ShowSpaceship = False

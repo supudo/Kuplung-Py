@@ -55,9 +55,9 @@ class DialogControlsGUI():
         if imgui.button('Reset values to default', -1, 0):
             mo.reset_properties_system()
             if self.selectedObjectLight > -1:
-                self.lightRotateX = mo.lightSources[self.selectedObjectLight].rotateX['point']
-                self.lightRotateY = mo.lightSources[self.selectedObjectLight].rotateY['point']
-                self.lightRotateZ = mo.lightSources[self.selectedObjectLight].rotateZ['point']
+                self.lightRotateX = mo.lightSources[self.selectedObjectLight].rotateX.point
+                self.lightRotateY = mo.lightSources[self.selectedObjectLight].rotateY.point
+                self.lightRotateZ = mo.lightSources[self.selectedObjectLight].rotateZ.point
         imgui.pop_style_color(3)
 
         # GUI items listbox
@@ -164,15 +164,15 @@ class DialogControlsGUI():
         imgui.end()
 
         if len(mo.lightSources) > 0 and self.selectedObjectLight > -1 and len(mo.lightSources) > self.selectedObjectLight:
-            slp_x = mo.lightSources[self.selectedObjectLight].rotateX['point']
-            slp_y = mo.lightSources[self.selectedObjectLight].rotateY['point']
-            slp_z = mo.lightSources[self.selectedObjectLight].rotateZ['point']
+            slp_x = mo.lightSources[self.selectedObjectLight].rotateX.point
+            slp_y = mo.lightSources[self.selectedObjectLight].rotateY.point
+            slp_z = mo.lightSources[self.selectedObjectLight].rotateZ.point
             if self.lightRotateX < slp_x or self.lightRotateX > slp_x or\
                 self.lightRotateY < slp_y or self.lightRotateY > slp_y or\
                 self.lightRotateZ < slp_z or self.lightRotateZ > slp_z:
-                mo.lightSources[self.selectedObjectLight].rotateX['point'] = self.lightRotateX
-                mo.lightSources[self.selectedObjectLight].rotateY['point'] = self.lightRotateY
-                mo.lightSources[self.selectedObjectLight].rotateZ['point'] = self.lightRotateZ
+                mo.lightSources[self.selectedObjectLight].rotateX.point = self.lightRotateX
+                mo.lightSources[self.selectedObjectLight].rotateY.point = self.lightRotateY
+                mo.lightSources[self.selectedObjectLight].rotateZ.point = self.lightRotateZ
 
         return is_opened, mo
 
@@ -226,9 +226,9 @@ class DialogControlsGUI():
                 imgui.indent()
                 imgui.text('Origin')
                 if imgui.button('Set to camera position', imgui.get_window_width() * .75, .0):
-                    Settings.Setting_mRayOriginX = mo.camera.positionX['point']
-                    Settings.Setting_mRayOriginY = mo.camera.positionY['point']
-                    Settings.Setting_mRayOriginZ = mo.camera.positionZ['point']
+                    Settings.Setting_mRayOriginX = mo.camera.positionX.point
+                    Settings.Setting_mRayOriginY = mo.camera.positionY.point
+                    Settings.Setting_mRayOriginZ = mo.camera.positionZ.point
                 # InputFloat for  Settings.mRayOriginX
                 # InputFloat for  Settings.mRayOriginY
                 # InputFloat for  Settings.mRayOriginZ
@@ -312,7 +312,7 @@ class DialogControlsGUI():
         return mo
 
     def render_defered_rendering_options(self, mo):
-        opened, _ = imgui.collapsing_header('Deferred Rendering')
+        opened, _ = imgui.collapsing_header('Deferred Rendering', None, imgui.TREE_NODE_DEFAULT_OPEN)
         if opened:
             imgui.indent()
             imgui.text('Deferred Rendering')
@@ -322,8 +322,10 @@ class DialogControlsGUI():
             )
             imgui.text('Ambient Strength')
             _, mo.Setting_DeferredAmbientStrength = imgui.slider_float('##210', mo.Setting_DeferredAmbientStrength, 0.0, 1.0)
-            mo.Setting_DeferredTestMode = imgui.checkbox('Test Mode', mo.Setting_DeferredTestMode)
-            mo.Setting_DeferredTestLights = imgui.checkbox('Test Lights', mo.Setting_DeferredTestLights)
+            _, mo.Setting_DeferredTestMode = imgui.checkbox('Test Mode', mo.Setting_DeferredTestMode)
+            _, mo.Setting_DeferredTestLights = imgui.checkbox('Test Lights', mo.Setting_DeferredTestLights)
+            if imgui.button('Randomize Light Positions', -1, 0):
+                mo.Setting_DeferredRandomizeLightPositions = True
             imgui.separator()
             imgui.text('Number of test lights')
             _, mo.Setting_DeferredTestLightsNumber = imgui.slider_int('##209', mo.Setting_DeferredTestLightsNumber, 0, 32)
@@ -356,19 +358,19 @@ class DialogControlsGUI():
             _, mo.camera.View_Up.z = self.ui_helper.add_controls_slider_same_line('Z', 9, 1.0, -1.0, 1.0, False, None, mo.camera.View_Up.z, True, self.is_frame)
         elif self.selectedTabGUICamera == 1:
             imgui.text_colored('Rotate object around axis', 1, 0, 0, 1)
-            mo.camera.rotateX['animate'], mo.camera.rotateX['point'] = self.ui_helper.add_controls_slider_same_line('X', 13, 1.0, 0.0, 360.0, True, mo.camera.rotateX['animate'], mo.camera.rotateX['point'], True, self.is_frame)
-            mo.camera.rotateY['animate'], mo.camera.rotateY['point'] = self.ui_helper.add_controls_slider_same_line('Y', 14, 1.0, 0.0, 360.0, True, mo.camera.rotateY['animate'], mo.camera.rotateY['point'], True, self.is_frame)
-            mo.camera.rotateZ['animate'], mo.camera.rotateZ['point'] = self.ui_helper.add_controls_slider_same_line('Z', 15, 1.0, 0.0, 360.0, True, mo.camera.rotateZ['animate'], mo.camera.rotateZ['point'], True, self.is_frame)
+            mo.camera.rotateX.animate, mo.camera.rotateX.point = self.ui_helper.add_controls_slider_same_line('X', 13, 1.0, 0.0, 360.0, True, mo.camera.rotateX.animate, mo.camera.rotateX.point, True, self.is_frame)
+            mo.camera.rotateY.animate, mo.camera.rotateY.point = self.ui_helper.add_controls_slider_same_line('Y', 14, 1.0, 0.0, 360.0, True, mo.camera.rotateY.animate, mo.camera.rotateY.point, True, self.is_frame)
+            mo.camera.rotateZ.animate, mo.camera.rotateZ.point = self.ui_helper.add_controls_slider_same_line('Z', 15, 1.0, 0.0, 360.0, True, mo.camera.rotateZ.animate, mo.camera.rotateZ.point, True, self.is_frame)
             imgui.separator()
             imgui.text_colored('Rotate object around center', 1, 0, 0, 1)
-            mo.camera.rotateCenterX['animate'], mo.camera.rotateCenterX['point'] = self.ui_helper.add_controls_slider_same_line('X', 16, 1.0, -180.0, 180.0, True, mo.camera.rotateCenterX['animate'], mo.camera.rotateCenterX['point'], True, self.is_frame)
-            mo.camera.rotateCenterY['animate'], mo.camera.rotateCenterY['point'] = self.ui_helper.add_controls_slider_same_line('Y', 17, 1.0, -180.0, 180.0, True, mo.camera.rotateCenterY['animate'], mo.camera.rotateCenterY['point'], True, self.is_frame)
-            mo.camera.rotateCenterZ['animate'], mo.camera.rotateCenterZ['point'] = self.ui_helper.add_controls_slider_same_line('Z', 18, 1.0, -180.0, 180.0, True, mo.camera.rotateCenterZ['animate'], mo.camera.rotateCenterZ['point'], True, self.is_frame)
+            mo.camera.rotateCenterX.animate, mo.camera.rotateCenterX.point = self.ui_helper.add_controls_slider_same_line('X', 16, 1.0, -180.0, 180.0, True, mo.camera.rotateCenterX.animate, mo.camera.rotateCenterX.point, True, self.is_frame)
+            mo.camera.rotateCenterY.animate, mo.camera.rotateCenterY.point = self.ui_helper.add_controls_slider_same_line('Y', 17, 1.0, -180.0, 180.0, True, mo.camera.rotateCenterY.animate, mo.camera.rotateCenterY.point, True, self.is_frame)
+            mo.camera.rotateCenterZ.animate, mo.camera.rotateCenterZ.point = self.ui_helper.add_controls_slider_same_line('Z', 18, 1.0, -180.0, 180.0, True, mo.camera.rotateCenterZ.animate, mo.camera.rotateCenterZ.point, True, self.is_frame)
         elif self.selectedTabGUICamera == 2:
             imgui.text_colored('Move object by axis', 1, 0, 0, 1)
-            mo.camera.positionX['animate'], mo.camera.positionX['point'] = self.ui_helper.add_controls_slider_same_line('X', 19, 0.05, -2 * mo.Setting_GridSize, 2 * mo.Setting_GridSize, True, mo.camera.positionX['animate'], mo.camera.positionX['point'], True, self.is_frame)
-            mo.camera.positionY['animate'], mo.camera.positionY['point'] = self.ui_helper.add_controls_slider_same_line('Y', 20, 0.05, -2 * mo.Setting_GridSize, 2 * mo.Setting_GridSize, True, mo.camera.positionY['animate'], mo.camera.positionY['point'], True, self.is_frame)
-            mo.camera.positionZ['animate'], mo.camera.positionZ['point'] = self.ui_helper.add_controls_slider_same_line('Z', 21, 0.05, -2 * mo.Setting_GridSize, 2 * mo.Setting_GridSize, True, mo.camera.positionZ['animate'], mo.camera.positionZ['point'], True, self.is_frame)
+            mo.camera.positionX.animate, mo.camera.positionX.point = self.ui_helper.add_controls_slider_same_line('X', 19, 0.05, -2 * mo.Setting_GridSize, 2 * mo.Setting_GridSize, True, mo.camera.positionX.animate, mo.camera.positionX.point, True, self.is_frame)
+            mo.camera.positionY.animate, mo.camera.positionY.point = self.ui_helper.add_controls_slider_same_line('Y', 20, 0.05, -2 * mo.Setting_GridSize, 2 * mo.Setting_GridSize, True, mo.camera.positionY.animate, mo.camera.positionY.point, True, self.is_frame)
+            mo.camera.positionZ.animate, mo.camera.positionZ.point = self.ui_helper.add_controls_slider_same_line('Z', 21, 0.05, -2 * mo.Setting_GridSize, 2 * mo.Setting_GridSize, True, mo.camera.positionZ.animate, mo.camera.positionZ.point, True, self.is_frame)
         return mo
 
     def render_camera_model(self, mo):
@@ -383,29 +385,29 @@ class DialogControlsGUI():
             _, mo.camera_model.showInWire = imgui.checkbox('Wireframe', mo.camera_model.showInWire)
             imgui.separator()
             imgui.text('Inner Light Direction')
-            mo.camera_model.innerLightDirectionX['animate'], mo.camera_model.innerLightDirectionX['point'] = self.ui_helper.add_controls_slider_same_line('X', 1, 0.001, -1.0, 1.0, True, mo.camera_model.innerLightDirectionX['animate'], mo.camera_model.innerLightDirectionX['point'], True, self.is_frame)
-            mo.camera_model.innerLightDirectionY['animate'], mo.camera_model.innerLightDirectionY['point'] = self.ui_helper.add_controls_slider_same_line('Y', 2, 0.001, -1.0, 1.0, True, mo.camera_model.innerLightDirectionY['animate'], mo.camera_model.innerLightDirectionY['point'], True, self.is_frame)
-            mo.camera_model.innerLightDirectionZ['animate'], mo.camera_model.innerLightDirectionZ['point'] = self.ui_helper.add_controls_slider_same_line('Z', 3, 0.001, -1.0, 1.0, True, mo.camera_model.innerLightDirectionZ['animate'], mo.camera_model.innerLightDirectionZ['point'], True, self.is_frame)
+            mo.camera_model.innerLightDirectionX.animate, mo.camera_model.innerLightDirectionX.point = self.ui_helper.add_controls_slider_same_line('X', 1, 0.001, -1.0, 1.0, True, mo.camera_model.innerLightDirectionX.animate, mo.camera_model.innerLightDirectionX.point, True, self.is_frame)
+            mo.camera_model.innerLightDirectionY.animate, mo.camera_model.innerLightDirectionY.point = self.ui_helper.add_controls_slider_same_line('Y', 2, 0.001, -1.0, 1.0, True, mo.camera_model.innerLightDirectionY.animate, mo.camera_model.innerLightDirectionY.point, True, self.is_frame)
+            mo.camera_model.innerLightDirectionZ.animate, mo.camera_model.innerLightDirectionZ.point = self.ui_helper.add_controls_slider_same_line('Z', 3, 0.001, -1.0, 1.0, True, mo.camera_model.innerLightDirectionZ.animate, mo.camera_model.innerLightDirectionZ.point, True, self.is_frame)
             imgui.separator()
             imgui.text('Model Color')
-            mo.camera_model.colorR['animate'], mo.camera_model.colorR['point'] = self.ui_helper.add_controls_slider_same_line('R', 4, 0.01, 0.0, 1.0, True, mo.camera_model.colorR['animate'], mo.camera_model.colorR['point'], True, self.is_frame)
-            mo.camera_model.colorG['animate'], mo.camera_model.colorG['point'] = self.ui_helper.add_controls_slider_same_line('G', 5, 0.01, 0.0, 1.0, True, mo.camera_model.colorG['animate'], mo.camera_model.colorG['point'], True, self.is_frame)
-            mo.camera_model.colorB['animate'], mo.camera_model.colorB['point'] = self.ui_helper.add_controls_slider_same_line('B', 6, 0.01, 0.0, 1.0, True, mo.camera_model.colorB['animate'], mo.camera_model.colorB['point'], True, self.is_frame)
+            mo.camera_model.colorR.animate, mo.camera_model.colorR.point = self.ui_helper.add_controls_slider_same_line('R', 4, 0.01, 0.0, 1.0, True, mo.camera_model.colorR.animate, mo.camera_model.colorR.point, True, self.is_frame)
+            mo.camera_model.colorG.animate, mo.camera_model.colorG.point = self.ui_helper.add_controls_slider_same_line('G', 5, 0.01, 0.0, 1.0, True, mo.camera_model.colorG.animate, mo.camera_model.colorG.point, True, self.is_frame)
+            mo.camera_model.colorB.animate, mo.camera_model.colorB.point = self.ui_helper.add_controls_slider_same_line('B', 6, 0.01, 0.0, 1.0, True, mo.camera_model.colorB.animate, mo.camera_model.colorB.point, True, self.is_frame)
         elif self.selectedTabGUICameraModel == 1:
             imgui.text_colored('Move object by axis', 1, 0, 0, 1)
-            mo.camera_model.positionX['animate'], mo.camera_model.positionX['point'] = self.ui_helper.add_controls_slider_same_line('X', 7, 0.05, -2 * mo.Setting_GridSize, 2 * mo.Setting_GridSize, True, mo.camera_model.positionX['animate'], mo.camera_model.positionX['point'], True, self.is_frame)
-            mo.camera_model.positionY['animate'], mo.camera_model.positionY['point'] = self.ui_helper.add_controls_slider_same_line('Y', 8, 0.05, -2 * mo.Setting_GridSize, 2 * mo.Setting_GridSize, True, mo.camera_model.positionY['animate'], mo.camera_model.positionY['point'], True, self.is_frame)
-            mo.camera_model.positionZ['animate'], mo.camera_model.positionZ['point'] = self.ui_helper.add_controls_slider_same_line('Z', 9, 0.05, -2 * mo.Setting_GridSize, 2 * mo.Setting_GridSize, True, mo.camera_model.positionZ['animate'], mo.camera_model.positionZ['point'], True, self.is_frame)
+            mo.camera_model.positionX.animate, mo.camera_model.positionX.point = self.ui_helper.add_controls_slider_same_line('X', 7, 0.05, -2 * mo.Setting_GridSize, 2 * mo.Setting_GridSize, True, mo.camera_model.positionX.animate, mo.camera_model.positionX.point, True, self.is_frame)
+            mo.camera_model.positionY.animate, mo.camera_model.positionY.point = self.ui_helper.add_controls_slider_same_line('Y', 8, 0.05, -2 * mo.Setting_GridSize, 2 * mo.Setting_GridSize, True, mo.camera_model.positionY.animate, mo.camera_model.positionY.point, True, self.is_frame)
+            mo.camera_model.positionZ.animate, mo.camera_model.positionZ.point = self.ui_helper.add_controls_slider_same_line('Z', 9, 0.05, -2 * mo.Setting_GridSize, 2 * mo.Setting_GridSize, True, mo.camera_model.positionZ.animate, mo.camera_model.positionZ.point, True, self.is_frame)
         elif self.selectedTabGUICameraModel == 2:
             imgui.text_colored('Rotate object around axis', 1, 0, 0, 1)
-            mo.camera_model.rotateX['animate'], mo.camera_model.rotateX['point'] = self.ui_helper.add_controls_slider_same_line('X', 7, 1.0, 0.0, 360.0, True, mo.camera_model.rotateX['animate'], mo.camera_model.rotateX['point'], True, self.is_frame)
-            mo.camera_model.rotateY['animate'], mo.camera_model.rotateY['point'] = self.ui_helper.add_controls_slider_same_line('Y', 8, 1.0, 0.0, 360.0, True, mo.camera_model.rotateY['animate'], mo.camera_model.rotateY['point'], True, self.is_frame)
-            mo.camera_model.rotateZ['animate'], mo.camera_model.rotateZ['point'] = self.ui_helper.add_controls_slider_same_line('Z', 9, 1.0, 0.0, 360.0, True, mo.camera_model.rotateZ['animate'], mo.camera_model.rotateZ['point'], True, self.is_frame)
+            mo.camera_model.rotateX.animate, mo.camera_model.rotateX.point = self.ui_helper.add_controls_slider_same_line('X', 7, 1.0, 0.0, 360.0, True, mo.camera_model.rotateX.animate, mo.camera_model.rotateX.point, True, self.is_frame)
+            mo.camera_model.rotateY.animate, mo.camera_model.rotateY.point = self.ui_helper.add_controls_slider_same_line('Y', 8, 1.0, 0.0, 360.0, True, mo.camera_model.rotateY.animate, mo.camera_model.rotateY.point, True, self.is_frame)
+            mo.camera_model.rotateZ.animate, mo.camera_model.rotateZ.point = self.ui_helper.add_controls_slider_same_line('Z', 9, 1.0, 0.0, 360.0, True, mo.camera_model.rotateZ.animate, mo.camera_model.rotateZ.point, True, self.is_frame)
             imgui.separator()
             imgui.text_colored('Rotate object around center', 1, 0, 0, 1)
-            mo.camera_model.rotateCenterX['animate'], mo.camera_model.rotateCenterX['point'] = self.ui_helper.add_controls_slider_same_line('X', 10, 1.0, -180.0, 180.0, True, mo.camera_model.rotateCenterX['animate'], mo.camera_model.rotateCenterX['point'], True, self.is_frame)
-            mo.camera_model.rotateCenterY['animate'], mo.camera_model.rotateCenterY['point'] = self.ui_helper.add_controls_slider_same_line('Y', 11, 1.0, -180.0, 180.0, True, mo.camera_model.rotateCenterY['animate'], mo.camera_model.rotateCenterY['point'], True, self.is_frame)
-            mo.camera_model.rotateCenterZ['animate'], mo.camera_model.rotateCenterZ['point'] = self.ui_helper.add_controls_slider_same_line('Z', 12, 1.0, -180.0, 180.0, True, mo.camera_model.rotateCenterZ['animate'], mo.camera_model.rotateCenterZ['point'], True, self.is_frame)
+            mo.camera_model.rotateCenterX.animate, mo.camera_model.rotateCenterX.point = self.ui_helper.add_controls_slider_same_line('X', 10, 1.0, -180.0, 180.0, True, mo.camera_model.rotateCenterX.animate, mo.camera_model.rotateCenterX.point, True, self.is_frame)
+            mo.camera_model.rotateCenterY.animate, mo.camera_model.rotateCenterY.point = self.ui_helper.add_controls_slider_same_line('Y', 11, 1.0, -180.0, 180.0, True, mo.camera_model.rotateCenterY.animate, mo.camera_model.rotateCenterY.point, True, self.is_frame)
+            mo.camera_model.rotateCenterZ.animate, mo.camera_model.rotateCenterZ.point = self.ui_helper.add_controls_slider_same_line('Z', 12, 1.0, -180.0, 180.0, True, mo.camera_model.rotateCenterZ.animate, mo.camera_model.rotateCenterZ.point, True, self.is_frame)
         return mo
 
     def render_grid(self, mo):
@@ -441,19 +443,19 @@ class DialogControlsGUI():
                 _, mo.grid.mirror_rotateZ = self.ui_helper.add_controls_slider_same_line('Z', 61, 0.5, -180.0, 180.0, False, None, mo.grid.mirror_rotateZ, True, self.is_frame)
         if self.selectedTabGUIGrid == 1:
             imgui.text_colored('Scale object', 1, 0, 0, 1)
-            mo.grid.scaleX['animate'], mo.grid.scaleX['point'] = self.ui_helper.add_controls_slider_same_line('X', 1, 0.05, 0.0, 1.0, True, mo.grid.scaleX['animate'], mo.grid.scaleX['point'], True, self.is_frame)
-            mo.grid.scaleY['animate'], mo.grid.scaleY['point'] = self.ui_helper.add_controls_slider_same_line('Y', 2, 0.05, 0.0, 1.0, True, mo.grid.scaleY['animate'], mo.grid.scaleY['point'], True, self.is_frame)
-            mo.grid.scaleZ['animate'], mo.grid.scaleZ['point'] = self.ui_helper.add_controls_slider_same_line('Z', 3, 0.05, 0.0, 1.0, True, mo.grid.scaleZ['animate'], mo.grid.scaleZ['point'], True, self.is_frame)
+            mo.grid.scaleX.animate, mo.grid.scaleX.point = self.ui_helper.add_controls_slider_same_line('X', 1, 0.05, 0.0, 1.0, True, mo.grid.scaleX.animate, mo.grid.scaleX.point, True, self.is_frame)
+            mo.grid.scaleY.animate, mo.grid.scaleY.point = self.ui_helper.add_controls_slider_same_line('Y', 2, 0.05, 0.0, 1.0, True, mo.grid.scaleY.animate, mo.grid.scaleY.point, True, self.is_frame)
+            mo.grid.scaleZ.animate, mo.grid.scaleZ.point = self.ui_helper.add_controls_slider_same_line('Z', 3, 0.05, 0.0, 1.0, True, mo.grid.scaleZ.animate, mo.grid.scaleZ.point, True, self.is_frame)
         if self.selectedTabGUIGrid == 2:
             imgui.text_colored('Rotate object around axis', 1, 0, 0, 1)
-            mo.grid.rotateX['animate'], mo.grid.rotateX['point'] = self.ui_helper.add_controls_slider_same_line('X', 4, 1.0, -180.0, 180.0, True, mo.grid.rotateX['animate'], mo.grid.rotateX['point'], True, self.is_frame)
-            mo.grid.rotateY['animate'], mo.grid.rotateY['point'] = self.ui_helper.add_controls_slider_same_line('Y', 5, 1.0, -180.0, 180.0, True, mo.grid.rotateY['animate'], mo.grid.rotateY['point'], True, self.is_frame)
-            mo.grid.rotateZ['animate'], mo.grid.rotateZ['point'] = self.ui_helper.add_controls_slider_same_line('Z', 6, 1.0, -180.0, 180.0, True, mo.grid.rotateZ['animate'], mo.grid.rotateZ['point'], True, self.is_frame)
+            mo.grid.rotateX.animate, mo.grid.rotateX.point = self.ui_helper.add_controls_slider_same_line('X', 4, 1.0, -180.0, 180.0, True, mo.grid.rotateX.animate, mo.grid.rotateX.point, True, self.is_frame)
+            mo.grid.rotateY.animate, mo.grid.rotateY.point = self.ui_helper.add_controls_slider_same_line('Y', 5, 1.0, -180.0, 180.0, True, mo.grid.rotateY.animate, mo.grid.rotateY.point, True, self.is_frame)
+            mo.grid.rotateZ.animate, mo.grid.rotateZ.point = self.ui_helper.add_controls_slider_same_line('Z', 6, 1.0, -180.0, 180.0, True, mo.grid.rotateZ.animate, mo.grid.rotateZ.point, True, self.is_frame)
         if self.selectedTabGUIGrid == 3:
             imgui.text_colored('Move object by axis', 1, 0, 0, 1)
-            mo.grid.positionX['animate'], mo.grid.positionX['point'] = self.ui_helper.add_controls_slider_same_line('X', 7, 0.5, -1 * mo.Setting_GridSize, mo.Setting_GridSize, True, mo.grid.positionX['animate'], mo.grid.positionX['point'], True, self.is_frame)
-            mo.grid.positionY['animate'], mo.grid.positionY['point'] = self.ui_helper.add_controls_slider_same_line('Y', 8, 0.5, -1 * mo.Setting_GridSize, mo.Setting_GridSize, True, mo.grid.positionY['animate'], mo.grid.positionY['point'], True, self.is_frame)
-            mo.grid.positionZ['animate'], mo.grid.positionZ['point'] = self.ui_helper.add_controls_slider_same_line('Z', 9, 0.5, -1 * mo.Setting_GridSize, mo.Setting_GridSize, True, mo.grid.positionZ['animate'], mo.grid.positionZ['point'], True, self.is_frame)
+            mo.grid.positionX.animate, mo.grid.positionX.point = self.ui_helper.add_controls_slider_same_line('X', 7, 0.5, -1 * mo.Setting_GridSize, mo.Setting_GridSize, True, mo.grid.positionX.animate, mo.grid.positionX.point, True, self.is_frame)
+            mo.grid.positionY.animate, mo.grid.positionY.point = self.ui_helper.add_controls_slider_same_line('Y', 8, 0.5, -1 * mo.Setting_GridSize, mo.Setting_GridSize, True, mo.grid.positionY.animate, mo.grid.positionY.point, True, self.is_frame)
+            mo.grid.positionZ.animate, mo.grid.positionZ.point = self.ui_helper.add_controls_slider_same_line('Z', 9, 0.5, -1 * mo.Setting_GridSize, mo.Setting_GridSize, True, mo.grid.positionZ.animate, mo.grid.positionZ.point, True, self.is_frame)
         return mo
 
     def render_scene_lights(self, mo):
@@ -543,23 +545,23 @@ class DialogControlsGUI():
                 self.selectedObjectLight = -1
         elif self.selectedTabGUILight == 1:
             imgui.text_colored('Scale Object', 1, 0, 0, 1)
-            mo.lightSources[self.selectedObjectLight].scaleX['animate'], mo.lightSources[self.selectedObjectLight].scaleX['point'] = self.ui_helper.add_controls_slider_same_line('X', 10, 0.05, 0.0, mo.Setting_GridSize, True, mo.lightSources[self.selectedObjectLight].scaleX['animate'], mo.lightSources[self.selectedObjectLight].scaleX['point'], True, self.is_frame)
-            mo.lightSources[self.selectedObjectLight].scaleY['animate'], mo.lightSources[self.selectedObjectLight].scaleY['point'] = self.ui_helper.add_controls_slider_same_line('Y', 11, 0.05, 0.0, mo.Setting_GridSize, True, mo.lightSources[self.selectedObjectLight].scaleY['animate'], mo.lightSources[self.selectedObjectLight].scaleY['point'], True, self.is_frame)
-            mo.lightSources[self.selectedObjectLight].scaleZ['animate'], mo.lightSources[self.selectedObjectLight].scaleZ['point'] = self.ui_helper.add_controls_slider_same_line('Z', 12, 0.05, 0.0, mo.Setting_GridSize, True, mo.lightSources[self.selectedObjectLight].scaleZ['animate'], mo.lightSources[self.selectedObjectLight].scaleZ['point'], True, self.is_frame)
+            mo.lightSources[self.selectedObjectLight].scaleX.animate, mo.lightSources[self.selectedObjectLight].scaleX.point = self.ui_helper.add_controls_slider_same_line('X', 10, 0.05, 0.0, mo.Setting_GridSize, True, mo.lightSources[self.selectedObjectLight].scaleX.animate, mo.lightSources[self.selectedObjectLight].scaleX.point, True, self.is_frame)
+            mo.lightSources[self.selectedObjectLight].scaleY.animate, mo.lightSources[self.selectedObjectLight].scaleY.point = self.ui_helper.add_controls_slider_same_line('Y', 11, 0.05, 0.0, mo.Setting_GridSize, True, mo.lightSources[self.selectedObjectLight].scaleY.animate, mo.lightSources[self.selectedObjectLight].scaleY.point, True, self.is_frame)
+            mo.lightSources[self.selectedObjectLight].scaleZ.animate, mo.lightSources[self.selectedObjectLight].scaleZ.point = self.ui_helper.add_controls_slider_same_line('Z', 12, 0.05, 0.0, mo.Setting_GridSize, True, mo.lightSources[self.selectedObjectLight].scaleZ.animate, mo.lightSources[self.selectedObjectLight].scaleZ.point, True, self.is_frame)
         elif self.selectedTabGUILight == 2:
             imgui.text_colored('Around Axis', 1, 0, 0, 1)
-            mo.lightSources[self.selectedObjectLight].rotateCenterX['animate'], mo.lightSources[self.selectedObjectLight].rotateCenterX['point'] = self.ui_helper.add_controls_slider_same_line('X', 13, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].rotateCenterX['animate'], mo.lightSources[self.selectedObjectLight].rotateCenterX['point'], True, self.is_frame)
-            mo.lightSources[self.selectedObjectLight].rotateCenterY['animate'], mo.lightSources[self.selectedObjectLight].rotateCenterY['point'] = self.ui_helper.add_controls_slider_same_line('Y', 14, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].rotateCenterY['animate'], mo.lightSources[self.selectedObjectLight].rotateCenterY['point'], True, self.is_frame)
-            mo.lightSources[self.selectedObjectLight].rotateCenterZ['animate'], mo.lightSources[self.selectedObjectLight].rotateCenterZ['point'] = self.ui_helper.add_controls_slider_same_line('Z', 15, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].rotateCenterZ['animate'], mo.lightSources[self.selectedObjectLight].rotateCenterZ['point'], True, self.is_frame)
+            mo.lightSources[self.selectedObjectLight].rotateCenterX.animate, mo.lightSources[self.selectedObjectLight].rotateCenterX.point = self.ui_helper.add_controls_slider_same_line('X', 13, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].rotateCenterX.animate, mo.lightSources[self.selectedObjectLight].rotateCenterX.point, True, self.is_frame)
+            mo.lightSources[self.selectedObjectLight].rotateCenterY.animate, mo.lightSources[self.selectedObjectLight].rotateCenterY.point = self.ui_helper.add_controls_slider_same_line('Y', 14, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].rotateCenterY.animate, mo.lightSources[self.selectedObjectLight].rotateCenterY.point, True, self.is_frame)
+            mo.lightSources[self.selectedObjectLight].rotateCenterZ.animate, mo.lightSources[self.selectedObjectLight].rotateCenterZ.point = self.ui_helper.add_controls_slider_same_line('Z', 15, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].rotateCenterZ.animate, mo.lightSources[self.selectedObjectLight].rotateCenterZ.point, True, self.is_frame)
             imgui.text_colored('Around World center', 1, 0, 0, 1)
-            mo.lightSources[self.selectedObjectLight].rotateX['animate'], self.lightRotateX = self.ui_helper.add_controls_slider_same_line('X', 16, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].rotateX['animate'], self.lightRotateX, True, self.is_frame)
-            mo.lightSources[self.selectedObjectLight].rotateY['animate'], self.lightRotateY = self.ui_helper.add_controls_slider_same_line('Y', 17, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].rotateY['animate'], self.lightRotateY, True, self.is_frame)
-            mo.lightSources[self.selectedObjectLight].rotateZ['animate'], self.lightRotateZ = self.ui_helper.add_controls_slider_same_line('Z', 18, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].rotateZ['animate'], self.lightRotateZ, True, self.is_frame)
+            mo.lightSources[self.selectedObjectLight].rotateX.animate, self.lightRotateX = self.ui_helper.add_controls_slider_same_line('X', 16, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].rotateX.animate, self.lightRotateX, True, self.is_frame)
+            mo.lightSources[self.selectedObjectLight].rotateY.animate, self.lightRotateY = self.ui_helper.add_controls_slider_same_line('Y', 17, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].rotateY.animate, self.lightRotateY, True, self.is_frame)
+            mo.lightSources[self.selectedObjectLight].rotateZ.animate, self.lightRotateZ = self.ui_helper.add_controls_slider_same_line('Z', 18, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].rotateZ.animate, self.lightRotateZ, True, self.is_frame)
         elif self.selectedTabGUILight == 3:
             imgui.text_colored('Move object by Axis', 1, 0, 0, 1)
-            mo.lightSources[self.selectedObjectLight].positionX['animate'], mo.lightSources[self.selectedObjectLight].positionX['point'] = self.ui_helper.add_controls_slider_same_line('X', 19, 0.5, -1 * mo.Setting_GridSize, mo.Setting_GridSize, True, mo.lightSources[self.selectedObjectLight].positionX['animate'], mo.lightSources[self.selectedObjectLight].positionX['point'], True, self.is_frame)
-            mo.lightSources[self.selectedObjectLight].positionY['animate'], mo.lightSources[self.selectedObjectLight].positionY['point'] = self.ui_helper.add_controls_slider_same_line('Y', 20, 1.0, -1 * mo.Setting_GridSize, mo.Setting_GridSize, True, mo.lightSources[self.selectedObjectLight].positionY['animate'], mo.lightSources[self.selectedObjectLight].positionY['point'], True, self.is_frame)
-            mo.lightSources[self.selectedObjectLight].positionZ['animate'], mo.lightSources[self.selectedObjectLight].positionZ['point'] = self.ui_helper.add_controls_slider_same_line('Z', 21, 1.0, -1 * mo.Setting_GridSize, mo.Setting_GridSize, True, mo.lightSources[self.selectedObjectLight].positionZ['animate'], mo.lightSources[self.selectedObjectLight].positionZ['point'], True, self.is_frame)
+            mo.lightSources[self.selectedObjectLight].positionX.animate, mo.lightSources[self.selectedObjectLight].positionX.point = self.ui_helper.add_controls_slider_same_line('X', 19, 0.5, -1 * mo.Setting_GridSize, mo.Setting_GridSize, True, mo.lightSources[self.selectedObjectLight].positionX.animate, mo.lightSources[self.selectedObjectLight].positionX.point, True, self.is_frame)
+            mo.lightSources[self.selectedObjectLight].positionY.animate, mo.lightSources[self.selectedObjectLight].positionY.point = self.ui_helper.add_controls_slider_same_line('Y', 20, 1.0, -1 * mo.Setting_GridSize, mo.Setting_GridSize, True, mo.lightSources[self.selectedObjectLight].positionY.animate, mo.lightSources[self.selectedObjectLight].positionY.point, True, self.is_frame)
+            mo.lightSources[self.selectedObjectLight].positionZ.animate, mo.lightSources[self.selectedObjectLight].positionZ.point = self.ui_helper.add_controls_slider_same_line('Z', 21, 1.0, -1 * mo.Setting_GridSize, mo.Setting_GridSize, True, mo.lightSources[self.selectedObjectLight].positionZ.animate, mo.lightSources[self.selectedObjectLight].positionZ.point, True, self.is_frame)
         elif self.selectedTabGUILight == 4:
             imgui.text_colored('Light Colors', 1, 0, 0, 1)
             mo.lightSources[self.selectedObjectLight].ambient.color, mo.lightSources[self.selectedObjectLight].ambient.colorPickerOpen = self.ui_helper.add_color3('Ambient Color', mo.lightSources[self.selectedObjectLight].ambient.color, mo.lightSources[self.selectedObjectLight].ambient.colorPickerOpen)
@@ -572,13 +574,13 @@ class DialogControlsGUI():
             mo.lightSources[self.selectedObjectLight].specular.animate, mo.lightSources[self.selectedObjectLight].specular.strength = self.ui_helper.add_slider('Specular Intensity', 24, 0.01, 0.0, 1.0, True, mo.lightSources[self.selectedObjectLight].specular.animate, mo.lightSources[self.selectedObjectLight].specular.strength, True, self.is_frame)
             imgui.separator()
             if mo.lightSources[self.selectedObjectLight].type != Settings.LightSourceTypes.LightSourceType_Directional:
-                mo.lightSources[self.selectedObjectLight].lConstant['animate'], mo.lightSources[self.selectedObjectLight].lConstant['point'] = self.ui_helper.add_slider('Constant', 25, 0.01, 0.0, 1.0, True, mo.lightSources[self.selectedObjectLight].lConstant['animate'], mo.lightSources[self.selectedObjectLight].lConstant['point'], True, self.is_frame)
-                mo.lightSources[self.selectedObjectLight].lLinear['animate'], mo.lightSources[self.selectedObjectLight].lLinear['point'] = self.ui_helper.add_slider('Literal', 26, 0.01, 0.0, 1.0, True, mo.lightSources[self.selectedObjectLight].lLinear['animate'], mo.lightSources[self.selectedObjectLight].lLinear['point'], True, self.is_frame)
-                mo.lightSources[self.selectedObjectLight].lQuadratic['animate'], mo.lightSources[self.selectedObjectLight].lQuadratic['point'] = self.ui_helper.add_slider('Quadratic', 27, 0.01, 0.0, 1.0, True, mo.lightSources[self.selectedObjectLight].lQuadratic['animate'], mo.lightSources[self.selectedObjectLight].lQuadratic['point'], True, self.is_frame)
+                mo.lightSources[self.selectedObjectLight].lConstant.animate, mo.lightSources[self.selectedObjectLight].lConstant.point = self.ui_helper.add_slider('Constant', 25, 0.01, 0.0, 1.0, True, mo.lightSources[self.selectedObjectLight].lConstant.animate, mo.lightSources[self.selectedObjectLight].lConstant.point, True, self.is_frame)
+                mo.lightSources[self.selectedObjectLight].lLinear.animate, mo.lightSources[self.selectedObjectLight].lLinear.point = self.ui_helper.add_slider('Literal', 26, 0.01, 0.0, 1.0, True, mo.lightSources[self.selectedObjectLight].lLinear.animate, mo.lightSources[self.selectedObjectLight].lLinear.point, True, self.is_frame)
+                mo.lightSources[self.selectedObjectLight].lQuadratic.animate, mo.lightSources[self.selectedObjectLight].lQuadratic.point = self.ui_helper.add_slider('Quadratic', 27, 0.01, 0.0, 1.0, True, mo.lightSources[self.selectedObjectLight].lQuadratic.animate, mo.lightSources[self.selectedObjectLight].lQuadratic.point, True, self.is_frame)
             if mo.lightSources[self.selectedObjectLight].type == Settings.LightSourceTypes.LightSourceType_Spot:
                 imgui.separator()
-                mo.lightSources[self.selectedObjectLight].lCutOff['animate'], mo.lightSources[self.selectedObjectLight].lCutOff['point'] = self.ui_helper.add_slider('Cutoff', 28, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].lCutOff['animate'], mo.lightSources[self.selectedObjectLight].lCutOff['point'], True, self.is_frame)
-                mo.lightSources[self.selectedObjectLight].lOuterCutOff['animate'], mo.lightSources[self.selectedObjectLight].lOuterCutOff['point'] = self.ui_helper.add_slider('Outer Cutoff', 29, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].lOuterCutOff['animate'], mo.lightSources[self.selectedObjectLight].lOuterCutOff['point'], True, self.is_frame)
+                mo.lightSources[self.selectedObjectLight].lCutOff.animate, mo.lightSources[self.selectedObjectLight].lCutOff.point = self.ui_helper.add_slider('Cutoff', 28, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].lCutOff.animate, mo.lightSources[self.selectedObjectLight].lCutOff.point, True, self.is_frame)
+                mo.lightSources[self.selectedObjectLight].lOuterCutOff.animate, mo.lightSources[self.selectedObjectLight].lOuterCutOff.point = self.ui_helper.add_slider('Outer Cutoff', 29, 1.0, -180.0, 180.0, True, mo.lightSources[self.selectedObjectLight].lOuterCutOff.animate, mo.lightSources[self.selectedObjectLight].lOuterCutOff.point, True, self.is_frame)
         return mo
 
     def lock_camera_once(self, mo):
@@ -588,12 +590,12 @@ class DialogControlsGUI():
 
     def lock_camera(self, mo):
         if self.lockCameraWithLight:
-            mo.camera.positionX['point'] = mo.lightSources[self.selectedObjectLight].positionX['point']
-            mo.camera.positionY['point'] = mo.lightSources[self.selectedObjectLight].positionY['point']
-            mo.camera.positionZ['point'] = mo.lightSources[self.selectedObjectLight].positionZ['point']
-            mo.camera.rotateX['point'] = mo.lightSources[self.selectedObjectLight].rotateX['point']
-            mo.camera.rotateY['point'] = mo.lightSources[self.selectedObjectLight].rotateY['point']
-            mo.camera.rotateZ['point'] = mo.lightSources[self.selectedObjectLight].rotateZ['point']
+            mo.camera.positionX.point = mo.lightSources[self.selectedObjectLight].positionX.point
+            mo.camera.positionY.point = mo.lightSources[self.selectedObjectLight].positionY.point
+            mo.camera.positionZ.point = mo.lightSources[self.selectedObjectLight].positionZ.point
+            mo.camera.rotateX.point = mo.lightSources[self.selectedObjectLight].rotateX.point
+            mo.camera.rotateY.point = mo.lightSources[self.selectedObjectLight].rotateY.point
+            mo.camera.rotateZ.point = mo.lightSources[self.selectedObjectLight].rotateZ.point
             mo.camera.cameraPosition = mo.lightSources[self.selectedObjectLight].matrixModel[3]
             mo.camera.matrixCamera = mo.lightSources[self.selectedObjectLight].matrixModel
         return mo

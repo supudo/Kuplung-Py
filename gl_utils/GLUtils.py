@@ -9,7 +9,10 @@ __version__ = "1.0.0"
 from OpenGL.GL import *
 from OpenGL.raw.GLU import *
 from settings import Settings
+from recordclass import recordclass
 
+
+ObjectCoordinate = recordclass('positionX', ['animate', 'point'])
 
 def compileAndAttachShader(shader_program, shaderType, shader_source):
     shader = glCreateShader(shaderType)
@@ -73,4 +76,4 @@ def printProgramLog(shader_program):
 def print_gl_errors():
     err = glGetError()
     if (err != GL_NO_ERROR):
-        print('[GLUtils] [ERROR]', gluErrorString(err))
+        print(' ----- [GLUtils] [ERROR]', gluErrorString(err))

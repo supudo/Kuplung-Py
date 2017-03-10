@@ -17,6 +17,7 @@ from maths.types.Matrix4x4 import Matrix4x4
 from maths.types.Vector3 import Vector3
 from maths.types.Vector4 import Vector4
 from maths import MathOps
+from gl_utils.GLUtils import ObjectCoordinate
 
 
 class WorldGrid():
@@ -26,17 +27,17 @@ class WorldGrid():
         self.gl_a_alpha = -1
         self.gl_a_actAsMirror = -1
 
-        self.positionX = {'animate': False, 'point': .0}
-        self.positionY = {'animate': False, 'point': .0}
-        self.positionZ = {'animate': False, 'point': .0}
+        self.positionX = ObjectCoordinate(animate=False, point=0.0)
+        self.positionY = ObjectCoordinate(animate=False, point=0.0)
+        self.positionZ = ObjectCoordinate(animate=False, point=0.0)
 
-        self.rotateX = {'animate': False, 'point': .0}
-        self.rotateY = {'animate': False, 'point': .0}
-        self.rotateZ = {'animate': False, 'point': .0}
+        self.rotateX = ObjectCoordinate(animate=False, point=0.0)
+        self.rotateY = ObjectCoordinate(animate=False, point=0.0)
+        self.rotateZ = ObjectCoordinate(animate=False, point=0.0)
 
-        self.scaleX = {'animate': False, 'point': 1.}
-        self.scaleY = {'animate': False, 'point': 1.}
-        self.scaleZ = {'animate': False, 'point': 1.}
+        self.scaleX = ObjectCoordinate(animate=False, point=1.0)
+        self.scaleY = ObjectCoordinate(animate=False, point=1.0)
+        self.scaleZ = ObjectCoordinate(animate=False, point=1.0)
 
         self.act_as_mirror = False
         self.showGrid = True
@@ -52,17 +53,17 @@ class WorldGrid():
         self.mirror_rotateZ = 0.0
 
     def init_properties(self):
-        self.positionX = {'animate': False, 'point': .0}
-        self.positionY = {'animate': False, 'point': .0}
-        self.positionZ = {'animate': False, 'point': .0}
+        self.positionX = ObjectCoordinate(animate=False, point=0.0)
+        self.positionY = ObjectCoordinate(animate=False, point=0.0)
+        self.positionZ = ObjectCoordinate(animate=False, point=0.0)
 
-        self.rotateX = {'animate': False, 'point': .0}
-        self.rotateY = {'animate': False, 'point': .0}
-        self.rotateZ = {'animate': False, 'point': .0}
+        self.rotateX = ObjectCoordinate(animate=False, point=0.0)
+        self.rotateY = ObjectCoordinate(animate=False, point=0.0)
+        self.rotateZ = ObjectCoordinate(animate=False, point=0.0)
 
-        self.scaleX = {'animate': False, 'point': 1.}
-        self.scaleY = {'animate': False, 'point': 1.}
-        self.scaleZ = {'animate': False, 'point': 1.}
+        self.scaleX = ObjectCoordinate(animate=False, point=1.0)
+        self.scaleY = ObjectCoordinate(animate=False, point=1.0)
+        self.scaleZ = ObjectCoordinate(animate=False, point=1.0)
 
         self.act_as_mirror = False
         self.showGrid = True
@@ -204,15 +205,15 @@ class WorldGrid():
             glUseProgram(self.shader_program)
 
             self.matrixModel = Matrix4x4(1.0)
-            self.matrixModel = MathOps.matrix_scale(self.matrixModel, Vector3(self.scaleX['point'], self.scaleY['point'], self.scaleZ['point']))
+            self.matrixModel = MathOps.matrix_scale(self.matrixModel, Vector3(self.scaleX.point, self.scaleY.point, self.scaleZ.point))
 
             self.matrixModel = MathOps.matrix_translate(self.matrixModel, Vector4(.0))
-            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateX['point'], Vector3(1, 0, 0))
-            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateY['point'], Vector3(0, 1, 0))
-            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateZ['point'], Vector3(0, 0, 1))
+            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateX.point, Vector3(1, 0, 0))
+            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateY.point, Vector3(0, 1, 0))
+            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateZ.point, Vector3(0, 0, 1))
             self.matrixModel = MathOps.matrix_translate(self.matrixModel, Vector4(.0))
 
-            self.matrixModel = MathOps.matrix_translate(self.matrixModel, Vector4(self.positionX['point'], self.positionY['point'], self.positionZ['point'], .0))
+            self.matrixModel = MathOps.matrix_translate(self.matrixModel, Vector4(self.positionX.point, self.positionY.point, self.positionZ.point, .0))
 
             mvpModel =  matrixProjection * matrixCamera * self.matrixModel
             glUniformMatrix4fv(self.gl_mvp_matrix, 1, GL_FALSE, MathOps.matrix_to_gl(mvpModel))

@@ -16,6 +16,7 @@ from maths.types.Matrix4x4 import Matrix4x4
 from maths import MathOps
 from maths.types.Vector3 import Vector3
 from maths.types.Vector4 import Vector4
+from gl_utils.GLUtils import ObjectCoordinate
 
 
 class CameraModel():
@@ -26,25 +27,25 @@ class CameraModel():
         self.gl_fs_innerLightDirection = -1
         self.mesh_model = None
 
-        self.positionX = {'animate': False, 'point': -6.}
-        self.positionY = {'animate': False, 'point': -2.}
-        self.positionZ = {'animate': False, 'point': 3.}
+        self.positionX = ObjectCoordinate(animate=False, point=-6.0)
+        self.positionY = ObjectCoordinate(animate=False, point=-2.0)
+        self.positionZ = ObjectCoordinate(animate=False, point=3.0)
 
-        self.rotateX = {'animate': False, 'point': .0}
-        self.rotateY = {'animate': False, 'point': .0}
-        self.rotateZ = {'animate': False, 'point': 300.}
+        self.rotateX = ObjectCoordinate(animate=False, point=.0)
+        self.rotateY = ObjectCoordinate(animate=False, point=.0)
+        self.rotateZ = ObjectCoordinate(animate=False, point=300.0)
 
-        self.rotateCenterX = {'animate': False, 'point': .0}
-        self.rotateCenterY = {'animate': False, 'point': 35.}
-        self.rotateCenterZ = {'animate': False, 'point': .0}
+        self.rotateCenterX = ObjectCoordinate(animate=False, point=.0)
+        self.rotateCenterY = ObjectCoordinate(animate=False, point=35.0)
+        self.rotateCenterZ = ObjectCoordinate(animate=False, point=.0)
 
-        self.innerLightDirectionX = {'animate': False, 'point': 1.}
-        self.innerLightDirectionY = {'animate': False, 'point': .055}
-        self.innerLightDirectionZ = {'animate': False, 'point': .206}
+        self.innerLightDirectionX = ObjectCoordinate(animate=False, point=1.0)
+        self.innerLightDirectionY = ObjectCoordinate(animate=False, point=.055)
+        self.innerLightDirectionZ = ObjectCoordinate(animate=False, point=.206)
 
-        self.colorR = {'animate': False, 'point': .61}
-        self.colorG = {'animate': False, 'point': .61}
-        self.colorB = {'animate': False, 'point': .61}
+        self.colorR = ObjectCoordinate(animate=False, point=.61)
+        self.colorG = ObjectCoordinate(animate=False, point=.61)
+        self.colorB = ObjectCoordinate(animate=False, point=.61)
 
         self.showCameraObject = True
         self.showInWire = False
@@ -52,25 +53,25 @@ class CameraModel():
         self.matrixModel = Matrix4x4(1.)
 
     def init_properties(self):
-        self.positionX = {'animate': False, 'point': -6.}
-        self.positionY = {'animate': False, 'point': -2.}
-        self.positionZ = {'animate': False, 'point': 3.}
+        self.positionX = ObjectCoordinate(animate=False, point=-6.0)
+        self.positionY = ObjectCoordinate(animate=False, point=-2.0)
+        self.positionZ = ObjectCoordinate(animate=False, point=3.0)
 
-        self.rotateX = {'animate': False, 'point': .0}
-        self.rotateY = {'animate': False, 'point': .0}
-        self.rotateZ = {'animate': False, 'point': 300.}
+        self.rotateX = ObjectCoordinate(animate=False, point=.0)
+        self.rotateY = ObjectCoordinate(animate=False, point=.0)
+        self.rotateZ = ObjectCoordinate(animate=False, point=300.0)
 
-        self.rotateCenterX = {'animate': False, 'point': .0}
-        self.rotateCenterY = {'animate': False, 'point': 35.}
-        self.rotateCenterZ = {'animate': False, 'point': .0}
+        self.rotateCenterX = ObjectCoordinate(animate=False, point=.0)
+        self.rotateCenterY = ObjectCoordinate(animate=False, point=35.0)
+        self.rotateCenterZ = ObjectCoordinate(animate=False, point=.0)
 
-        self.innerLightDirectionX = {'animate': False, 'point': 1.}
-        self.innerLightDirectionY = {'animate': False, 'point': .055}
-        self.innerLightDirectionZ = {'animate': False, 'point': .206}
+        self.innerLightDirectionX = ObjectCoordinate(animate=False, point=1.0)
+        self.innerLightDirectionY = ObjectCoordinate(animate=False, point=.055)
+        self.innerLightDirectionZ = ObjectCoordinate(animate=False, point=.206)
 
-        self.colorR = {'animate': False, 'point': .61}
-        self.colorG = {'animate': False, 'point': .61}
-        self.colorB = {'animate': False, 'point': .61}
+        self.colorR = ObjectCoordinate(animate=False, point=.61)
+        self.colorG = ObjectCoordinate(animate=False, point=.61)
+        self.colorB = ObjectCoordinate(animate=False, point=.61)
 
         self.showCameraObject = True
         self.showInWire = False
@@ -149,24 +150,24 @@ class CameraModel():
 
             # rotate
             self.matrixModel = MathOps.matrix_translate(self.matrixModel, Vector4(.0))
-            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateX['point'], Vector3(1, 0, 0))
-            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateY['point'], Vector3(0, 1, 0))
-            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateZ['point'], Vector3(0, 0, 1))
+            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateX.point, Vector3(1, 0, 0))
+            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateY.point, Vector3(0, 1, 0))
+            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateZ.point, Vector3(0, 0, 1))
             self.matrixModel = MathOps.matrix_translate(self.matrixModel, Vector4(.0))
 
             # translate
-            self.matrixModel = MathOps.matrix_translate(self.matrixModel, (self.positionX['point'], self.positionY['point'], self.positionZ['point']))
+            self.matrixModel = MathOps.matrix_translate(self.matrixModel, (self.positionX.point, self.positionY.point, self.positionZ.point))
 
             # rotate center
-            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateCenterX['point'], Vector3(1, 0, 0))
-            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateCenterY['point'], Vector3(0, 1, 0))
-            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateCenterZ['point'], Vector3(0, 0, 1))
+            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateCenterX.point, Vector3(1, 0, 0))
+            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateCenterY.point, Vector3(0, 1, 0))
+            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateCenterZ.point, Vector3(0, 0, 1))
 
             self.matrixModel = matrixProjection * matrixCamera * self.matrixModel
             glUniformMatrix4fv(self.gl_mvp_matrix, 1, GL_FALSE, MathOps.matrix_to_gl(self.matrixModel))
 
-            glUniform3f(self.gl_fs_color, self.colorR['point'], self.colorG['point'], self.colorB['point'])
-            glUniform3f(self.gl_fs_innerLightDirection, self.innerLightDirectionX['point'], self.innerLightDirectionY['point'], self.innerLightDirectionZ['point'])
+            glUniform3f(self.gl_fs_color, self.colorR.point, self.colorG.point, self.colorB.point)
+            glUniform3f(self.gl_fs_innerLightDirection, self.innerLightDirectionX.point, self.innerLightDirectionY.point, self.innerLightDirectionZ.point)
 
             glBindVertexArray(self.glVAO)
             if self.showInWire:

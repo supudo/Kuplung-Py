@@ -9,6 +9,7 @@ __version__ = "1.0.0"
 
 import os
 import numpy
+from gl_utils.GLUtils import ObjectCoordinate
 from OpenGL.GL import *
 from OpenGL.arrays import ArrayDatatype
 from PIL import Image
@@ -23,21 +24,21 @@ from gl_utils.objects.MaterialColor import MaterialColor
 class ModelFace:
 
     def __init__(self):
-        self.positionX = {'animate': False, 'point': .0}
-        self.positionY = {'animate': False, 'point': .0}
-        self.positionZ = {'animate': False, 'point': .0}
+        self.positionX = ObjectCoordinate(animate=False, point=0.0)
+        self.positionY = ObjectCoordinate(animate=False, point=0.0)
+        self.positionZ = ObjectCoordinate(animate=False, point=0.0)
 
-        self.rotateX = {'animate': False, 'point': .0}
-        self.rotateY = {'animate': False, 'point': .0}
-        self.rotateZ = {'animate': False, 'point': .0}
+        self.rotateX = ObjectCoordinate(animate=False, point=0.0)
+        self.rotateY = ObjectCoordinate(animate=False, point=0.0)
+        self.rotateZ = ObjectCoordinate(animate=False, point=0.0)
 
-        self.scaleX = {'animate': False, 'point': 1.}
-        self.scaleY = {'animate': False, 'point': 1.}
-        self.scaleZ = {'animate': False, 'point': 1.}
+        self.scaleX = ObjectCoordinate(animate=False, point=1.0)
+        self.scaleY = ObjectCoordinate(animate=False, point=1.0)
+        self.scaleZ = ObjectCoordinate(animate=False, point=1.0)
 
-        self.displaceX = {'animate': False, 'point': .0}
-        self.displaceY = {'animate': False, 'point': .0}
-        self.displaceZ = {'animate': False, 'point': .0}
+        self.displaceX = ObjectCoordinate(animate=False, point=.0)
+        self.displaceY = ObjectCoordinate(animate=False, point=.0)
+        self.displaceZ = ObjectCoordinate(animate=False, point=.0)
 
         self.so_outlineColor = Vector4(1.0, 0.0, 0.0, 1.0)
         self.Setting_UseCullFace = False
@@ -55,18 +56,18 @@ class ModelFace:
         self.Setting_LightSpecular = Vector3(1.0, 1.0, 1.0)
 
         # material
-        self.Setting_MaterialRefraction = {'animate': False, 'point': .0}
+        self.Setting_MaterialRefraction = ObjectCoordinate(animate=False, point=.0)
         self.materialAmbient = MaterialColor(False, False, 1.0, Vector3(1.0))
         self.materialDiffuse = MaterialColor(False, False, 1.0, Vector3(1.0))
         self.materialSpecular = MaterialColor(False, False, 1.0, Vector3(1.0))
         self.materialEmission = MaterialColor(False, False, 1.0, Vector3(1.0))
-        self.displacementHeightScale = {'animate': False, 'point': .0}
+        self.displacementHeightScale = ObjectCoordinate(animate=False, point=.0)
         self.Setting_ParallaxMapping = False
 
         # effects
         self.Effect_GBlur_Mode = -1
-        self.Effect_GBlur_Radius = {'animate': False, 'point': .0}
-        self.Effect_GBlur_Width = {'animate': False, 'point': .0}
+        self.Effect_GBlur_Radius = ObjectCoordinate(animate=False, point=.0)
+        self.Effect_GBlur_Width = ObjectCoordinate(animate=False, point=.0)
         self.Effect_ToneMapping_ACESFilmRec2020 = False
 
         # gizmo controls
@@ -88,13 +89,13 @@ class ModelFace:
         self.Setting_UseTessellation = True
         self.Setting_TessellationSubdivision = 1
         self.Setting_ModelViewSkin = Settings.ViewModelSkin.ViewModelSkin_Wireframe
-        self.Setting_MaterialRefraction = {'animate': False, 'point': .0}
-        self.Setting_MaterialSpecularExp = {'animate': False, 'point': .0}
+        self.Setting_MaterialRefraction = ObjectCoordinate(animate=False, point=.0)
+        self.Setting_MaterialSpecularExp = ObjectCoordinate(animate=False, point=.0)
         self.Setting_ScaleAllParts = True
 
         self.Effect_GBlur_Mode = -1
-        self.Effect_GBlur_Radius = {'animate': False, 'point': .0}
-        self.Effect_GBlur_Width = {'animate': False, 'point': .0}
+        self.Effect_GBlur_Radius = ObjectCoordinate(animate=False, point=.0)
+        self.Effect_GBlur_Width = ObjectCoordinate(animate=False, point=.0)
 
         self.Effect_Bloom_doBloom = False
         self.Effect_Bloom_WeightA = 0.0
@@ -108,14 +109,23 @@ class ModelFace:
 
         self.lightSources = []
 
-        self.mesh_model = None
-
         self.so_selectedYn = False
         self.so_outlineColor = Vector4(1.0, 0.0, 0.0, 1.0)
         self.so_outlineThickness = 1.0
         self.solidLightSkin_MaterialColor = Vector3(0, 0, 0)
 
         self.initBuffersAgain = False
+
+    def __del__(self):
+        glDeleteTextures(self.vbo_tex_ambient)
+        glDeleteTextures(self.vbo_tex_diffuse)
+        glDeleteTextures(self.vbo_tex_normal)
+        glDeleteTextures(self.vbo_tex_displacement)
+        glDeleteTextures(self.vbo_tex_specular)
+        glDeleteTextures(self.vbo_tex_specular_exp)
+        glDeleteTextures(self.vbo_tex_dissolve)
+        glDeleteVertexArrays(1, [self.glVAO])
+        Settings.do_log('[ModelFace] Model destroyed!')
 
     def init_own(self, model):
         self.set_model(model)
@@ -139,18 +149,18 @@ class ModelFace:
         self.Setting_LightSpecular = Vector3(1.0, 1.0, 1.0)
 
         # material
-        self.Setting_MaterialRefraction = {'animate': False, 'point': self.mesh_model.ModelMaterial.optical_density}
+        self.Setting_MaterialRefraction = ObjectCoordinate(animate=False, point=self.mesh_model.ModelMaterial.optical_density)
         self.materialAmbient = MaterialColor(False, False, 1.0, Vector3(1.0))
         self.materialDiffuse = MaterialColor(False, False, 1.0, Vector3(1.0))
         self.materialSpecular = MaterialColor(False, False, 1.0, Vector3(1.0))
         self.materialEmission = MaterialColor(False, False, 1.0, Vector3(1.0))
-        self.displacementHeightScale = {'animate': False, 'point': .0}
+        self.displacementHeightScale = ObjectCoordinate(animate=False, point=.0)
         self.Setting_ParallaxMapping = False
 
         # effects
         self.Effect_GBlur_Mode = -1
-        self.Effect_GBlur_Radius = {'animate': False, 'point': .0}
-        self.Effect_GBlur_Width = {'animate': False, 'point': .0}
+        self.Effect_GBlur_Radius = ObjectCoordinate(animate=False, point=.0)
+        self.Effect_GBlur_Width = ObjectCoordinate(animate=False, point=.0)
         self.Effect_ToneMapping_ACESFilmRec2020 = False
 
         # gizmo controls
@@ -178,26 +188,26 @@ class ModelFace:
         self.Setting_EditMode = False
         self.Setting_ScaleAllParts = True
 
-        self.positionX = {'animate': False, 'point': .0}
-        self.positionY = {'animate': False, 'point': .0}
-        self.positionZ = {'animate': False, 'point': .0}
+        self.positionX = ObjectCoordinate(animate=False, point=0.0)
+        self.positionY = ObjectCoordinate(animate=False, point=0.0)
+        self.positionZ = ObjectCoordinate(animate=False, point=0.0)
 
-        self.scaleX = {'animate': False, 'point': 1.}
-        self.scaleY = {'animate': False, 'point': 1.}
-        self.scaleZ = {'animate': False, 'point': 1.}
+        self.rotateX= ObjectCoordinate(animate=False, point=0.0)
+        self.rotateY = ObjectCoordinate(animate=False, point=0.0)
+        self.rotateZ = ObjectCoordinate(animate=False, point=0.0)
 
-        self.rotateX = {'animate': False, 'point': .0}
-        self.rotateY = {'animate': False, 'point': .0}
-        self.rotateZ = {'animate': False, 'point': .0}
+        self.scaleX = ObjectCoordinate(animate=False, point=1.0)
+        self.scaleY = ObjectCoordinate(animate=False, point=1.0)
+        self.scaleZ = ObjectCoordinate(animate=False, point=1.0)
 
-        self.displaceX = {'animate': False, 'point': .0}
-        self.displaceY = {'animate': False, 'point': .0}
-        self.displaceZ = {'animate': False, 'point': .0}
+        self.displaceX = ObjectCoordinate(animate=False, point=.0)
+        self.displaceY = ObjectCoordinate(animate=False, point=.0)
+        self.displaceZ = ObjectCoordinate(animate=False, point=.0)
 
         self.matrixModel = Matrix4x4(1.)
 
-        self.Setting_MaterialRefraction =  {'animate': False, 'point': self.mesh_model.ModelMaterial.optical_density}
-        self.Setting_MaterialSpecularExp =  {'animate': False, 'point': self.mesh_model.ModelMaterial.specular_exp}
+        self.Setting_MaterialRefraction = ObjectCoordinate(animate=False, point=self.mesh_model.ModelMaterial.optical_density)
+        self.Setting_MaterialSpecularExp = ObjectCoordinate(animate=False, point=self.mesh_model.ModelMaterial.specular_exp)
 
         self.Setting_LightPosition = Vector3(.0)
         self.Setting_LightDirection = Vector3(.0)
@@ -217,11 +227,11 @@ class ModelFace:
         self.materialDiffuse = MaterialColor(False, False, 1.0, self.mesh_model.ModelMaterial.color_diffuse)
         self.materialSpecular = MaterialColor(False, False, 1.0, self.mesh_model.ModelMaterial.color_specular)
         self.materialEmission = MaterialColor(False, False, 1.0, self.mesh_model.ModelMaterial.color_emission)
-        self.displacementHeightScale = {'animate': False, 'point': .0}
+        self.displacementHeightScale = ObjectCoordinate(animate=False, point=.0)
 
         self.Effect_GBlur_Mode = -1
-        self.Effect_GBlur_Radius =  {'animate': False, 'point': .0}
-        self.Effect_GBlur_Width =  {'animate': False, 'point': .0}
+        self.Effect_GBlur_Radius = ObjectCoordinate(animate=False, point=.0)
+        self.Effect_GBlur_Width = ObjectCoordinate(animate=False, point=.0)
 
         self.Effect_Bloom_doBloom = False
         self.Effect_Bloom_WeightA = 0.0

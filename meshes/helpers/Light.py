@@ -17,6 +17,9 @@ from maths import MathOps
 from maths.types.Vector3 import Vector3
 from maths.types.Vector4 import Vector4
 from maths.types.Matrix4x4 import Matrix4x4
+import os
+from PIL import Image
+from gl_utils.GLUtils import ObjectCoordinate
 
 
 class Light():
@@ -32,35 +35,35 @@ class Light():
         self.showLampDirection = False
         self.showInWire = False
 
-        self.positionX = {'animate': False, 'point': .0}
-        self.positionY = {'animate': False, 'point': .0}
-        self.positionZ = {'animate': False, 'point': .0}
+        self.positionX = ObjectCoordinate(animate=False, point=0.0)
+        self.positionY = ObjectCoordinate(animate=False, point=0.0)
+        self.positionZ = ObjectCoordinate(animate=False, point=0.0)
 
-        self.directionX = {'animate': False, 'point': .0}
-        self.directionY = {'animate': False, 'point': .0}
-        self.directionZ = {'animate': False, 'point': .0}
+        self.rotateX = ObjectCoordinate(animate=False, point=0.0)
+        self.rotateY = ObjectCoordinate(animate=False, point=0.0)
+        self.rotateZ = ObjectCoordinate(animate=False, point=0.0)
 
-        self.scaleX = {'animate': False, 'point': 1.}
-        self.scaleY = {'animate': False, 'point': 1.}
-        self.scaleZ = {'animate': False, 'point': 1.}
+        self.scaleX = ObjectCoordinate(animate=False, point=1.0)
+        self.scaleY = ObjectCoordinate(animate=False, point=1.0)
+        self.scaleZ = ObjectCoordinate(animate=False, point=1.0)
 
-        self.rotateX = {'animate': False, 'point': .0}
-        self.rotateY = {'animate': False, 'point': .0}
-        self.rotateZ = {'animate': False, 'point': .0}
+        self.directionX = ObjectCoordinate(animate=False, point=.0)
+        self.directionY = ObjectCoordinate(animate=False, point=.0)
+        self.directionZ = ObjectCoordinate(animate=False, point=.0)
 
-        self.rotateCenterX = {'animate': False, 'point': .0}
-        self.rotateCenterY = {'animate': False, 'point': .0}
-        self.rotateCenterZ = {'animate': False, 'point': .0}
+        self.rotateCenterX = ObjectCoordinate(animate=False, point=.0)
+        self.rotateCenterY = ObjectCoordinate(animate=False, point=.0)
+        self.rotateCenterZ = ObjectCoordinate(animate=False, point=.0)
 
         self.ambient = MaterialColor(False, False, 1.0, Vector3(1.0))
         self.diffuse = MaterialColor(False, False, 1.0, Vector3(1.0))
         self.specular = MaterialColor(False, False, 1.0, Vector3(1.0))
 
-        self.lCutOff = {'animate': False, 'point': .0}
-        self.lOuterCutOff = {'animate': False, 'point': .0}
-        self.lConstant = {'animate': False, 'point': .0}
-        self.lLinear = {'animate': False, 'point': .0}
-        self.lQuadratic = {'animate': False, 'point': .0}
+        self.lCutOff = ObjectCoordinate(animate=False, point=.0)
+        self.lOuterCutOff = ObjectCoordinate(animate=False, point=.0)
+        self.lConstant = ObjectCoordinate(animate=False, point=.0)
+        self.lLinear = ObjectCoordinate(animate=False, point=.0)
+        self.lQuadratic = ObjectCoordinate(animate=False, point=.0)
         self.turnOff_Position = False
 
         self.mesh_model = None
@@ -82,50 +85,50 @@ class Light():
         self.showInWire = False
         self.turnOff_Position = False
 
-        self.positionX = {'animate': False, 'point': .0}
-        self.positionY = {'animate': False, 'point': 5.0}
-        self.positionZ = {'animate': False, 'point': .0}
+        self.positionX = ObjectCoordinate(animate=False, point=0.0)
+        self.positionY = ObjectCoordinate(animate=False, point=0.0)
+        self.positionZ = ObjectCoordinate(animate=False, point=0.0)
 
-        self.directionX = {'animate': False, 'point': .0}
-        self.directionY = {'animate': False, 'point': 1.0}
-        self.directionZ = {'animate': False, 'point': .0}
+        self.rotateX = ObjectCoordinate(animate=False, point=0.0)
+        self.rotateY = ObjectCoordinate(animate=False, point=0.0)
+        self.rotateZ = ObjectCoordinate(animate=False, point=0.0)
 
-        self.scaleX = {'animate': False, 'point': 1.}
-        self.scaleY = {'animate': False, 'point': 1.}
-        self.scaleZ = {'animate': False, 'point': 1.}
+        self.scaleX = ObjectCoordinate(animate=False, point=1.0)
+        self.scaleY = ObjectCoordinate(animate=False, point=1.0)
+        self.scaleZ = ObjectCoordinate(animate=False, point=1.0)
 
-        self.rotateX = {'animate': False, 'point': .0}
-        self.rotateY = {'animate': False, 'point': .0}
-        self.rotateZ = {'animate': False, 'point': .0}
+        self.directionX = ObjectCoordinate(animate=False, point=.0)
+        self.directionY = ObjectCoordinate(animate=False, point=.0)
+        self.directionZ = ObjectCoordinate(animate=False, point=.0)
 
-        self.rotateCenterX = {'animate': False, 'point': .0}
-        self.rotateCenterY = {'animate': False, 'point': .0}
-        self.rotateCenterZ = {'animate': False, 'point': .0}
+        self.rotateCenterX = ObjectCoordinate(animate=False, point=.0)
+        self.rotateCenterY = ObjectCoordinate(animate=False, point=.0)
+        self.rotateCenterZ = ObjectCoordinate(animate=False, point=.0)
 
         self.ambient = MaterialColor(False, False, 0.3, Vector3(1.0))
         self.diffuse = MaterialColor(False, False, 1.0, Vector3(1.0))
 
         if self.type == Settings.LightSourceTypes.LightSourceType_Directional:
-            self.lConstant = {'animate': False, 'point': .0}
-            self.lLinear = {'animate': False, 'point': .0}
-            self.lQuadratic = {'animate': False, 'point': .0}
+            self.lCutOff = ObjectCoordinate(animate=False, point=-180.0)
+            self.lOuterCutOff = ObjectCoordinate(animate=False, point=160.0)
+            self.lConstant = ObjectCoordinate(animate=False, point=.0)
+            self.lLinear = ObjectCoordinate(animate=False, point=.0)
+            self.lQuadratic = ObjectCoordinate(animate=False, point=.0)
             self.specular = MaterialColor(False, False, .0, Vector3(1.0))
-            self.lCutOff = {'animate': False, 'point': -180.0}
-            self.lOuterCutOff = {'animate': False, 'point': 160.0}
         elif self.type == Settings.LightSourceTypes.LightSourceType_Point:
-            self.lConstant = {'animate': False, 'point': .0}
-            self.lLinear = {'animate': False, 'point': 0.2}
-            self.lQuadratic = {'animate': False, 'point': 0.05}
+            self.lCutOff = ObjectCoordinate(animate=False, point=-180.0)
+            self.lOuterCutOff = ObjectCoordinate(animate=False, point=160.0)
+            self.lConstant = ObjectCoordinate(animate=False, point=.0)
+            self.lLinear = ObjectCoordinate(animate=False, point=0.2)
+            self.lQuadratic = ObjectCoordinate(animate=False, point=0.05)
             self.specular = MaterialColor(False, False, .0, Vector3(1.0))
-            self.lCutOff = {'animate': False, 'point': -180.0}
-            self.lOuterCutOff = {'animate': False, 'point': 160.0}
         elif self.type == Settings.LightSourceTypes.LightSourceType_Spot:
-            self.lConstant = {'animate': False, 'point': 1.0}
-            self.lLinear = {'animate': False, 'point': 0.09}
-            self.lQuadratic = {'animate': False, 'point': 0.032}
+            self.lCutOff = ObjectCoordinate(animate=False, point=-12.5)
+            self.lOuterCutOff = ObjectCoordinate(animate=False, point=15.0)
+            self.lConstant = ObjectCoordinate(animate=False, point=1.0)
+            self.lLinear = ObjectCoordinate(animate=False, point=0.09)
+            self.lQuadratic = ObjectCoordinate(animate=False, point=0.032)
             self.specular = MaterialColor(False, False, .0, Vector3(1.0))
-            self.lCutOff = {'animate': False, 'point': 12.5}
-            self.lOuterCutOff = {'animate': False, 'point': 15.0}
 
         self.matrixModel = Matrix4x4(1.0)
 
@@ -231,23 +234,23 @@ class Light():
             self.matrixModel = Matrix4x4(1.0)
 
             # scale
-            self.matrixModel = MathOps.matrix_scale(self.matrixModel, (self.scaleX['point'], self.scaleY['point'], self.scaleZ['point']))
+            self.matrixModel = MathOps.matrix_scale(self.matrixModel, (self.scaleX.point, self.scaleY.point, self.scaleZ.point))
 
             # rotate
             self.matrixModel = MathOps.matrix_translate(self.matrixModel, Vector4(.0))
-            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateX['point'], Vector3(1, 0, 0))
-            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateY['point'], Vector3(0, 1, 0))
-            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateZ['point'], Vector3(0, 0, 1))
+            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateX.point, Vector3(1, 0, 0))
+            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateY.point, Vector3(0, 1, 0))
+            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateZ.point, Vector3(0, 0, 1))
             self.matrixModel = MathOps.matrix_translate(self.matrixModel, Vector4(.0))
 
             if not self.turnOff_Position:
-                self.matrixModel = MathOps.matrix_translate(self.matrixModel, (self.positionX['point'], self.positionY['point'], self.positionZ['point']))
+                self.matrixModel = MathOps.matrix_translate(self.matrixModel, (self.positionX.point, self.positionY.point, self.positionZ.point))
 
             # rotate center
             self.matrixModel = MathOps.matrix_translate(self.matrixModel, Vector4(.0))
-            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateCenterX['point'], Vector3(1, 0, 0))
-            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateCenterY['point'], Vector3(0, 1, 0))
-            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateCenterZ['point'], Vector3(0, 0, 1))
+            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateCenterX.point, Vector3(1, 0, 0))
+            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateCenterY.point, Vector3(0, 1, 0))
+            self.matrixModel = MathOps.matrix_rotate(self.matrixModel, self.rotateCenterZ.point, Vector3(0, 0, 1))
             self.matrixModel = MathOps.matrix_translate(self.matrixModel, Vector4(.0))
 
             if self.vbo_texture_diffuse > 0:

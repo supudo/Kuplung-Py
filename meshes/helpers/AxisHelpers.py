@@ -24,14 +24,11 @@ class AxisHelpers():
         self.gl_fs_color = -1
         self.mesh_model = None
 
-
     def init_properties(self):
         pass
 
-
     def set_model(self, mesh_model):
         self.mesh_model = mesh_model
-
 
     def init_shader_program(self):
         file_vs = open('resources/shaders/axis_helpers.vert', 'r', encoding='utf-8')
@@ -59,7 +56,6 @@ class AxisHelpers():
 
         return True
 
-
     def init_buffers(self):
         self.glVAO = glGenVertexArrays(1)
         glBindVertexArray(self.glVAO)
@@ -82,7 +78,6 @@ class AxisHelpers():
         glBindBuffer(GL_ARRAY_BUFFER, 0)
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
         glDeleteBuffers(2, [vboVertices, vboIndices])
-
 
     def render(self, matrixProjection, matrixCamera, position):
         if self.glVAO > 0:

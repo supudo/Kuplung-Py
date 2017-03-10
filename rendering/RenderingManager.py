@@ -18,23 +18,24 @@ class RenderingManager:
     def __init__(self):
         self.model_faces = []
 
-    def init_systems(self):
+    def init_systems(self, mo):
         self.renderingForward = RenderingForward()
-        self.renderingForward.initShaderProgram()
+        self.renderingForward.init_renderer(mo)
 
         self.renderingDeferred = RenderingDeferred()
-        self.renderingDeferred.initShaderProgram()
+        self.renderingDeferred.init_renderer(mo)
 
         self.renderingShadowMapping = RenderingShadowMapping()
-        self.renderingShadowMapping.initShaderProgram()
+        self.renderingShadowMapping.init_renderer(mo)
 
     def render(self, mo, selectedModel):
         self.renderingForward.model_faces = self.model_faces
         self.renderingDeferred.model_faces = self.model_faces
         self.renderingShadowMapping.model_faces = self.model_faces
         if Settings.Setting_RendererType == Settings.InAppRendererType.InAppRendererType_Forward:
-            self.renderingForward.render(mo, selectedModel)
+            mo = self.renderingForward.render(mo, selectedModel)
         elif Settings.Setting_RendererType == Settings.InAppRendererType.InAppRendererType_Deferred:
-            self.renderingDeferred.render(mo, selectedModel)
+            mo = self.renderingDeferred.render(mo, selectedModel)
         elif Settings.Setting_RendererType == Settings.InAppRendererType.InAppRendererType_ForwardShadowMapping:
-            self.renderingShadowMapping.render(mo, selectedModel)
+            mo = self.renderingShadowMapping.render(mo, selectedModel)
+        return mo

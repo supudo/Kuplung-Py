@@ -283,46 +283,46 @@ class DialogControlsModels():
         imgui.text_colored('Scale Model', 1, 0, 0, 1)
         _, mmfs[self.selectedObject].Setting_ScaleAllParts = imgui.checkbox('Scale All', mmfs[self.selectedObject].Setting_ScaleAllParts)
         if mmfs[self.selectedObject].Setting_ScaleAllParts:
-            _, mmfs[self.selectedObject].scaleX['point'] = imgui.slider_float('##001', mmfs[self.selectedObject].scaleX['point'], 0.05, gs / 2, "%.03f", 1.0)
+            _, mmfs[self.selectedObject].scaleX.point = imgui.slider_float('##001', mmfs[self.selectedObject].scaleX.point, 0.05, gs / 2, "%.03f", 1.0)
             imgui.same_line()
             imgui.text('X')
-            _, mmfs[self.selectedObject].scaleY['point'] = imgui.slider_float('##001', mmfs[self.selectedObject].scaleY['point'], 0.05, gs / 2, "%.03f", 1.0)
+            _, mmfs[self.selectedObject].scaleY.point = imgui.slider_float('##001', mmfs[self.selectedObject].scaleY.point, 0.05, gs / 2, "%.03f", 1.0)
             imgui.same_line()
             imgui.text('Y')
-            _, mmfs[self.selectedObject].scaleZ['point'] = imgui.slider_float('##001', mmfs[self.selectedObject].scaleZ['point'], 0.05, gs / 2, "%.03f", 1.0)
+            _, mmfs[self.selectedObject].scaleZ.point = imgui.slider_float('##001', mmfs[self.selectedObject].scaleZ.point, 0.05, gs / 2, "%.03f", 1.0)
             imgui.same_line()
             imgui.text('Z')
         else:
-            _, mmfs[self.selectedObject].scaleX['point'] = imgui.slider_float('##001', mmfs[self.selectedObject].scaleX['point'], 0.05, gs / 2, "%.03f", 1.0)
+            _, mmfs[self.selectedObject].scaleX.point = imgui.slider_float('##001', mmfs[self.selectedObject].scaleX.point, 0.05, gs / 2, "%.03f", 1.0)
             imgui.same_line()
             imgui.text('X')
-            _, mmfs[self.selectedObject].scaleY['point'] = imgui.slider_float('##002', mmfs[self.selectedObject].scaleY['point'], 0.05, gs / 2, "%.03f", 1.0)
+            _, mmfs[self.selectedObject].scaleY.point = imgui.slider_float('##002', mmfs[self.selectedObject].scaleY.point, 0.05, gs / 2, "%.03f", 1.0)
             imgui.same_line()
             imgui.text('Y')
-            _, mmfs[self.selectedObject].scaleZ['point'] = imgui.slider_float('##003', mmfs[self.selectedObject].scaleZ['point'], 0.05, gs / 2, "%.03f", 1.0)
+            _, mmfs[self.selectedObject].scaleZ.point = imgui.slider_float('##003', mmfs[self.selectedObject].scaleZ.point, 0.05, gs / 2, "%.03f", 1.0)
             imgui.same_line()
             imgui.text('Z')
         return mmfs
 
     def render_rotate(self, mmfs):
         imgui.text_colored('Rotate model around axis', 1, 0, 0, 1)
-        mmfs[self.selectedObject].rotateX['animate'], mmfs[self.selectedObject].rotateX['point'] = self.ui_helper.add_controls_slider_same_line('X', 4, 1.0, -180.0, 180.0, True, mmfs[self.selectedObject].rotateX['animate'], mmfs[self.selectedObject].rotateX['point'], True, self.is_frame)
-        mmfs[self.selectedObject].rotateY['animate'], mmfs[self.selectedObject].rotateY['point'] = self.ui_helper.add_controls_slider_same_line('Y', 5, 1.0, -180.0, 180.0, True, mmfs[self.selectedObject].rotateY['animate'], mmfs[self.selectedObject].rotateY['point'], True, self.is_frame)
-        mmfs[self.selectedObject].rotateZ['animate'], mmfs[self.selectedObject].rotateZ['point'] = self.ui_helper.add_controls_slider_same_line('Z', 6, 1.0, -180.0, 180.0, True, mmfs[self.selectedObject].rotateZ['animate'], mmfs[self.selectedObject].rotateZ['point'], True, self.is_frame)
+        mmfs[self.selectedObject].rotateX.animate, mmfs[self.selectedObject].rotateX.point = self.ui_helper.add_controls_slider_same_line('X', 4, 1.0, -180.0, 180.0, True, mmfs[self.selectedObject].rotateX.animate, mmfs[self.selectedObject].rotateX.point, True, self.is_frame)
+        mmfs[self.selectedObject].rotateY.animate, mmfs[self.selectedObject].rotateY.point = self.ui_helper.add_controls_slider_same_line('Y', 5, 1.0, -180.0, 180.0, True, mmfs[self.selectedObject].rotateY.animate, mmfs[self.selectedObject].rotateY.point, True, self.is_frame)
+        mmfs[self.selectedObject].rotateZ.animate, mmfs[self.selectedObject].rotateZ.point = self.ui_helper.add_controls_slider_same_line('Z', 6, 1.0, -180.0, 180.0, True, mmfs[self.selectedObject].rotateZ.animate, mmfs[self.selectedObject].rotateZ.point, True, self.is_frame)
         return mmfs
 
     def render_translate(self, mmfs, gs):
         imgui.text_colored('Translate model by axis', 1, 0, 0, 1)
-        mmfs[self.selectedObject].positionX['animate'], mmfs[self.selectedObject].positionX['point'] = self.ui_helper.add_controls_slider_same_line('X', 7, 1.0, -1 * gs, gs, True, mmfs[self.selectedObject].positionX['animate'], mmfs[self.selectedObject].positionX['point'], True, self.is_frame)
-        mmfs[self.selectedObject].positionY['animate'], mmfs[self.selectedObject].positionY['point'] = self.ui_helper.add_controls_slider_same_line('Y', 8, 1.0, -1 * gs, gs, True, mmfs[self.selectedObject].positionY['animate'], mmfs[self.selectedObject].positionY['point'], True, self.is_frame)
-        mmfs[self.selectedObject].positionZ['animate'], mmfs[self.selectedObject].positionZ['point'] = self.ui_helper.add_controls_slider_same_line('Z', 9, 1.0, -1 * gs, gs, True, mmfs[self.selectedObject].positionZ['animate'], mmfs[self.selectedObject].positionZ['point'], True, self.is_frame)
+        mmfs[self.selectedObject].positionX.animate, mmfs[self.selectedObject].positionX.point = self.ui_helper.add_controls_slider_same_line('X', 7, 1.0, -1 * gs, gs, True, mmfs[self.selectedObject].positionX.animate, mmfs[self.selectedObject].positionX.point, True, self.is_frame)
+        mmfs[self.selectedObject].positionY.animate, mmfs[self.selectedObject].positionY.point = self.ui_helper.add_controls_slider_same_line('Y', 8, 1.0, -1 * gs, gs, True, mmfs[self.selectedObject].positionY.animate, mmfs[self.selectedObject].positionY.point, True, self.is_frame)
+        mmfs[self.selectedObject].positionZ.animate, mmfs[self.selectedObject].positionZ.point = self.ui_helper.add_controls_slider_same_line('Z', 9, 1.0, -1 * gs, gs, True, mmfs[self.selectedObject].positionZ.animate, mmfs[self.selectedObject].positionZ.point, True, self.is_frame)
         return mmfs
 
     def render_displace(self, mmfs, gs):
         imgui.text_colored('Displace model', 1, 0, 0, 1)
-        mmfs[self.selectedObject].displaceX['animate'], mmfs[self.selectedObject].displaceX['point'] = self.ui_helper.add_controls_slider_same_line('X', 10, 1.0, -1 * gs, gs, True, mmfs[self.selectedObject].displaceX['animate'], mmfs[self.selectedObject].displaceX['point'], True, self.is_frame)
-        mmfs[self.selectedObject].displaceY['animate'], mmfs[self.selectedObject].displaceY['point'] = self.ui_helper.add_controls_slider_same_line('Y', 11, 1.0, -1 * gs, gs, True, mmfs[self.selectedObject].displaceY['animate'], mmfs[self.selectedObject].displaceY['point'], True, self.is_frame)
-        mmfs[self.selectedObject].displaceZ['animate'], mmfs[self.selectedObject].displaceZ['point'] = self.ui_helper.add_controls_slider_same_line('Z', 12, 1.0, -1 * gs, gs, True, mmfs[self.selectedObject].displaceZ['animate'], mmfs[self.selectedObject].displaceZ['point'], True, self.is_frame)
+        mmfs[self.selectedObject].displaceX.animate, mmfs[self.selectedObject].displaceX.point = self.ui_helper.add_controls_slider_same_line('X', 10, 1.0, -1 * gs, gs, True, mmfs[self.selectedObject].displaceX.animate, mmfs[self.selectedObject].displaceX.point, True, self.is_frame)
+        mmfs[self.selectedObject].displaceY.animate, mmfs[self.selectedObject].displaceY.point = self.ui_helper.add_controls_slider_same_line('Y', 11, 1.0, -1 * gs, gs, True, mmfs[self.selectedObject].displaceY.animate, mmfs[self.selectedObject].displaceY.point, True, self.is_frame)
+        mmfs[self.selectedObject].displaceZ.animate, mmfs[self.selectedObject].displaceZ.point = self.ui_helper.add_controls_slider_same_line('Z', 12, 1.0, -1 * gs, gs, True, mmfs[self.selectedObject].displaceZ.animate, mmfs[self.selectedObject].displaceZ.point, True, self.is_frame)
         return mmfs
 
     def render_material(self, mmfs):
@@ -336,14 +336,14 @@ class DialogControlsModels():
             mmfs[self.selectedObject].Setting_TessellationSubdivision = self.ui_helper.add_int_slider_control('Subdivision', 24, 0, 100, mmfs[self.selectedObject].Setting_TessellationSubdivision)
             imgui.separator()
             if mmfs[self.selectedObject].mesh_model.ModelMaterial.texture_displacement.UseTexture:
-                mmfs[self.selectedObject].displacementHeightScale['animate'], mmfs[self.selectedObject].displacementHeightScale['point'] = self.ui_helper.add_slider('Displacement', 15, 0.05, -2.0, 2.0, True, mmfs[self.selectedObject].displacementHeightScale['animate'], mmfs[self.selectedObject].displacementHeightScale['point'], False, self.is_frame)
+                mmfs[self.selectedObject].displacementHeightScale.animate, mmfs[self.selectedObject].displacementHeightScale.point = self.ui_helper.add_slider('Displacement', 15, 0.05, -2.0, 2.0, True, mmfs[self.selectedObject].displacementHeightScale.animate, mmfs[self.selectedObject].displacementHeightScale.point, False, self.is_frame)
                 imgui.separator()
         else:
             imgui.separator()
         imgui.text('Refraction')
-        mmfs[self.selectedObject].Setting_MaterialRefraction['animate'], mmfs[self.selectedObject].Setting_MaterialRefraction['point'] = self.ui_helper.add_controls_slider_same_line('', 13, 0.05, -10, 10, True, mmfs[self.selectedObject].Setting_MaterialRefraction['animate'], mmfs[self.selectedObject].Setting_MaterialRefraction['point'], True, self.is_frame)
+        mmfs[self.selectedObject].Setting_MaterialRefraction.animate, mmfs[self.selectedObject].Setting_MaterialRefraction.point = self.ui_helper.add_controls_slider_same_line('', 13, 0.05, -10, 10, True, mmfs[self.selectedObject].Setting_MaterialRefraction.animate, mmfs[self.selectedObject].Setting_MaterialRefraction.point, True, self.is_frame)
         imgui.text('Specular Exponent')
-        mmfs[self.selectedObject].Setting_MaterialSpecularExp['animate'], mmfs[self.selectedObject].Setting_MaterialSpecularExp['point'] = self.ui_helper.add_controls_slider_same_line('', 14, 10, 0, 1000, True, mmfs[self.selectedObject].Setting_MaterialSpecularExp['animate'], mmfs[self.selectedObject].Setting_MaterialSpecularExp['point'], True, self.is_frame)
+        mmfs[self.selectedObject].Setting_MaterialSpecularExp.animate, mmfs[self.selectedObject].Setting_MaterialSpecularExp.point = self.ui_helper.add_controls_slider_same_line('', 14, 10, 0, 1000, True, mmfs[self.selectedObject].Setting_MaterialSpecularExp.animate, mmfs[self.selectedObject].Setting_MaterialSpecularExp.point, True, self.is_frame)
         imgui.separator()
         mmfs[self.selectedObject].materialAmbient.color, mmfs[self.selectedObject].materialAmbient.colorPickerOpen = self.ui_helper.add_color3('Ambient Color', mmfs[self.selectedObject].materialAmbient.color, mmfs[self.selectedObject].materialAmbient.colorPickerOpen)
         mmfs[self.selectedObject].materialDiffuse.color, mmfs[self.selectedObject].materialDiffuse.colorPickerOpen = self.ui_helper.add_color3('Diffuse Color', mmfs[self.selectedObject].materialDiffuse.color, mmfs[self.selectedObject].materialDiffuse.colorPickerOpen)
@@ -358,8 +358,8 @@ class DialogControlsModels():
             imgui.begin_group()
             gb_items = ['No Blur', 'Horizontal', 'Vertical']
             _, mmfs[self.selectedObject].Effect_GBlur_Mode = imgui.combo("Mode##228", mmfs[self.selectedObject].Effect_GBlur_Mode, gb_items)
-            mmfs[self.selectedObject].Effect_GBlur_Radius['animate'], mmfs[self.selectedObject].Effect_GBlur_Radius['point'] = self.ui_helper.add_controls_slider_same_line('Radius', 16, 0.0, 0.0, 1000.0, True, mmfs[self.selectedObject].Effect_GBlur_Radius['animate'], mmfs[self.selectedObject].Effect_GBlur_Radius['point'], True, self.is_frame)
-            mmfs[self.selectedObject].Effect_GBlur_Width['animate'], mmfs[self.selectedObject].Effect_GBlur_Width['point'] = self.ui_helper.add_controls_slider_same_line('Radius', 17, 0.0, 0.0, 1000.0, True, mmfs[self.selectedObject].Effect_GBlur_Width['animate'], mmfs[self.selectedObject].Effect_GBlur_Width['point'], True, self.is_frame)
+            mmfs[self.selectedObject].Effect_GBlur_Radius.animate, mmfs[self.selectedObject].Effect_GBlur_Radius.point = self.ui_helper.add_controls_slider_same_line('Radius', 16, 0.0, 0.0, 1000.0, True, mmfs[self.selectedObject].Effect_GBlur_Radius.animate, mmfs[self.selectedObject].Effect_GBlur_Radius.point, True, self.is_frame)
+            mmfs[self.selectedObject].Effect_GBlur_Width.animate, mmfs[self.selectedObject].Effect_GBlur_Width.point = self.ui_helper.add_controls_slider_same_line('Radius', 17, 0.0, 0.0, 1000.0, True, mmfs[self.selectedObject].Effect_GBlur_Width.animate, mmfs[self.selectedObject].Effect_GBlur_Width.point, True, self.is_frame)
             imgui.end_group()
             imgui.unindent()
         opened_ftm, _ = imgui.collapsing_header('Filmic Tone Mapping')

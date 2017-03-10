@@ -10,7 +10,7 @@ __version__ = "1.0.0"
 import os
 import psutil
 import time
-from threading import Thread
+import threading
 from settings import Settings
 
 class Consumption():
@@ -23,15 +23,19 @@ class Consumption():
         self.pool_Memory = True
 
     def start_pooling(self):
-        self.thread_cpu = Thread(target=self.get_consumption_cpu, args=())
+        self.thread_cpu = threading.Thread(target=self.get_consumption_cpu, args=())
+        self.thread_cpu.setDaemon(True)
         self.thread_cpu.start()
 
-        self.thread_memory = Thread(target=self.get_consumption_memory, args=())
+        self.thread_memory = threading.Thread(target=self.get_consumption_memory, args=())
+        self.thread_memory.setDaemon(True)
         self.thread_memory.start()
+        Settings.do_log('[Consumption] CPU and Memory threads started!')
 
     def stop_pooling(self):
         self.pool_CPU = False
         self.pool_Memory = False
+        Settings.do_log('[Consumption] Stopping CPU and Memory threads...')
 
     def get_consumption(self):
         consumption = ''

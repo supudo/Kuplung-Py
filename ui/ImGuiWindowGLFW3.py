@@ -155,32 +155,32 @@ class ImGuiWindowGLFW3():
                 if self.managerObjects.Setting_FOV < -180:
                     self.managerObjects.Setting_FOV = -180
             else:
-                self.managerObjects.camera.positionZ['point'] += self.managerControls.mouseWheel['y']
+                self.managerObjects.camera.positionZ.point += self.managerControls.mouseWheel['y']
 
             self.managerControls.reset_mouse_scroll()
 
             if self.managerControls.mouseButton_MIDDLE:
                 # if self.managerControls.mouseGoUp or self.managerControls.mouseGoDown:
-                #     self.managerObjects.camera.rotateX['point'] += self.managerControls.mouse_rel_y
+                #     self.managerObjects.camera.rotateX.point += self.managerControls.mouse_rel_y
                 if self.managerControls.mouseGoDown:
-                    self.managerObjects.camera.rotateX['point'] -= 2
+                    self.managerObjects.camera.rotateX.point -= 2
                 if self.managerControls.mouseGoUp:
-                    self.managerObjects.camera.rotateX['point'] += 2
-                if self.managerObjects.camera.rotateX['point'] > 360:
-                    self.managerObjects.camera.rotateX['point'] = .0
-                if self.managerObjects.camera.rotateX['point'] < .0:
-                    self.managerObjects.camera.rotateX['point'] = 360
+                    self.managerObjects.camera.rotateX.point += 2
+                if self.managerObjects.camera.rotateX.point > 360:
+                    self.managerObjects.camera.rotateX.point = .0
+                if self.managerObjects.camera.rotateX.point < .0:
+                    self.managerObjects.camera.rotateX.point = 360
 
                 # if self.managerControls.mouseGoLeft or self.managerControls.mouseGoRight:
-                #     self.managerObjects.camera.rotateY['point'] += self.managerControls.mouse_rel_x
+                #     self.managerObjects.camera.rotateY.point += self.managerControls.mouse_rel_x
                 if self.managerControls.mouseGoLeft:
-                    self.managerObjects.camera.rotateY['point'] += 2
+                    self.managerObjects.camera.rotateY.point += 2
                 if self.managerControls.mouseGoRight:
-                    self.managerObjects.camera.rotateY['point'] -= 2
-                if self.managerObjects.camera.rotateY['point'] > 360:
-                    self.managerObjects.camera.rotateY['point'] = .0
-                if self.managerObjects.camera.rotateY['point'] < .0:
-                    self.managerObjects.camera.rotateY['point'] = 360
+                    self.managerObjects.camera.rotateY.point -= 2
+                if self.managerObjects.camera.rotateY.point > 360:
+                    self.managerObjects.camera.rotateY.point = .0
+                if self.managerObjects.camera.rotateY.point < .0:
+                    self.managerObjects.camera.rotateY.point = 360
 
             self.managerControls.reset_mouse_motion()
 

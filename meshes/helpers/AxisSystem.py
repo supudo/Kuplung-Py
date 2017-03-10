@@ -14,22 +14,21 @@ from OpenGL.arrays import ArrayDatatype
 import numpy
 from maths.types.Matrix4x4 import Matrix4x4
 from maths import MathOps
+from gl_utils.GLUtils import ObjectCoordinate
 
 
 class AxisSystem():
     def __init__(self):
         self.shader_program = None
         self.gl_mvp_matrix = -1
-        self.rotateX = {'animate': False, 'point': 0}
-        self.rotateY = {'animate': False, 'point': 0}
-        self.rotateZ = {'animate': False, 'point': 0}
-
+        self.rotateX = ObjectCoordinate(animate=False, point=.0)
+        self.rotateY = ObjectCoordinate(animate=False, point=.0)
+        self.rotateZ = ObjectCoordinate(animate=False, point=.0)
 
     def init_properties(self):
-        self.rotateX = {'animate': False, 'point': 0}
-        self.rotateY = {'animate': False, 'point': 0}
-        self.rotateZ = {'animate': False, 'point': 0}
-
+        self.rotateX = ObjectCoordinate(animate=False, point=.0)
+        self.rotateY = ObjectCoordinate(animate=False, point=.0)
+        self.rotateZ = ObjectCoordinate(animate=False, point=.0)
 
     def init_shader_program(self):
         file_vs = open('resources/shaders/axis.vert', 'r', encoding='utf-8')
@@ -54,7 +53,6 @@ class AxisSystem():
         self.gl_mvp_matrix = GLUtils.glGetUniform(self.shader_program, "u_MVPMatrix")
 
         return True
-
 
     def init_buffers(self):
         self.glVAO = glGenVertexArrays(1)
@@ -102,7 +100,6 @@ class AxisSystem():
         glBindBuffer(GL_ARRAY_BUFFER, 0)
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
         glDeleteBuffers(2, [vboVertices, vboColors])
-
 
     def render(self, window, matrixProjection, matrixCamera, win_width, win_height):
         if self.glVAO > 0:

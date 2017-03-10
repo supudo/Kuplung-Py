@@ -77,6 +77,9 @@ class RenderingForward:
         self.mfLights_Point = []
         self.mfLights_Spot = []
 
+    def init_renderer(self, mo):
+        self.initShaderProgram()
+
     def initShaderProgram(self):
         # vertex shader
         file_vs = open('resources/shaders/model_face.vert', 'r', encoding='utf-8')
@@ -285,6 +288,7 @@ class RenderingForward:
         self.uiAmbientLight = mo.Setting_UIAmbientLight
         self.lightingPass_DrawMode = mo.Setting_LightingPass_DrawMode
         self.render_models(mo, selectedModel)
+        return mo
 
     def render_models(self, mo, selectedModel):
         glUseProgram(self.shader_program)
@@ -300,14 +304,14 @@ class RenderingForward:
             # grid
             matrixModel *= mo.grid.matrixModel
             # scale
-            matrixModel = MathOps.matrix_scale( matrixModel, (model.scaleX['point'], model.scaleY['point'], model.scaleZ['point']))
+            matrixModel = MathOps.matrix_scale( matrixModel, (model.scaleX.point, model.scaleY.point, model.scaleZ.point))
             # translate
-            matrixModel = MathOps.matrix_translate(matrixModel, (model.positionX['point'], model.positionY['point'], model.positionZ['point']))
+            matrixModel = MathOps.matrix_translate(matrixModel, (model.positionX.point, model.positionY.point, model.positionZ.point))
             # rotate
             matrixModel = MathOps.matrix_translate(matrixModel, Vector4(.0))
-            matrixModel = MathOps.matrix_rotate(matrixModel, model.rotateX['point'], Vector3(1, 0, 0))
-            matrixModel = MathOps.matrix_rotate(matrixModel, model.rotateY['point'], Vector3(0, 1, 0))
-            matrixModel = MathOps.matrix_rotate(matrixModel, model.rotateZ['point'], Vector3(0, 0, 1))
+            matrixModel = MathOps.matrix_rotate(matrixModel, model.rotateX.point, Vector3(1, 0, 0))
+            matrixModel = MathOps.matrix_rotate(matrixModel, model.rotateY.point, Vector3(0, 1, 0))
+            matrixModel = MathOps.matrix_rotate(matrixModel, model.rotateZ.point, Vector3(0, 0, 1))
             matrixModel = MathOps.matrix_translate(matrixModel, Vector4(.0))
 
             model.matrixGrid = mo.grid.matrixModel
@@ -398,9 +402,9 @@ class RenderingForward:
             # geometry shader displacement
             glUniform3f(
                 self.glGS_GeomDisplacementLocation,
-                model.displaceX['point'],
-                model.displaceY['point'],
-                model.displaceZ['point']
+                model.displaceX.point,
+                model.displaceY.point,
+                model.displaceZ.point
             )
 
             # mapping
@@ -442,7 +446,7 @@ class RenderingForward:
                     glUniform1i(f.gl_InUse, 1)
 
                     # light
-                    glUniform3f(f.gl_Direction, light.positionX['point'], light.positionY['point'], light.positionZ['point'])
+                    glUniform3f(f.gl_Direction, light.positionX.point, light.positionY.point, light.positionZ.point)
 
                     # color
                     glUniform3f(f.gl_Ambient, light.ambient.color.r, light.ambient.color.g, light.ambient.color.b)
@@ -464,9 +468,9 @@ class RenderingForward:
                     glUniform3f(f.gl_Position, light.matrixModel[3].x, light.matrixModel[3].y, light.matrixModel[3].z)
 
                     # factors﻿
-                    glUniform1f(f.gl_Constant, light.lConstant['point'])
-                    glUniform1f(f.gl_Linear, light.lLinear['point'])
-                    glUniform1f(f.gl_Quadratic, light.lQuadratic['point'])
+                    glUniform1f(f.gl_Constant, light.lConstant.point)
+                    glUniform1f(f.gl_Linear, light.lLinear.point)
+                    glUniform1f(f.gl_Quadratic, light.lQuadratic.point)
 
                     # color
                     glUniform3f(f.gl_Ambient, light.ambient.color.r, light.ambient.color.g, light.ambient.color.b)
@@ -485,17 +489,17 @@ class RenderingForward:
                     glUniform1i(f.gl_InUse, 1)
 
                     # light
-                    glUniform3f(f.gl_Direction, light.positionX['point'], light.positionY['point'], light.positionZ['point'])
+                    glUniform3f(f.gl_Direction, light.positionX.point, light.positionY.point, light.positionZ.point)
                     glUniform3f(f.gl_Position, light.matrixModel[3].x, light.matrixModel[3].y, light.matrixModel[3].z)
 
                     # cutoff
-                    glUniform1f(f.gl_CutOff, cos(radians(light.lCutOff['point'])))
-                    glUniform1f(f.gl_OuterCutOff, cos(radians(light.lOuterCutOff['point'])))
+                    glUniform1f(f.gl_CutOff, cos(radians(light.lCutOff.point)))
+                    glUniform1f(f.gl_OuterCutOff, cos(radians(light.lOuterCutOff.point)))
 
                     # factors﻿
-                    glUniform1f(f.gl_Constant, light.lConstant['point'])
-                    glUniform1f(f.gl_Linear, light.lLinear['point'])
-                    glUniform1f(f.gl_Quadratic, light.lQuadratic['point'])
+                    glUniform1f(f.gl_Constant, light.lConstant.point)
+                    glUniform1f(f.gl_Linear, light.lLinear.point)
+                    glUniform1f(f.gl_Quadratic, light.lQuadratic.point)
 
                     # color
                     glUniform3f(f.gl_Ambient, light.ambient.color.r, light.ambient.color.g, light.ambient.color.b)
@@ -519,10 +523,10 @@ class RenderingForward:
                 glUniform1i(self.mfLights_Spot[i].gl_InUse, 0)
 
             # material
-            glUniform1f(self.glMaterial_Refraction, model.Setting_MaterialRefraction['point'])
-            glUniform1f(self.glMaterial_SpecularExp, model.Setting_MaterialSpecularExp['point'])
+            glUniform1f(self.glMaterial_Refraction, model.Setting_MaterialRefraction.point)
+            glUniform1f(self.glMaterial_SpecularExp, model.Setting_MaterialSpecularExp.point)
             glUniform1i(self.glMaterial_IlluminationModel, int(model.materialIlluminationModel))
-            glUniform1f(self.glMaterial_HeightScale, model.displacementHeightScale['point'])
+            glUniform1f(self.glMaterial_HeightScale, model.displacementHeightScale.point)
             glUniform3f(self.glMaterial_Ambient,
                         model.materialAmbient.color.r,
                         model.materialAmbient.color.g,
@@ -612,8 +616,8 @@ class RenderingForward:
 
             # effects - gaussian blur
             glUniform1i(self.glEffect_GB_Mode, model.Effect_GBlur_Mode - 1)
-            glUniform1f(self.glEffect_GB_W, model.Effect_GBlur_Width['point'])
-            glUniform1f(self.glEffect_GB_Radius, model.Effect_GBlur_Radius['point'])
+            glUniform1f(self.glEffect_GB_W, model.Effect_GBlur_Width.point)
+            glUniform1f(self.glEffect_GB_Radius, model.Effect_GBlur_Radius.point)
 
             # effects - bloom
             # TODO: Bloom effect
