@@ -119,7 +119,7 @@ Setting_mRayDirectionY = .0
 Setting_mRayDirectionZ = .0
 
 Setting_BoundingBoxShow = True
-Setting_BoundingBoxPadding = 1.0
+Setting_BoundingBoxPadding = 0.01
 Setting_BoundingBoxRefresh = False
 
 class GeometryEditMode(Enum):

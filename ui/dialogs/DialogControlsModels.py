@@ -64,7 +64,8 @@ class DialogControlsModels():
 
         self.multi_handler_ro = False
 
-    def render(self, delegate, is_opened, managerObjects, meshModelFaces, is_frame):
+    def render(self, delegate, is_opened, managerObjects, meshModelFaces, is_frame, sceneSelectedModelObject):
+        self.selectedObject = sceneSelectedModelObject
         self.is_frame = is_frame
 
         imgui.set_next_window_size(300, 600, imgui.FIRST_USE_EVER)
@@ -86,7 +87,9 @@ class DialogControlsModels():
 
         imgui.end()
 
-        return is_opened, meshModelFaces
+        sceneSelectedModelObject = self.selectedObject
+
+        return is_opened, meshModelFaces, sceneSelectedModelObject
 
     def render_create(self, delegate):
         # shapes

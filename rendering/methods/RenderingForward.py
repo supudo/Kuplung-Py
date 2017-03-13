@@ -634,6 +634,10 @@ class RenderingForward:
 
             # border
             glUniform1f(self.glVS_IsBorder, 0.0)
+            mtxModel = MathOps.matrix_scale(matrixModel, Vector3(1.0, 1.0, 1.0))
+            mvpMatrixDraw = self.matrixProjection * self.matrixCamera * mtxModel
+            glUniformMatrix4fv(self.glVS_MVPMatrix, 1, GL_FALSE, MathOps.matrix_to_gl(mvpMatrixDraw))
+            glUniformMatrix4fv(self.glFS_MMatrix, 1, GL_FALSE, MathOps.matrix_to_gl(mtxModel))
 
             # render VAO
             model.render(True)

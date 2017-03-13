@@ -188,7 +188,7 @@ class ImGuiWindowSDL2():
         self.render_main_menu()
 
         if Settings.Setting_RendererType == Settings.InAppRendererType.InAppRendererType_Deferred:
-            self.renderingManager.render(
+            self.managerObjects = self.renderingManager.render(
                 self.managerObjects,
                 self.sceneSelectedModelObject
             )
@@ -202,6 +202,10 @@ class ImGuiWindowSDL2():
 
     def handle_controls_events(self):
         if not imgui.is_mouse_hovering_any_window():
+            if self.managerControls.keyPressed_ESC:
+                self.sceneSelectedModelObject = -1
+                self.managerControls.keyPressed_ESC = False
+
             if self.managerControls.keyPressed_LALT:
                 if self.managerControls.mouseWheel['y'] < 0:
                     self.managerObjects.Setting_FOV += 4
@@ -381,7 +385,7 @@ class ImGuiWindowSDL2():
             self.dialog_importer_obj_window()
 
         if self.show_controls_models:
-            self.show_controls_models, self.renderingManager.model_faces = self.controlsModels.render(self, self.show_controls_models, self.managerObjects, self.renderingManager.model_faces, True)
+            self.show_controls_models, self.renderingManager.model_faces, self.sceneSelectedModelObject = self.controlsModels.render(self, self.show_controls_models, self.managerObjects, self.renderingManager.model_faces, True, self.sceneSelectedModelObject)
 
         if self.show_controls_gui:
             self.show_controls_gui, self.managerObjects = self.controlsGUI.render(self.show_controls_gui, self.managerObjects, True)

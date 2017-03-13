@@ -19,6 +19,7 @@ from maths.types.Matrix4x4 import Matrix4x4
 from maths.types.Vector3 import Vector3
 from maths.types.Vector4 import Vector4
 from gl_utils.objects.MaterialColor import MaterialColor
+from meshes.helpers.BoundingBox import BoundingBox
 
 
 class ModelFace:
@@ -116,16 +117,7 @@ class ModelFace:
 
         self.initBuffersAgain = False
 
-    def __del__(self):
-        glDeleteTextures(self.vbo_tex_ambient)
-        glDeleteTextures(self.vbo_tex_diffuse)
-        glDeleteTextures(self.vbo_tex_normal)
-        glDeleteTextures(self.vbo_tex_displacement)
-        glDeleteTextures(self.vbo_tex_specular)
-        glDeleteTextures(self.vbo_tex_specular_exp)
-        glDeleteTextures(self.vbo_tex_dissolve)
-        glDeleteVertexArrays(1, [self.glVAO])
-        Settings.do_log('[ModelFace] Model destroyed!')
+        self.boundingBox = BoundingBox()
 
     def init_own(self, model):
         self.set_model(model)
@@ -171,7 +163,8 @@ class ModelFace:
         self.init_buffers()
 
     def init_bounding_box(self):
-        pass
+        self.boundingBox.init_shader_program()
+        self.boundingBox.init_buffers(self.mesh_model)
 
     def init_vertex_sphere(self):
         pass
@@ -382,3 +375,11 @@ class ModelFace:
             glBindVertexArray(0)
             if Settings.Setting_Wireframe or Settings.Setting_ModelViewSkin == Settings.ViewModelSkin.ViewModelSkin_Wireframe or self.Setting_Wireframe:
                 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
+
+            matrixBB = Matrix4x4(1.0)
+            matrixBB = matrixBB * self.matrixProjection
+            matrixBB = matrixBB * self.matrixCamera
+            matrixBB = matrixBB * self.matrixModel
+
+            if Settings.Setting_BoundingBoxShow and self.so_selectedYn:
+                self.boundingBox.render(matrixBB, self.so_outlineColor)
