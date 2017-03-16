@@ -75,7 +75,7 @@ class DialogShadertoy():
         self.vboTexture = self.engineShadertoy.renderToTexture(imgui_io.mouse_pos.x, imgui_io.mouse_pos.y, app_time, self.vboTexture)
 
         # shader render
-        imgui.begin_child('Preview'.encode('utf-8'), 0, self.heightTopPanel, True)
+        imgui.begin_child('Preview', 0, self.heightTopPanel, True)
         imgui.image(self.vboTexture, self.textureWidth, self.textureHeight)
         imgui.end_child()
 
@@ -94,7 +94,7 @@ class DialogShadertoy():
             imgui_io.mouse_draw_cursor = False
 
         # editor
-        imgui.begin_child('Editor'.encode('utf-8'))
+        imgui.begin_child('Editor')
 
         if imgui.button('COMPILE', imgui.get_window_width() * 0.85, self.buttonCompileHeight):
             self.compileShader()
@@ -103,7 +103,7 @@ class DialogShadertoy():
             self.getFromClipboard()
 
         # textures
-        imgui.begin_child('Options'.encode('utf-8'), self.widthTexturesPanel, 0, False)
+        imgui.begin_child('Options', self.widthTexturesPanel, 0, False)
         imgui.text('Examples')
 
         if imgui.button('Artificial', -1, 0):
@@ -251,7 +251,7 @@ class DialogShadertoy():
         imgui.same_line()
 
         # editor
-        imgui.begin_child('IDE'.encode('utf-8'), 0, 0, False)
+        imgui.begin_child('IDE', 0, 0, False)
         # lines = (imgui.get_window_height() - 4.0) / imgui.get_text_line_height()
         # imgui.input_text_multiline('##source', self.shadertoyEditorText, -1, imgui.get_text_line_height() * lines, imgui.INPUT_TEXT_FLAGS_ALLOW_TAB_INPUT)
         imgui.end_child()

@@ -64,7 +64,7 @@ class DialogControlsGUI():
         imgui.push_style_var(imgui.STYLE_ITEM_SPACING, (10.0, 0.0))
         imgui.push_style_color(imgui.COLOR_FRAME_BACKGROUND, 255, 0, 0, 255)
         imgui.push_item_width(imgui.get_window_width() * 0.95)
-        imgui.begin_child("Global Items".encode('utf-8'), 0.0, self.height_top_panel, True)
+        imgui.begin_child("Global Items", 0.0, self.height_top_panel, True)
 
         items = ['General', 'Camera', 'Camera Model',
                  'Grid', 'Scene Lights', 'Skybox', 'Lights', 'Artefacts']
@@ -135,7 +135,7 @@ class DialogControlsGUI():
             imgui_io.mouse_draw_cursor = False
 
         # GUI items
-        imgui.begin_child("Properties Pane".encode('utf-8'), 0.0, 0.0, False)
+        imgui.begin_child("Properties Pane", 0.0, 0.0, False)
         if self.selectedObject == 0:
             mo = self.render_general_view_options(mo)
             mo = self.render_general_editor_artefacts(mo)

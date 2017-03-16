@@ -120,7 +120,7 @@ class DialogControlsModels():
         imgui.pop_style_color(3)
 
         # scene items
-        imgui.begin_child("Scene Items".encode('utf-8'), 0.0, self.height_top_panel, True)
+        imgui.begin_child("Scene Items", 0.0, self.height_top_panel, True)
 
         scene_items = []
         for item in mmfs:
@@ -167,7 +167,7 @@ class DialogControlsModels():
             imgui_io.mouse_draw_cursor = False
 
         # properties
-        imgui.begin_child("Properties Pane".encode('utf-8'), 0.0, 0.0, False)
+        imgui.begin_child("Properties Pane", 0.0, 0.0, False)
         imgui.push_item_width(imgui.get_window_width() * 0.75)
 
         if self.selectedObject > -1:

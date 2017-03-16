@@ -29,7 +29,7 @@ class DialogOptions():
             imgui.indent()
             _, Settings.ShowLogWindow = imgui.checkbox('Log Messages', Settings.ShowLogWindow)
             imgui.push_style_var(imgui.STYLE_CHILD_WINDOW_ROUNDING, 5.0)
-            imgui.begin_child("RefreshRate".encode('utf-8'), 0.0, 98.0, True)
+            imgui.begin_child("RefreshRate", 0.0, 98.0, True)
             imgui.text("Consumption Refresh Interval (in seconds, 0 - disabled)")
             _, Settings.Consumption_Interval_Memory = imgui.slider_int('Memory', Settings.Consumption_Interval_Memory, 0, 100, '%.f')
             _, Settings.Consumption_Interval_CPU = imgui.slider_int('CPU', Settings.Consumption_Interval_CPU, 0, 100, '%.f')

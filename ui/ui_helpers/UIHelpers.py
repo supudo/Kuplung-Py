@@ -48,8 +48,7 @@ def add_int_slider_control(title, idx, min, limit, value=0):
 def add_color3(title, color, animate):
     ce_id = '##101' + title
     imgui.text_colored(title, color.r, color.g, color.b, 255.0)
-    _, new_color = imgui.color_edit3(ce_id.encode('utf-8'),
-                                     color.r, color.g, color.b)
+    _, new_color = imgui.color_edit3(ce_id, color.r, color.g, color.b)
     color.r = new_color[0]
     color.g = new_color[1]
     color.b = new_color[2]
@@ -66,8 +65,7 @@ def add_color3(title, color, animate):
 def add_color4(title, color, animate):
     ce_id = '##101' + title
     imgui.text_colored(title, color.r, color.g, color.b, color.a)
-    _, new_color = imgui.color_edit4(ce_id.encode('utf-8'),
-                                     color.r, color.g, color.b, color.a, True)
+    _, new_color = imgui.color_edit4(ce_id, color.r, color.g, color.b, color.a, True)
     color.r = new_color[0]
     color.g = new_color[1]
     color.b = new_color[2]

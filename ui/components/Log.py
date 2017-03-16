@@ -29,7 +29,7 @@ class Log():
 
         imgui.separator()
 
-        imgui.begin_child('scrolling'.encode('utf-8'))
+        imgui.begin_child('scrolling')
         imgui.push_style_var(imgui.STYLE_ITEM_SPACING, imgui.Vec2(0, 1))
 
         imgui.text_unformatted(self.log_text)
