@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/supudo/Kuplung-Py.svg?branch=master)](https://travis-ci.org/supudo/Kuplung-Py)
+
 # Kuplung
 
 Python port of https://github.com/supudo/kuplung
