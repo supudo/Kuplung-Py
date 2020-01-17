@@ -4,7 +4,7 @@ imgui==0.1.0
 multipledispatch==0.4.9
 numpy==1.12.0
 olefile==0.44
-Pillow==4.0.0
+Pillow==6.2.0
 psutil==5.2.0
 pyassimp==3.3
 PyOpenGL==3.1.0
