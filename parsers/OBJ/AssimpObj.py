@@ -15,6 +15,7 @@ from gl_utils.objects.Material import Material
 from gl_utils.objects.Material import MaterialTextureImage
 from maths.types.Vector2 import Vector2
 from maths.types.Vector3 import Vector3
+from settings import Settings
 
 
 class AssimpObj:
@@ -29,6 +30,7 @@ class AssimpObj:
         self.index_model = 0
         scene = pyassimp.load(
             self.file_obj,
+            None,
             pyassimp.postprocess.aiProcess_Triangulate
         )
         self.process_node(scene)
@@ -81,6 +83,7 @@ class AssimpObj:
             entityMaterial = Material()
             entityMaterial.material_title = material.properties['name']
 
+            # TODO: fix assimp parser crash
             entityMaterial.specular_exp = float(material.properties['shininess'] / 4.0)
             entityMaterial.optical_density = float(material.properties['refracti'])
             entityMaterial.transparency = float(material.properties['opacity'])

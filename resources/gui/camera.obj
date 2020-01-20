@@ -1,7 +1,7 @@
 # Blender v2.78 (sub 0) OBJ File: ''
 # www.blender.org
 mtllib camera.mtl
-o Camera.001_Camera
+o Camera
 v -1.000000 -0.200000 0.200000
 v 0.417244 -1.000000 1.000000
 v 0.417244 1.000000 1.000000

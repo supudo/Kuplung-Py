@@ -74,7 +74,7 @@ class ModelFileParserTypes(Enum):
     ModelFileParser_Own2 = 1
     ModelFileParser_Assimp = 2
 
-ModelFileParser = ModelFileParserTypes.ModelFileParser_Assimp
+ModelFileParser = ModelFileParserTypes.ModelFileParser_Own2
 
 # -------------------------------------------------------------------
 # Scene Info

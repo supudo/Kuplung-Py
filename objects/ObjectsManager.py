@@ -8,6 +8,7 @@ __author__ = 'supudo'
 __version__ = "1.0.0"
 
 import glfw
+from collections import defaultdict
 from OpenGL.GL import *
 from settings import Settings
 from meshes.helpers.Camera import Camera
@@ -18,6 +19,7 @@ from meshes.helpers.Light import Light
 from meshes.helpers.Skybox import Skybox
 from meshes.helpers.WorldGrid import WorldGrid
 from parsers.OBJ.AssimpObj import AssimpObj
+from parsers.OBJ.ParserObj2 import ParserObj2
 from maths import MathOps
 from maths.types.Vector3 import Vector3
 from maths.types.Vector4 import Vector4
@@ -27,7 +29,8 @@ from maths.types.Matrix4x4 import Matrix4x4
 class ObjectsManager():
     def __init__(self):
         self.lightSources = []
-        self.systemModels = {}
+        self.systemModels = defaultdict(dict)
+
         self.viewModelSkin = Settings.ViewModelSkin.ViewModelSkin_Rendered
 
         self.matrixProjection = Matrix4x4()
@@ -267,37 +270,40 @@ class ObjectsManager():
         self.axis_helpers_z_plus.init_buffers()
 
     def load_system_models(self):
-        self.parser = AssimpObj()
+        if Settings.ModelFileParser == Settings.ModelFileParserTypes.ModelFileParser_Own2 :
+            self.parser = ParserObj2()
+        else:
+            self.parser = AssimpObj()
 
         self.parser.parse_file('resources/gui/', 'light_directional.obj')
-        self.systemModels["light_directional"] = self.parser.mesh_models[0]
+        self.systemModels["light_directional"] = self.parser.mesh_models['LightDirectional']
 
         self.parser.parse_file('resources/gui/', 'light_point.obj')
-        self.systemModels["light_point"] = self.parser.mesh_models[0]
+        self.systemModels["light_point"] = self.parser.mesh_models['LightPoint']
 
         self.parser.parse_file('resources/gui/', 'light_spot.obj')
-        self.systemModels["light_spot"] = self.parser.mesh_models[0]
+        self.systemModels["light_spot"] = self.parser.mesh_models['LightSpot']
 
         self.parser.parse_file('resources/gui/', 'camera.obj')
-        self.systemModels["camera"] = self.parser.mesh_models[0]
+        self.systemModels["camera"] = self.parser.mesh_models['Camera']
 
         self.parser.parse_file('resources/axis_helpers/', 'x_plus.obj')
-        self.systemModels["axis_x_plus"] = self.parser.mesh_models[0]
+        self.systemModels["axis_x_plus"] = self.parser.mesh_models['XPlus']
 
         self.parser.parse_file('resources/axis_helpers/', 'x_minus.obj')
-        self.systemModels["axis_x_minus"] = self.parser.mesh_models[0]
+        self.systemModels["axis_x_minus"] = self.parser.mesh_models['XMinus']
 
         self.parser.parse_file('resources/axis_helpers/', 'y_plus.obj')
-        self.systemModels["axis_y_plus"] = self.parser.mesh_models[0]
+        self.systemModels["axis_y_plus"] = self.parser.mesh_models['YPlus']
 
         self.parser.parse_file('resources/axis_helpers/', 'y_minus.obj')
-        self.systemModels["axis_y_minus"] = self.parser.mesh_models[0]
+        self.systemModels["axis_y_minus"] = self.parser.mesh_models['YMinus']
 
         self.parser.parse_file('resources/axis_helpers/', 'z_plus.obj')
-        self.systemModels["axis_z_plus"] = self.parser.mesh_models[0]
+        self.systemModels["axis_z_plus"] = self.parser.mesh_models['ZPlus']
 
         self.parser.parse_file('resources/axis_helpers/', 'z_minus.obj')
-        self.systemModels["axis_z_minus"] = self.parser.mesh_models[0]
+        self.systemModels["axis_z_minus"] = self.parser.mesh_models['ZMinus']
 
     def add_light(self, lightType, title='', description=''):
         l = Light()
