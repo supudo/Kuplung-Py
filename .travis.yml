@@ -11,3 +11,4 @@ install:
 
 script:
   - python3 kuplung.py
+  
