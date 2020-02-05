@@ -98,3 +98,5 @@ bin/
 imgui.ini
 
 share/
+.vscode/*
+resources/fonts/*
