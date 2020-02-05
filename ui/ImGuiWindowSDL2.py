@@ -182,6 +182,11 @@ class ImGuiWindowSDL2():
         self.imgui_context = SDL2Impl(self.window)
         self.imgui_context.enable()
         self.app_is_running = True
+        imgui_io = imgui.get_io()
+        imgui_io.fonts.add_font_from_file_ttf(
+            'resources/fonts/fontawesome-webfont.ttf', 16, None
+        )
+        self.imgui_context.refresh_font_texture()
         Settings.do_log("[ImGuiWindow] PyImGui initialized.")
 
     def render_screen(self):

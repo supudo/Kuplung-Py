@@ -6,6 +6,7 @@ python:
   - "3.5"
 
 install:
+  - apt-get install libglfw3-dev libglfw3
   - pip3 install -r requirements.txt
 
 script:
