@@ -6,14 +6,7 @@ python:
   - "3.8"
 
 before_install:
-  - if [ $TRAVIS_OS_NAME == linux ]; then 
-      sudo apt-get install libglfw3-dev libglfw3 libsdl2-dev libassimp-dev python-pyassimp
-    fi
-  - if [ $TRAVIS_OS_NAME == osx ]; then 
-      brew update;
-      brew install glfw3;
-      brew install sdl2;
-    fi
+  - sudo apt-get install libglfw3-dev libglfw3 libsdl2-dev libassimp-dev python-pyassimp
 
 install:
   - pip3 install -r requirements.txt
