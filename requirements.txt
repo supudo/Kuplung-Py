@@ -1,5 +1,7 @@
+Cython==0.29.14
 imgui==1.1.0
 numpy==1.18.1
+psutil==5.6.7
 pyassimp==4.1.4
 PyOpenGL==3.1.5
 PySDL2==0.9.6
