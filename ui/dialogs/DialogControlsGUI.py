@@ -46,7 +46,7 @@ class DialogControlsGUI():
         imgui.set_next_window_size(300, 600, imgui.FIRST_USE_EVER)
         imgui.set_next_window_position((300 * 2) + 200 , 28, imgui.FIRST_USE_EVER)
 
-        _, is_opened = imgui.begin('GUI Controls', is_opened, imgui.WINDOW_SHOW_BORDERS)
+        _, is_opened = imgui.begin('GUI Controls', is_opened, 0)
 
         # reset defaults button
         imgui.push_style_color(imgui.COLOR_BUTTON, 153 / 255, 68 / 255, 61 / 255, 255 / 255)

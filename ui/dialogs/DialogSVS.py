@@ -32,7 +32,7 @@ class DialogSVS():
         imgui.set_next_window_size(800, 600, imgui.FIRST_USE_EVER)
         imgui.set_next_window_position(60, 80, imgui.FIRST_USE_EVER)
 
-        _, is_opened = imgui.begin('Structured Volumetric Sampling', is_opened, imgui.WINDOW_SHOW_BORDERS)
+        _, is_opened = imgui.begin('Structured Volumetric Sampling', is_opened, 0)
 
         imgui_io = imgui.get_io()
 

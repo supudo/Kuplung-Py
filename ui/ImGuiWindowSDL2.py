@@ -12,7 +12,7 @@ from ctypes import byref
 
 import OpenGL.GL as gl
 import imgui
-from imgui.impl import SDL2Impl
+from imgui.integrations.sdl2 import SDL2Renderer
 from sdl2 import *
 
 from consumption.Consumption import Consumption
@@ -92,10 +92,11 @@ class ImGuiWindowSDL2():
                     running = False
                     self.utilConsumption.stop_pooling()
                     break
-                self.imgui_context.process_event(event)
+                self.imgui_impl.process_event(event)
+                self.imgui_impl.process_inputs()
                 self.managerControls.process_event(event)
 
-            self.imgui_context.new_frame()
+            imgui.new_frame()
 
             self.handle_controls_events()
 
@@ -108,10 +109,10 @@ class ImGuiWindowSDL2():
 
             self.render_screen()
             imgui.render()
-
+            self.imgui_impl.render(imgui.get_draw_data())
             SDL_GL_SwapWindow(self.window)
 
-        # self.imgui_context.shutdown()
+        self.imgui_impl.shutdown()
         SDL_GL_DeleteContext(self.gl_context)
         SDL_DestroyWindow(self.window)
         SDL_Quit()
@@ -179,14 +180,14 @@ class ImGuiWindowSDL2():
         Settings.do_log("[ImGuiWindow] GUI components initialized.")
 
     def init_imgui_impl(self):
-        self.imgui_context = SDL2Impl(self.window)
-        self.imgui_context.enable()
+        imgui.create_context()
+        self.imgui_impl = SDL2Renderer(self.window)
         self.app_is_running = True
         imgui_io = imgui.get_io()
         imgui_io.fonts.add_font_from_file_ttf(
             'resources/fonts/fontawesome-webfont.ttf', 16, None
         )
-        self.imgui_context.refresh_font_texture()
+        self.imgui_impl.refresh_font_texture()
         Settings.do_log("[ImGuiWindow] PyImGui initialized.")
 
     def render_screen(self):
@@ -206,7 +207,8 @@ class ImGuiWindowSDL2():
             self.managerObjects.render(self.window)
 
     def handle_controls_events(self):
-        if not imgui.is_mouse_hovering_any_window():
+        # if not imgui.is_mouse_hovering_any_window():
+        if not imgui.is_window_hovered(imgui.HOVERED_ANY_WINDOW):
             if self.managerControls.keyPressed_ESC:
                 self.sceneSelectedModelObject = -1
                 self.managerControls.keyPressed_ESC = False

@@ -71,7 +71,7 @@ class DialogControlsModels():
         imgui.set_next_window_size(300, 600, imgui.FIRST_USE_EVER)
         imgui.set_next_window_position(10, 28, imgui.FIRST_USE_EVER)
 
-        _, is_opened = imgui.begin('Scene Settings', is_opened, imgui.WINDOW_SHOW_BORDERS)
+        _, is_opened = imgui.begin('Scene Settings', is_opened, 0)
 
         tab_labels = ['Models', 'Create']
         tab_icons = ['ICON_MD_BUILD', 'ICON_MD_ADD']
@@ -518,7 +518,7 @@ class DialogControlsModels():
         imgui.set_next_window_size(tWidth, tHeight, imgui.FIRST_USE_EVER)
 
         title = title + ' Texture'
-        imgui.begin(title, showWindow, imgui.WINDOW_SHOW_BORDERS | imgui.WINDOW_HORIZONTAL_SCROLLING_BAR)
+        imgui.begin(title, showWindow, imgui.WINDOW_HORIZONTAL_SCROLLING_BAR)
 
         imgui.text('Image: ' + img)
         imgui.text('Image Dimensions: ' + str(width) + ' x ' + str(height))

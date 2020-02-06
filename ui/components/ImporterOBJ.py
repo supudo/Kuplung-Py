@@ -26,7 +26,7 @@ class ImporterOBJ():
         imgui.set_next_window_size(self.width, self.height, imgui.FIRST_USE_EVER)
         imgui.set_next_window_position(self.position_x, self.position_y, imgui.FIRST_USE_EVER)
 
-        _, is_opened = imgui.begin(title, is_opened, imgui.WINDOW_SHOW_BORDERS)
+        _, is_opened = imgui.begin(title, is_opened, 0)
 
         imgui.text('Select OBJ File : ' + Settings.Settings_CurrentFolder)
         imgui.separator()

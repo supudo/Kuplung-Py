@@ -22,7 +22,7 @@ class DialogOptions():
         imgui.set_next_window_size(300, 600, imgui.FIRST_USE_EVER)
         imgui.set_next_window_position((300 * 2) + 200 , 28, imgui.FIRST_USE_EVER)
 
-        _, is_opened = imgui.begin('Options', is_opened, imgui.WINDOW_SHOW_BORDERS)
+        _, is_opened = imgui.begin('Options', is_opened, 0)
 
         opened, _ = imgui.collapsing_header('General', None, imgui.TREE_NODE_DEFAULT_OPEN)
         if opened:
