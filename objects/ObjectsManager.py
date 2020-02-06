@@ -7,7 +7,6 @@ supudo.net
 __author__ = 'supudo'
 __version__ = "1.0.0"
 
-import glfw
 from collections import defaultdict
 from OpenGL.GL import *
 from settings import Settings
@@ -116,10 +115,7 @@ class ObjectsManager():
         self.camera.render()
 
         if Settings.AppShowAllVisualArtefacts:
-            if Settings.ApplicationGLFW3:
-                win_width, win_height = glfw.get_framebuffer_size(window)
-            else:
-                win_width, win_height = Settings.AppWindowWidth, Settings.AppWindowHeight
+            win_width, win_height = Settings.AppWindowWidth, Settings.AppWindowHeight
             self.axis_system.render(window, self.matrixProjection, self.camera.matrixCamera, win_width, win_height)
 
             if self.Setting_GridSize != self.grid.grid_size:

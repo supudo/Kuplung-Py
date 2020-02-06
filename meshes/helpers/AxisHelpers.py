@@ -7,7 +7,6 @@ supudo.net
 __author__ = 'supudo'
 __version__ = "1.0.0"
 
-import glfw
 from settings import Settings
 from gl_utils import GLUtils
 from OpenGL.GL import *
