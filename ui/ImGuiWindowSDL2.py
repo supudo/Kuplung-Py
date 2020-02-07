@@ -154,7 +154,7 @@ class ImGuiWindowSDL2():
 
         self.gl_context = SDL_GL_CreateContext(self.window)
         if self.gl_context is None:
-            Settings.log_error("[ImGuiWindow] Error: Cannot create OpenGL Context! SDL Error: " + SDL_GetError())
+            Settings.log_error("[ImGuiWindow] Error: Cannot create OpenGL Context! SDL Error: {}".format(SDL_GetError()))
             return False
 
         SDL_GL_MakeCurrent(self.window, self.gl_context)
