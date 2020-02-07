@@ -118,8 +118,8 @@ class ImGuiWindowSDL2():
         SDL_Quit()
 
     def init_gl(self):
-        if SDL_Init(SDL_INIT_EVERYTHING) < 0:
-            Settings.log_error("[ImGuiWindow] Could not initialize SDL2!")
+        if SDL_Init(SDL_INIT_EVERYTHING) != 0:
+            Settings.log_error("[ImGuiWindow] Could not initialize SDL2! {}".format(SDL_GetError()))
             return False
 
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1)
@@ -149,7 +149,7 @@ class ImGuiWindowSDL2():
             SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE)
 
         if self.window is None:
-            Settings.log_error("[ImGuiWindow] Could not initialize Window!! SDL Error: " + SDL_GetError())
+            Settings.log_error("[ImGuiWindow] Could not initialize Window!! SDL Error: {}".format(SDL_GetError()))
             return False
 
         self.gl_context = SDL_GL_CreateContext(self.window)
@@ -159,7 +159,7 @@ class ImGuiWindowSDL2():
 
         SDL_GL_MakeCurrent(self.window, self.gl_context)
         if SDL_GL_SetSwapInterval(1) < 0:
-            Settings.log_error("[ImGuiWindow] Warning: Unable to set VSync! SDL Error: " + SDL_GetError())
+            Settings.log_error("[ImGuiWindow] Warning: Unable to set VSync! SDL Error: {}".format(SDL_GetError()))
 
     def init_manager_controls(self):
         self.managerControls = ControlsManagerSDL2()
