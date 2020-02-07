@@ -6,7 +6,7 @@ python:
   - "3.8"
 
 before_install:
-  - sudo apt-get install libglfw3-dev libglfw3 libsdl2-dev libassimp-dev python-pyassimp xauth xvfb
+  - sudo apt-get install libglfw3-dev libglfw3 libsdl2-dev libassimp-dev python-pyassimp
   #- brew update
   #- brew install sdl2 glm minizip glew glfw glfw3 assimp python@3.8
 
@@ -14,4 +14,4 @@ install:
   - pip3 install -r requirements.txt
 
 script:
-  - xvfb-run -a python3 kuplung.py
+  - python3 kuplung.py build
