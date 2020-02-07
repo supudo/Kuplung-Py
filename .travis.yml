@@ -1,12 +1,14 @@
 sudo: false
-
 language: python
+os: osx
 
 python:
   - "3.8"
 
 before_install:
-  - sudo apt-get install libglfw3-dev libglfw3 libsdl2-dev libassimp-dev python-pyassimp
+  #- sudo apt-get install libglfw3-dev libglfw3 libsdl2-dev libassimp-dev python-pyassimp
+  - brew update
+  - brew install sdl2 glm minizip glfw3 assimp
 
 install:
   - pip3 install -r requirements.txt
