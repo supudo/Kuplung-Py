@@ -263,9 +263,9 @@ class Light():
                 glUniform1i(self.gl_fs_useColor, True)
                 glUniform3f(
                     self.gl_fs_color,
-                    self.mesh_model.ModelMaterial.color_diffuse.r,
-                    self.mesh_model.ModelMaterial.color_diffuse.g,
-                    self.mesh_model.ModelMaterial.color_diffuse.b
+                    self.mesh_model.ModelMaterial.color_diffuse[0],
+                    self.mesh_model.ModelMaterial.color_diffuse[1],
+                    self.mesh_model.ModelMaterial.color_diffuse[2]
                 )
 
             glBindVertexArray(self.glVAO)

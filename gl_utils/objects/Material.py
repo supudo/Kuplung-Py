@@ -11,6 +11,9 @@ from enum import Enum
 __author__ = 'supudo'
 __version__ = "1.0.0"
 
+from maths.types.Vector4 import Vector4
+
+
 class MaterialTextureType(Enum):
     MaterialTextureType_Undefined = 0
     MaterialTextureType_Ambient = 1
@@ -37,10 +40,10 @@ class Material:
     def __init__(self):
         self.material_title = ''
 
-        self.color_ambient = []
-        self.color_diffuse = []
-        self.color_specular = []
-        self.color_emission = []
+        self.color_ambient = Vector4(.0)
+        self.color_diffuse = Vector4(.0)
+        self.color_specular = Vector4(.0)
+        self.color_emission = Vector4(.0)
 
         self.specular_exp = 0
         self.transparency = 0

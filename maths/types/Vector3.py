@@ -9,8 +9,6 @@ __version__ = "1.0.0"
 
 
 class Vector3(object):
-
-
     def __init__(self, *args, **kwargs):
         if kwargs:
             self.x = kwargs.get('x', .0)

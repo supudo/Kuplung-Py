@@ -140,6 +140,14 @@ class ImGuiWindowSDL2():
         self.utilConsumption = Consumption()
         self.utilConsumption.start_pooling()
 
+        displayMode = SDL_DisplayMode();
+        SDL_GetCurrentDisplayMode(0, displayMode);
+
+        if displayMode.w < int(Settings.AppFramebufferWidth):
+            Settings.AppFramebufferWidth = displayMode.w - 100
+        if displayMode.h < int(Settings.AppFramebufferHeight):
+            Settings.AppFramebufferHeight = displayMode.h - 100
+
         self.window = SDL_CreateWindow(
             Settings.AppMainWindowTitle.encode('utf-8'),
             SDL_WINDOWPOS_CENTERED,
