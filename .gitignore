@@ -99,3 +99,4 @@ imgui.ini
 
 share/
 .vscode/*
+/activate.bat
